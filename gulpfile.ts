@@ -3,7 +3,7 @@ import * as gulp from 'gulp';
 import * as runSequence from 'run-sequence';
 import * as sourceMaps from 'gulp-sourcemaps';
 import * as tsc from 'gulp-typescript';
-// import * as uglify from 'gulp-uglify';
+import * as uglify from 'gulp-uglify';
 
 
 /**
@@ -12,6 +12,7 @@ import * as tsc from 'gulp-typescript';
 gulp.task("clean", (done:any) => {
 return del(["dist"], done);
 });
+
 
 /**
 * Build the server.
@@ -22,7 +23,7 @@ const result = gulp.src(["src/*.ts"])
 // .pipe(sourceMaps.init())
 .pipe(project());
 return result.js
-// .pipe(uglify())
+.pipe(uglify())
 // .pipe(sourceMaps.write("dist",{addComment: true}))
 .pipe(gulp.dest("dist"));
 });
