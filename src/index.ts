@@ -49,8 +49,10 @@ class fsLibrary {
         //get all collections
         const master_collection: any = document.querySelectorAll(object.target_selector);
         master_collection.forEach((elem, i) => {
-            if (i % 2 == 0) {
-                elem.className = `${elem.className} ${object.flip_selector}`
+            
+            if (i % 2 == 1) {
+                console.log(elem)
+                elem.className = `${elem.className} ${object.flip_selector.replace(/(.|#)/,"")}`
             }
         })
     }
@@ -69,8 +71,8 @@ class fsLibrary {
             //get all collections
             const master_collection: any = document.querySelectorAll(target_selector);
             master_collection.forEach((elem, i) => {
-                if (i % 2 == 0) {
-                    elem.className = `${elem.className} ${flip_selector}`
+                if (i % 2 == 1) {
+                    elem.className = `${elem.className} ${flip_selector.replace(/(.|#)/,"")}`
 
                 }
             })
@@ -83,7 +85,7 @@ class fsLibrary {
      * @param cms_selector 
      * @param cms_filter 
      */
-    public static cmsfilter(cms_selector: string, cms_filter: Array<FilterObject>) {
+    public static cmsfilter(cms_selector: string, cms_filter: Array<string>, filter_type: string = 'and') {
 
         let filter = {};
         //get all collections
@@ -96,9 +98,51 @@ class fsLibrary {
         })
 
 
-        cms_filter.map(({ filter_selector, filter_text }) => {
+        cms_filter.map((filter_selector) => {
+            
+            const element = document.querySelector(filter_selector);
+            const tag_element = element&& element.tagName;
+            console.log(element)
+            if(!element){
+                return
+            }
 
-            (<any>document.querySelector(filter_selector)).onclick = function (event) {
+            if (tag_element == "SELECT") {
+                (<any>document.querySelector(filter_selector)).onchange = function (event) {
+                    let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
+
+                    filterHelper(filter_type,filter_selector, filter_text)
+                }
+            }
+            else if(tag_element == "INPUT"){//handle checkbox and radio button
+                (<any>document.querySelector(filter_selector)).onchange = function (event) {
+                    let filter_text = event.currentTarget.getAttribute("data-search") || '';
+                    
+                    if(!event.target.checked){
+                        filter_text='';
+                    }    
+
+                    filterHelper(filter_type,filter_selector, filter_text)
+                }
+            }
+            else {
+                (<any>document.querySelector(filter_selector)).onclick = function (event) {
+                    let filter_text = event.currentTarget.getAttribute("data-search") || '';
+                    filterHelper(filter_type,filter_selector, filter_text)
+
+                }
+            }
+
+        })
+
+        function filterHelper(filter_type,filter_selector, filter_text) {
+
+            if (/^or$/i.test(filter_type)) {
+                filter = {}
+                filter[filter_selector] = filter_text;
+                filterHandler();
+            }
+            else {
 
                 //checks if it has previously been clicked
                 if (filter_selector in filter) {
@@ -109,10 +153,12 @@ class fsLibrary {
                     filter[filter_selector] = filter_text;
                     filterHandler();
                 }
-
             }
 
-        })
+            console.log(filter)
+
+        }
+
 
         function filterHandler() {
             //creating a regex to test against
@@ -144,8 +190,6 @@ class fsLibrary {
 
             })
         }
-
-
     }
 }
 
@@ -155,7 +199,7 @@ interface AltClass {
 }
 
 
-interface FilterObject {
-    filter_selector: string,
-    filter_text: string
-}
+// interface FilterObject {
+//     filter_selector: string,
+//     filter_text: string
+// }

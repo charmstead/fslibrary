@@ -1,3 +1,45 @@
+.w-checkbox {
+  display: block;
+  margin-bottom: 5px;
+  padding-left: 20px;
+}
+
+.w-checkbox:before {
+  content: ' ';
+  display: table;
+  -ms-grid-column-span: 1;
+  grid-column-end: 2;
+  -ms-grid-column: 1;
+  grid-column-start: 1;
+  -ms-grid-row-span: 1;
+  grid-row-end: 2;
+  -ms-grid-row: 1;
+  grid-row-start: 1;
+}
+
+.w-checkbox:after {
+  content: ' ';
+  display: table;
+  -ms-grid-column-span: 1;
+  grid-column-end: 2;
+  -ms-grid-column: 1;
+  grid-column-start: 1;
+  -ms-grid-row-span: 1;
+  grid-row-end: 2;
+  -ms-grid-row: 1;
+  grid-row-start: 1;
+  clear: both;
+}
+
+.w-checkbox-input {
+  float: left;
+  margin-bottom: 0px;
+  margin-left: -20px;
+  margin-right: 0px;
+  margin-top: 4px;
+  line-height: normal;
+}
+
 .page-content {
   width: 100%;
   max-width: 1200px;
@@ -96,14 +138,31 @@
 }
 
 .filter-button {
-  margin-right: 10px;
-  margin-left: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
   padding: 11px 15px 10px;
   background-color: #000;
   color: #fff;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.filter-button.red {
+  background-color: #f13333;
+}
+
+.filter-button.green {
+  background-color: #00c257;
+}
+
+.filter-button.blue {
+  background-color: #001eff;
+}
+
+.filter-button.active {
+  background-color: #a7a7a7;
+  color: #000;
 }
 
 .project-feature {
@@ -223,4 +282,45 @@
   color: #fff;
   font-size: 18px;
   font-weight: 700;
+}
+
+.project-color {
+  margin-top: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.filter-cat-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.filter-cat-2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  margin-right: 29px;
+  margin-left: 29px;
+}
+
+.filter-cat-3 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.checkbox {
+  width: 15%;
+  margin-right: 24px;
+  padding-left: 11px;
 }
