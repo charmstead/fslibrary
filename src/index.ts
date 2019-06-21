@@ -51,7 +51,6 @@ class fsLibrary {
         master_collection.forEach((elem, i) => {
             
             if (i % 2 == 1) {
-                console.log(elem)
                 elem.className = `${elem.className} ${object.flip_selector.replace(/(.|#)/,"")}`
             }
         })

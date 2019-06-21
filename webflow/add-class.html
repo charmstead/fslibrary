@@ -174,39 +174,46 @@
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     <script src="../dist/index.js"></script>
     <script>
+        $(document).ready(function () {
 
-        fsLibrary.addClass({
-            target_selector: ".project-feature",
-            flip_selector: ".flip-row"
-        })
 
-        fsLibrary.addClass({
-            target_selector: ".project-feature-content",
-            flip_selector: ".flip-text"
-        })
-        
-        fsLibrary.addClass({
-            target_selector: ".project-feature-image",
-            flip_selector: ".flip-image"
-        })
-
-        //or
-        var _to_flip = [
-            {
+            fsLibrary.addClass({
                 target_selector: ".project-feature",
                 flip_selector: ".flip-row"
-            },
-            {
+            })
+
+            fsLibrary.addClass({
                 target_selector: ".project-feature-content",
                 flip_selector: ".flip-text"
-            },
-            {
+            })
+
+            fsLibrary.addClass({
                 target_selector: ".project-feature-image",
                 flip_selector: ".flip-image"
-            }
-        ]
+            })
 
-        fsLibrary.mutateTarget(_to_flip)
+
+
+        })
+
+
+        //or
+        // var _to_flip = [
+        //     {
+        //         target_selector: ".project-feature",
+        //         flip_selector: ".flip-row"
+        //     },
+        //     {
+        //         target_selector: ".project-feature-content",
+        //         flip_selector: ".flip-text"
+        //     },
+        //     {
+        //         target_selector: ".project-feature-image",
+        //         flip_selector: ".flip-image"
+        //     }
+        // ]
+
+        // fsLibrary.mutateTarget(_to_flip)
 
 
     </script>
