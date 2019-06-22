@@ -30,7 +30,7 @@ Include the /dist/index.js file in your html element.
 
 ```
 
-##Combine functionality
+##  Combine functionality
 
 The combine function takes a parameter of string which is the
 cms collection outer wrapper class selector.
@@ -46,7 +46,7 @@ fsLibrary.combine('.w-dyn-list')
 ```
 
 
-##AddClass functionality
+##  AddClass functionality
 
 To addclass a custom class to an elem can be done using the following functions:
 
@@ -89,7 +89,7 @@ fsLibrary.mutateTarget(_to_flip)
 
 ```
 
-##cmsfilter functionality
+##  cmsfilter functionality
 
 To perform filter functions on the list of collection items:
 
