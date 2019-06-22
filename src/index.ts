@@ -1,9 +1,17 @@
-
 class fsLibrary {
 
     constructor() {
 
     }
+
+
+    private static commonValue(...arr) {
+        let res = arr[0].filter(function (x) {
+            return arr.every((y) => y.includes(x))
+        })
+        return res;
+    }
+
     /**
      * Accepts the cms collector outer wrapper selector
      * and combine all the collection items into one collection.
@@ -49,9 +57,9 @@ class fsLibrary {
         //get all collections
         const master_collection: any = document.querySelectorAll(object.target_selector);
         master_collection.forEach((elem, i) => {
-            
+
             if (i % 2 == 1) {
-                elem.className = `${elem.className} ${object.flip_selector.replace(/(.|#)/,"")}`
+                elem.className = `${elem.className} ${object.flip_selector.replace(/(.|#)/, "")}`
             }
         })
     }
@@ -71,7 +79,7 @@ class fsLibrary {
             const master_collection: any = document.querySelectorAll(target_selector);
             master_collection.forEach((elem, i) => {
                 if (i % 2 == 1) {
-                    elem.className = `${elem.className} ${flip_selector.replace(/(.|#)/,"")}`
+                    elem.className = `${elem.className} ${flip_selector.replace(/(.|#)/, "")}`
 
                 }
             })
@@ -84,75 +92,82 @@ class fsLibrary {
      * @param cms_selector 
      * @param cms_filter 
      */
-    public static cmsfilter(cms_selector: string, cms_filter: Array<string>, filter_type: string = 'and') {
+    public static cmsfilter(cms_selector: string, cms_filter: Array<Array<string>>, filter_type: string = 'and') {
 
-        let filter = {};
+        let filter = []//2D array to hold categories of filter selectors and their corresponding
+
         //get all collections
         const master_collection: any = [].slice.call(document.querySelectorAll(cms_selector));
 
         const cms_filter_master_collection = [];
+
         //creates a clone of the list
         master_collection.map((elem) => {
             cms_filter_master_collection.push(elem.cloneNode(true));
         })
 
 
-        cms_filter.map((filter_selector) => {
-            
-            const element = document.querySelector(filter_selector);
-            const tag_element = element&& element.tagName;
-            console.log(element)
-            if(!element){
-                return
-            }
+        cms_filter.map((val, index) => {
+            filter[index] = {} //initialise default values
 
-            if (tag_element == "SELECT") {
-                (<any>document.querySelector(filter_selector)).onchange = function (event) {
-                    let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
+            val.map((filter_selector) => {
+                const element = document.querySelector(filter_selector);
+                const tag_element = element && element.tagName;
+                console.log(element)
 
-                    filterHelper(filter_type,filter_selector, filter_text)
+                
+                if (!element) {
+                    return
                 }
-            }
-            else if(tag_element == "INPUT"){//handle checkbox and radio button
-                (<any>document.querySelector(filter_selector)).onchange = function (event) {
-                    let filter_text = event.currentTarget.getAttribute("data-search") || '';
-                    
-                    if(!event.target.checked){
-                        filter_text='';
-                    }    
 
-                    filterHelper(filter_type,filter_selector, filter_text)
-                }
-            }
-            else {
-                (<any>document.querySelector(filter_selector)).onclick = function (event) {
-                    let filter_text = event.currentTarget.getAttribute("data-search") || '';
-                    filterHelper(filter_type,filter_selector, filter_text)
+                if (tag_element == "SELECT") {
+                    (<any>document.querySelector(filter_selector)).onchange = function (event) {
+                        let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
+                        filterHelper(filter_type, filter_selector, index, filter_text)
+                    }
                 }
-            }
+                else if (tag_element == "INPUT") {//handle checkbox and radio button
+                    (<any>document.querySelector(filter_selector)).onchange = function (event) {
+                        let filter_text = event.currentTarget.getAttribute("data-search") || '';
+
+                        if (!event.target.checked) {
+                            filter_text = '';
+                        }
+                        filterHelper(filter_type, filter_selector, index, filter_text)
+                    }
+                }
+                else {
+                    (<any>document.querySelector(filter_selector)).onclick = function (event) {
+                        let filter_text = event.currentTarget.getAttribute("data-search") || '';
+                        filterHelper(filter_type, filter_selector, index, filter_text)
+                    }
+                }
+
+            })
 
         })
 
-        function filterHelper(filter_type,filter_selector, filter_text) {
+        function filterHelper(filter_type, filter_selector, index, filter_text) {
 
             if (/^or$/i.test(filter_type)) {
-                filter = {}
-                filter[filter_selector] = filter_text;
-                filterHandler();
+                (<any>filter[index]) = {}
+                filter[index][filter_selector] = filter_text;
             }
-            else {
+            else {//it is definitely "and"
 
                 //checks if it has previously been clicked
-                if (filter_selector in filter) {
-                    delete filter[filter_selector]
-                    filterHandler();
+                if (filter_selector in (<any>filter[index])) {
+                    delete filter[index][filter_selector]
+
                 }
                 else {
-                    filter[filter_selector] = filter_text;
-                    filterHandler();
+                    filter[index][filter_selector] = filter_text;
+
                 }
             }
+            filterHandler();
+
 
             console.log(filter)
 
@@ -160,13 +175,14 @@ class fsLibrary {
 
 
         function filterHandler() {
-            //creating a regex to test against
-            const val = `(${Object["values"](filter).join("|")})`;
-
+            console.log(filter)
             cms_filter_master_collection.map((elem, i) => {
 
-                const result = (
-                    [].slice.call(elem.cloneNode(true).firstElementChild.children).map((item, j) => {
+                const search_result = filter.reduce((curr, search) => {
+                    //creating a regex to test against
+                    const val = `(${Object["values"](search).join("|")})`;
+
+                    const result = [].slice.call(elem.cloneNode(true).firstElementChild.children).map((item, j) => {
 
                         const re = new RegExp(val, "i");
                         const valid = re.test(item.textContent);
@@ -179,12 +195,17 @@ class fsLibrary {
                         }
 
                         return item.outerHTML;
+                    })
 
-                    }).join("")
-                ).trim()
+                    if (curr.length < 1) {
+                        return result;
+                    }
 
-                if (result.length > 1) {
-                    master_collection[i].firstElementChild.innerHTML = result;
+                    return [...curr.filter((a) => result.includes(a))]
+                }, []).join("").trim()
+
+                if (search_result.length > 1) {
+                    master_collection[i].firstElementChild.innerHTML = search_result;
                 }
 
             })

@@ -24,10 +24,7 @@
         <div class="page-content">
             <div class="filter-bar">
                 <div class="filter-cat-1">
-                    <div class="filter-button cat-reset" data-search="">
-                        <div>All</div>
-                    </div>
-                    <div class="filter-button cat-a active" data-search='CATEGORY A'>
+                    <div class="filter-button cat-a" data-search='CATEGORY A'>
                         <div>A</div>
                     </div>
                     <div class="filter-button cat-b" data-search='CATEGORY B'>
@@ -56,31 +53,32 @@
                 </div>
                 <div class="filter-cat-3">
                     <div class="w-checkbox checkbox">
-                        <input type="radio" id="checkbox" name="month" data-search="Jan" class="w-checkbox-input">
+                        <input type="checkbox" id="checkbox" name="jan" data-search="Jan" class="w-checkbox-input">
                         <label for="checkbox" class="w-form-label">Jan</label>
                     </div>
                     <div class="w-checkbox checkbox">
-                        <input type="radio" id="checkbox-2" name="month" data-search="May" class="w-checkbox-input">
+                        <input type="checkbox" id="checkbox-2" name="may" data-search="May" class="w-checkbox-input">
                         <label for="checkbox-2" class="w-form-label">May</label>
                     </div>
                     <div class="w-checkbox checkbox">
-                        <input type="radio" id="checkbox-3" name="month" data-search="Dec" class="w-checkbox-input">
+                        <input type="checkbox" id="checkbox-3" name="dec" data-search="Dec" class="w-checkbox-input">
                         <label for="checkbox-3" class="w-form-label">Dec</label>
                     </div>
                     <div class="w-checkbox checkbox">
-                        <input type="radio" id="checkbox-4" name="month" data-search="April" class="w-checkbox-input">
+                        <input type="checkbox" id="checkbox-4" name="april" data-search="April"
+                            class="w-checkbox-input">
                         <label for="checkbox-4" class="w-form-label">April</label>
                     </div>
                     <div class="w-checkbox checkbox">
-                        <input type="radio" id="checkbox-5" name="month" data-search="Sept" class="w-checkbox-input">
+                        <input type="checkbox" id="checkbox-5" name="sept" data-search="Sept" class="w-checkbox-input">
                         <label for="checkbox-5" class="w-form-label">Sept</label>
                     </div>
                     <div class="w-checkbox checkbox">
-                        <input type="radio" id="checkbox-6" name="month" data-search="Feb" class="w-checkbox-input">
+                        <input type="checkbox" id="checkbox-6" name="feb" data-search="Feb" class="w-checkbox-input">
                         <label for="checkbox-6" class="w-form-label">Feb</label>
                     </div>
                     <div class="w-checkbox checkbox">
-                        <input type="radio" id="checkbox-7" name="month" data-search="June" class="w-checkbox-input">
+                        <input type="checkbox" id="checkbox-7" name="june" data-search="June" class="w-checkbox-input">
                         <label for="checkbox-7" class="w-form-label">June</label>
                     </div>
                 </div>
@@ -2063,11 +2061,11 @@
         fsLibrary.combine('.w-dyn-list')
 
 
-        var _cms_button_filter = [".cat-a", ".cat-b", ".cat-c", ".cat-d", ".cat-e", ".cat-reset"]
+        var _cms_button_filter = [".cat-a", ".cat-b", ".cat-c", ".cat-d", ".cat-e"]
         var _mnth_button_filter = ["#checkbox", "#checkbox-2", "#checkbox-3", "#checkbox-4", "#checkbox-5", "#checkbox-6", "#checkbox-7"]
         var _color_button_filter = [".red", ".green", ".blue"]
 
-        var merge_filter = _cms_button_filter.concat(_mnth_button_filter,_color_button_filter);
+        var merge_filter = [_cms_button_filter, _mnth_button_filter, _color_button_filter]
         //default is and
         fsLibrary.cmsfilter('.w-dyn-list', merge_filter)
 
