@@ -139,6 +139,14 @@ class fsLibrary {
                 }
                 else {
                     (<any>document.querySelector(filter_selector)).onclick = function (event) {
+                        const active= event.currentTarget.className;
+                        
+                        if(active.includes("active")){
+                            event.currentTarget.classList.remove("active")
+                        }
+                        else{
+                            event.currentTarget.classList.add("active")
+                        }
                         let filter_text = event.currentTarget.getAttribute("data-search") || '';
                         filterHelper(filter_type, filter_selector, index, filter_text)
                     }
