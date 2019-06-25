@@ -72,7 +72,7 @@ class fsLibrary {
  * }
  * @param object array values of targetSelector element and selector class to add to Element
  */
-    public static mutateTarget(object: Array<AltClass>) {
+    public static addClasses(object: Array<AltClass>) {
 
         object.map(({ target_selector, flip_selector }) => {
             //get all collections

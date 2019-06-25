@@ -3,7 +3,7 @@
 # The functionalities consist of the following
 
 1. combine: To combine all the collection items into one collection.
-2. addClass/mutateTarget: To add custom class selectors to specific DOM elements.
+2. addClass/addClasses: To add custom class selectors to specific DOM elements.
 3. cmsfilter: To perform filter on collection items.
 
 
@@ -51,7 +51,7 @@ fsLibrary.combine('.w-dyn-list')
 To addclass a custom class to an elem can be done using the following functions:
 
 addclass: targets a single element.
-mutateTarget: more than one element
+addClasses: more than one element
 
 The addclass functions accepts an object parameter with two key/value pair of
 target element selector and the class selector to add.
@@ -69,7 +69,7 @@ fsLibrary.addClass({
     flip_selector: ".flip-row"
 })
 
-// or use the mutateTarget
+// or use the addClasses
 var _to_flip = [
     {
         target_selector: ".project-feature",
@@ -85,7 +85,7 @@ var _to_flip = [
     }
 ]
 
-fsLibrary.mutateTarget(_to_flip)
+fsLibrary.addClasses(_to_flip)
 
 ```
 
