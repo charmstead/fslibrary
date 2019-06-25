@@ -105,7 +105,9 @@ class fsLibrary {
         master_collection.map((elem) => {
             cms_filter_master_collection.push(elem.cloneNode(true));
         })
+        
 
+        let prevClicked;
 
         cms_filter.map((val, index) => {
             filter[index] = {} //initialise default values
@@ -140,13 +142,26 @@ class fsLibrary {
                 else {
                     (<any>document.querySelector(filter_selector)).onclick = function (event) {
                         const active= event.currentTarget.className;
-                        
+
                         if(active.includes("active")){
                             event.currentTarget.classList.remove("active")
                         }
                         else{
                             event.currentTarget.classList.add("active")
                         }
+                        //only one element should have active class for or
+                        if (/^or$/i.test(filter_type)) {
+                            
+                            if(prevClicked){
+                                prevClicked.classList.remove("active")
+                            }
+                            else{
+                                prevClicked=event.currentTarget;
+                            }
+                        }
+                        prevClicked=event.currentTarget;
+
+                        
                         let filter_text = event.currentTarget.getAttribute("data-search") || '';
                         filterHelper(filter_type, filter_selector, index, filter_text)
                     }
