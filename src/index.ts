@@ -21,16 +21,13 @@ class fsLibrary {
 
         //get all collections
         const master_collection: any = [].slice.call(document.querySelectorAll(cms_selector));
-        //checks if the right selector was passed in
-        if (master_collection[0].childElementCount !== 1) {
-            throw ("combine expects the cms_outer_wrapper css selector");
-        }
-        else {
+
+     
             //copies the cms items into the first collection list
-            master_collection[0].firstElementChild.innerHTML = (
+            master_collection[0].innerHTML = (
                 [...master_collection].reduce((curr, items) => {
                     //gets all the items  
-                    return [...curr, ...items.firstElementChild.innerHTML]
+                    return [...curr, ...items.innerHTML]
                 }, []).join("")
             )
 
@@ -41,7 +38,6 @@ class fsLibrary {
                 }
             })
 
-        }
 
     }
 
@@ -72,17 +68,39 @@ class fsLibrary {
  * }
  * @param object array values of targetSelector element and selector class to add to Element
  */
-    public static addClasses(object: Array<AltClass>) {
+/**
+ * 
+ * @param container The css selector of the parent container elem of the list you want to add classnames to.
+ * @param object defined as
+ *  {
+ *     classNames: Array<string>; //list of classnames you want to add
+ *     frequency: number; //The frequency or order of addition of class to the list
+ *     start: number; //position of list item to start with
+ * }
+ */
+    public static addClasses(container, object: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
+        const master_collection: any = document.querySelectorAll(container);
+        const { frequency, start } = object;
+        let ClassNames = object.classNames.join(" ")
+        ClassNames = ClassNames.replace(/\./g, "")
 
-        object.map(({ target_selector, flip_selector }) => {
-            //get all collections
-            const master_collection: any = document.querySelectorAll(target_selector);
-            master_collection.forEach((elem, i) => {
-                if (i % 2 == 1) {
-                    elem.className = `${elem.className} ${flip_selector.replace(/(.|#)/, "")}`
+        if(frequency<0){
+            throw "unaccepted value passed as frequency";
+        }
+        else if (start<1){
+            throw "unaccepted value passed as start";
+        }
 
+        master_collection.forEach((elem, i) => {
+
+            const children = elem.children;
+            for (let j = start - 1; j < children.length; j += frequency) {
+                children[j].className += " " + ClassNames
+
+                if (frequency == 0) {
+                    break;
                 }
-            })
+            }
         })
 
     }
@@ -92,9 +110,9 @@ class fsLibrary {
      * @param cms_selector 
      * @param cms_filter 
      */
-    public static cmsfilter(cms_selector: string, cms_filter: Array<Array<string>>, filter_type: string = 'and') {
+    public static cmsfilter(cms_selector: string, cms_filter: Array<FilterGroup>|string, filter_type: string = 'single') {
 
-        let filter = []//2D array to hold categories of filter selectors and their corresponding
+        let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
         //get all collections
         const master_collection: any = [].slice.call(document.querySelectorAll(cms_selector));
@@ -105,107 +123,119 @@ class fsLibrary {
         master_collection.map((elem) => {
             cms_filter_master_collection.push(elem.cloneNode(true));
         })
+
+        let filter_group: any[]=[];
+        
+        if (Array.isArray(cms_filter)) {
+            cms_filter.map((val, index) => {
+                let prevClicked;
+                const { filter_option } = val;
+
+                filter_group= [].slice.call(document.querySelectorAll(`${val.filter_group} [data-search]`));
+                assignChangeEventToButtons(index,prevClicked,filter_option)   
+                
+            })
+        }
+        else if (typeof cms_filter == "string") {
+            let prevClicked;
+            filter_group= [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
+            assignChangeEventToButtons(0,prevClicked)
+        }
+        else {
+            throw "Incorrect type passed as cms_filter"
+        }
         
 
-        let prevClicked;
-
-        cms_filter.map((val, index) => {
+        function assignChangeEventToButtons(index,prevClicked,filter_option=filter_type){
             filter[index] = {} //initialise default values
-
-            val.map((filter_selector) => {
-                const element = document.querySelector(filter_selector);
-                const tag_element = element && element.tagName;
-                console.log(element)
-
-                
-                if (!element) {
-                    return
-                }
+            filter_group.map((elem, j) => {
+                const id = `${index}${j}`;
+                const tag_element = elem && elem.tagName;
 
                 if (tag_element == "SELECT") {
-                    (<any>document.querySelector(filter_selector)).onchange = function (event) {
+                    (<any>elem).onchange = function (event) {
                         let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
-                        filterHelper(filter_type, filter_selector, index, filter_text)
+                        filterHelper({ filter_option, id, index, filter_text })
                     }
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
-                    (<any>document.querySelector(filter_selector)).onchange = function (event) {
+                    (<any>elem).onchange = function (event) {
                         let filter_text = event.currentTarget.getAttribute("data-search") || '';
 
                         if (!event.target.checked) {
                             filter_text = '';
                         }
-                        filterHelper(filter_type, filter_selector, index, filter_text)
+                        filterHelper({ filter_option, id, index, filter_text })
                     }
                 }
                 else {
-                    (<any>document.querySelector(filter_selector)).onclick = function (event) {
-                        const active= event.currentTarget.className;
+                    (<any>elem).onclick = function (event) {
+                        const active = event.currentTarget.className;
 
-                        if(active.includes("active")){
-                            event.currentTarget.classList.remove("active")
-                        }
-                        else{
-                            event.currentTarget.classList.add("active")
-                        }
                         //only one element should have active class for or
-                        if (/^or$/i.test(filter_type)) {
-                            
-                            if(prevClicked){
-                                prevClicked.classList.remove("active")
-                            }
-                            else{
-                                prevClicked=event.currentTarget;
-                            }
+                        if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
+                            if(prevClicked) prevClicked.classList.remove("active")
                         }
-                        prevClicked=event.currentTarget;
 
-                        
-                        let filter_text = event.currentTarget.getAttribute("data-search") || '';
-                        filterHelper(filter_type, filter_selector, index, filter_text)
+                        prevClicked = event.currentTarget;
+
+                        if (active.includes("active")) {
+                            prevClicked.classList.remove("active")
+                        }
+                        else {
+                            prevClicked.classList.add("active")
+                        }
+
+                        let filter_text = prevClicked.getAttribute("data-search") || '';
+                        filterHelper({ filter_option, id, index, filter_text })
                     }
                 }
-
             })
+        }
 
-        })
 
-        function filterHelper(filter_type, filter_selector, index, filter_text) {
+        function filterHelper({ filter_option, id, index, filter_text }) {
 
-            if (/^or$/i.test(filter_type)) {
-                (<any>filter[index]) = {}
-                filter[index][filter_selector] = filter_text;
+            if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
+
+                //checks if it has previously been clicked                
+                if (id in filter[index]) {
+                    delete filter[index][id];
+                }
+                else {
+                    filter[index] = {};
+                    filter[index][id] = filter_text;
+                }
+
             }
-            else {//it is definitely "and"
+            else {//it is definitely "multi"
 
                 //checks if it has previously been clicked
-                if (filter_selector in (<any>filter[index])) {
-                    delete filter[index][filter_selector]
+                if (id in filter[index]) {
 
+                    delete filter[index][id];
                 }
                 else {
-                    filter[index][filter_selector] = filter_text;
-
+                    filter[index][id] = filter_text;
                 }
+
             }
-            filterHandler();
-
-
+            findAndMatchFilterText();
             console.log(filter)
 
         }
 
 
-        function filterHandler() {
-            console.log(filter)
+        function findAndMatchFilterText() {
             cms_filter_master_collection.map((elem, i) => {
 
                 const search_result = filter.reduce((curr, search) => {
-                    //creating a regex to test against
-                    const val = `(${Object["values"](search).join("|")})`;
 
-                    const result = [].slice.call(elem.cloneNode(true).firstElementChild.children).map((item, j) => {
+                    //creating a regex to test against
+                    const val = `(${Object["values"]((search)).join("|")})`;
+
+                    const result = [].slice.call(elem.cloneNode(true).children).map((item, j) => {
 
                         const re = new RegExp(val, "i");
                         const valid = re.test(item.textContent);
@@ -217,18 +247,34 @@ class fsLibrary {
                             item.style.display = "none"
                         }
 
-                        return item.outerHTML;
+                        // return item.outerHTML;
+                        return item;
                     })
 
                     if (curr.length < 1) {
                         return result;
                     }
 
-                    return [...curr.filter((a) => result.includes(a))]
-                }, []).join("").trim()
+                    // return [...curr.filter((a) => result.includes(a))]
+
+                    //intersections of the results
+                    return [...curr.map((a, index) => {
+                        if (a.style.display !== result[index].style.display) {
+                            a.style.display = "none";
+                        }
+                        return a;
+                    })]
+
+                }, [])//.join("").trim()
 
                 if (search_result.length > 1) {
-                    master_collection[i].firstElementChild.innerHTML = search_result;
+                    console.log(search_result.length);
+
+                    [].slice.call(master_collection[i].children)
+                        .map((child, k) => {
+                            child.style.display = search_result[k].style.display;
+
+                        })
                 }
 
             })
@@ -237,12 +283,17 @@ class fsLibrary {
 }
 
 interface AltClass {
-    target_selector: string,
+    target_selector: string;
     flip_selector: string
 }
 
+interface AddClass {
+    classNames: Array<string>; //list of classnames you want to add
+    frequency: number; //The frequency or order of addition of class to the list
+    start: number; //position of list item to start with
+}
 
-// interface FilterObject {
-//     filter_selector: string,
-//     filter_text: string
-// }
+interface FilterGroup {
+    filter_group: string;
+    filter_option: string
+}

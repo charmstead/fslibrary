@@ -24,19 +24,22 @@
         <div class="page-content">
             <div class="filter-bar">
                 <div class="filter-cat-1">
-                    <div class="filter-button cat-a" data-search='CATEGORY A'>
+                    <div class="filter-button" data-search=''>
+                        <div>All</div>
+                    </div>
+                    <div class="filter-button" data-search='CATEGORY A'>
                         <div>A</div>
                     </div>
-                    <div class="filter-button cat-b" data-search='CATEGORY B'>
+                    <div class="filter-button" data-search='CATEGORY B'>
                         <div>B</div>
                     </div>
-                    <div class="filter-button cat-c" data-search='CATEGORY C'>
+                    <div class="filter-button" data-search='CATEGORY C'>
                         <div>C</div>
                     </div>
-                    <div class="filter-button cat-d" data-search='CATEGORY D'>
+                    <div class="filter-button" data-search='CATEGORY D'>
                         <div>D</div>
                     </div>
-                    <div class="filter-button cat-e" data-search='CATEGORY E'>
+                    <div class="filter-button" data-search='CATEGORY E'>
                         <div>E</div>
                     </div>
                 </div>
@@ -2059,15 +2062,22 @@
     <script>
 
         fsLibrary.combine('.w-dyn-list')
-
-
-        var _cms_button_filter = [".cat-a", ".cat-b", ".cat-c", ".cat-d", ".cat-e"]
-        var _mnth_button_filter = ["#checkbox", "#checkbox-2", "#checkbox-3", "#checkbox-4", "#checkbox-5", "#checkbox-6", "#checkbox-7"]
-        var _color_button_filter = [".red", ".green", ".blue"]
-
-        var _FILTERS = [_cms_button_filter, _mnth_button_filter, _color_button_filter]
+        var _FILTERS = [
+            {
+                filter_group: ".filter-cat-1",
+                filter_option: "single"
+            },
+            {
+                filter_group: ".filter-cat-2",
+                filter_option: "multi"
+            },
+            {
+                filter_group: ".filter-cat-3",
+                filter_option: "multi"
+            }
+        ]
         //default is and
-        fsLibrary.cmsfilter('.w-dyn-list', _FILTERS)
+        fsLibrary.cmsfilter('.w-dyn-items', _FILTERS,"multi")
 
     </script>
 </body>

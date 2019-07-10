@@ -19,7 +19,7 @@ Include the /dist/index.js file in your html element.
 <script>
 
     //combine
-    fsLibrary.combine('.w-dyn-list')
+    fsLibrary.combine('.w-dyn-items')
 
     //addclass
     fsLibrary.addClass({
@@ -33,7 +33,8 @@ Include the /dist/index.js file in your html element.
 ##  Combine functionality
 
 The combine function takes a parameter of string which is the
-cms collection outer wrapper class selector.
+Css selector of the parent container element of the cms items
+i.e cms collection inner wrapper class selector.
 
 The combine function retrieves all the collection items and combine it
 into the first collection wrapper.
@@ -42,7 +43,7 @@ into the first collection wrapper.
 
 ```
 //combine
-fsLibrary.combine('.w-dyn-list')
+fsLibrary.combine('.w-dyn-items')
 ```
 
 
@@ -51,7 +52,6 @@ fsLibrary.combine('.w-dyn-list')
 To addclass a custom class to an elem can be done using the following functions:
 
 addclass: targets a single element.
-addClasses: more than one element
 
 The addclass functions accepts an object parameter with two key/value pair of
 target element selector and the class selector to add.
@@ -69,48 +69,80 @@ fsLibrary.addClass({
     flip_selector: ".flip-row"
 })
 
-// or use the addClasses
-var _to_flip = [
-    {
-        target_selector: ".project-feature",
-        flip_selector: ".flip-row"
-    },
-    {
-        target_selector: ".project-feature-content",
-        flip_selector: ".flip-text"
-    },
-    {
-        target_selector: ".project-feature-image",
-        flip_selector: ".flip-image"
-    }
-]
+```
+##  AddClasses functionality
 
-fsLibrary.addClasses(_to_flip)
+To add classnames to a particular list and also specify additional instructions of how
+the classnames should be added to the list
+
+The addclass functions accepts parameters.
+1. The css selector of the parent container elem of the list you want to add classnames to.
+2. An object defined as below:
+    {
+        classNames: Array<string>; //list of classnames you want to add
+        frequency: number; //The frequency or order of addition of class to the list
+        start: number; //position of list item to start with
+    }
+****usage:****
 
 ```
+fsLibrary.addClass(".w-dyn-items",{
+    classNames:["bg-red","text-bold"],
+    frequency:2,
+    start:1
+})
+
+```
+
 
 ##  cmsfilter functionality
 
 To perform filter functions on the list of collection items:
 
-The cmsfilter functions takes two parameter and/or and optional third parameter "OR" or "AND"
+The cmsfilter functions takes two parameter and/or and optional third parameter "SINGLE" or "MULTI"
 depending on the type of the filter functionality you want to perform.
 
-The "and" shows intersection of filtered results across provided filters.
+The "MULTI" shows intersection of filtered results across provided group of filters.
 
 The first parameter is the cms collection wrapper selector
-The second parameter is a 2D array of categories of filter elem selector.
+The second parameter can be a string or Array of objects that contain css selector of the parent container of the filter buttons/elements.
+
+The second parameter is a ****STRING**** for the case of a "SINGLE" filter option. The css selector of the parent container
+of the filter buttons/elements is passed as the argument.
+
+The second parameter is a Array of objects with below structure for the case of "MULTI" filter option.
+var _FILTERS = [
+    {
+        filter_group: ".filter-cat-1",
+        filter_option: "single"
+    },
+    {
+        filter_group: ".filter-cat-2",
+        filter_option: "multi"
+    },
+    {
+        filter_group: ".filter-cat-3",
+        filter_option: "multi"
+    }
+]
+
+The variable "_FILTER" above is passed as the second argument.
+
+The ****filter_group**** property is the css selector of the parent container of the filter buttons/elements.
+The ****filter_option**** property is filter option you wish to assign to the current filter group. This becomes
+powerful as allows you to mix both "MULTI" and "SINGLE" filter functionalities.
+
 
 ****usage:****
-Create the elements you want to use as your filter and add a "data-search" attribute initialised
+Create the elements you want to use as your filter and add a "data-search" attribute initialized
 to the corresponding search string you want to match in the collection items.
 
-For select elem, add the "data-search" attribute to the children elements option tags.
+For SELECT Tag, add the "data-search" attribute to the children elements option tags.
 
 ```
-//Example for "OR" filter
+//Example for "SINGLE" filter
 
-<div class="filter-bar">
+<div class="filter-bar"><!--parent container elem-->
     <div  class="filter-button cat-reset">
         <div>All</div>
     </div>
@@ -131,16 +163,15 @@ For select elem, add the "data-search" attribute to the children elements option
     </div>
 </div>
 
-var _cms_filter = [".cat-a", ".cat-b", ".cat-c", ".cat-d", ".cat-e",".cat-reset"]
-
-fsLibrary.cmsfilter('.w-dyn-list',[_cms_filter],"or")
+fsLibrary.cmsfilter('.w-dyn-list',".filter-bar","single")
 
 ```
 
 ```
-//Example for "OR" filter with select
+//Example for "SINGLE" filter with select
+//For SELECT Tag, use the css selector of the select as the parent container elem
 
-<select name="my_filter" class="select_filter">
+<select name="my_filter" class="select_filter"><!--parent container elem-->
     <option data-search=''>RESET</option>
     <option data-search='CATEGORY A'> Category A</option>
     <option data-search='CATEGORY B'> Category B</option>
@@ -149,56 +180,40 @@ fsLibrary.cmsfilter('.w-dyn-list',[_cms_filter],"or")
     <option data-search='CATEGORY E'> Category E</option>
 </select>
 
-var _cms_filter = [".select_filter"]
-fsLibrary.cmsfilter('.w-dyn-list',[_cms_filter],"or")
 
-//OR
-
-
-<select name="my_filter" class="select_filter">
-    <option class="cat-reset" data-search=''>RESET</option>
-    <option class="cat-a" data-search='CATEGORY A'> Category A</option>
-    <option class="cat-b" data-search='CATEGORY B'> Category B</option>
-    <option class="cat-c" data-search='CATEGORY C'> Category C</option>
-    <option class="cat-d" data-search='CATEGORY D'> Category D</option>
-    <option class="cat-e" data-search='CATEGORY E'> Category E</option>
-</select>
-
-var _cms_filter = [".cat-a", ".cat-b", ".cat-c", ".cat-d", ".cat-e",".cat-reset"]
-
-fsLibrary.cmsfilter('.w-dyn-list',[_cms_filter],"or")
+fsLibrary.cmsfilter('.w-dyn-list',".select_filter","single")
 
 ```
 
 ```
-//Example for "AND" filter
+//Example for "MULTI" filter
 
 <div class="filter-bar">
     <div class="filter-cat-1">
-        <div class="filter-button cat-a" data-search='CATEGORY A'>
+        <div class="filter-button" data-search='CATEGORY A'>
             <div>A</div>
         </div>
-        <div class="filter-button cat-b" data-search='CATEGORY B'>
+        <div class="filter-button" data-search='CATEGORY B'>
             <div>B</div>
         </div>
-        <div class="filter-button cat-c" data-search='CATEGORY C'>
+        <div class="filter-button" data-search='CATEGORY C'>
             <div>C</div>
         </div>
-        <div class="filter-button cat-d" data-search='CATEGORY D'>
+        <div class="filter-button" data-search='CATEGORY D'>
             <div>D</div>
         </div>
-        <div class="filter-button cat-e" data-search='CATEGORY E'>
+        <div class="filter-button" data-search='CATEGORY E'>
             <div>E</div>
         </div>
     </div>
     <div class="filter-cat-2">
-        <div class="filter-button red" data-search='RED'>
+        <div class="filter-button" data-search='RED'>
             <div>Red</div>
         </div>
-        <div class="filter-button green" data-search='GREEN'>
+        <div class="filter-button" data-search='GREEN'>
             <div>Green</div>
         </div>
-        <div class="filter-button blue" data-search='BLUE'>
+        <div class="filter-button" data-search='BLUE'>
             <div>Blue</div>
         </div>
     </div>
@@ -236,12 +251,21 @@ fsLibrary.cmsfilter('.w-dyn-list',[_cms_filter],"or")
 </div>
 
 
-var _cms_button_filter = [".cat-a", ".cat-b", ".cat-c", ".cat-d", ".cat-e"]
-var _mnth_button_filter = ["#checkbox", "#checkbox-2", "#checkbox-3", "#checkbox-4", "#checkbox-5", "#checkbox-6", "#checkbox-7"]
-var _color_button_filter = [".red", ".green", ".blue"]
-
-var _FILTERS = [_cms_button_filter, _mnth_button_filter, _color_button_filter]
-//default is and
-fsLibrary.cmsfilter('.w-dyn-list', _FILTERS)
+var _FILTERS = [
+    {
+        filter_group: ".filter-cat-1",
+        filter_option: "single"
+    },
+    {
+        filter_group: ".filter-cat-2",
+        filter_option: "multi"
+    },
+    {
+        filter_group: ".filter-cat-3",
+        filter_option: "multi"
+    }
+]
+     
+fsLibrary.cmsfilter('.w-dyn-list', _FILTERS,"multi")
 
 ```

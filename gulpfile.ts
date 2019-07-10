@@ -23,11 +23,11 @@ const result = gulp.src(["src/*.ts"])
 // .pipe(sourceMaps.init())
 .pipe(project());
 return result.js
-.pipe(uglify({
-    compress: {
-        drop_console: true
-   }
-}))
+// .pipe(uglify({
+//     compress: {
+//         drop_console: true
+//    }
+// }))
 // .pipe(sourceMaps.write("dist",{addComment: true}))
 .pipe(gulp.dest("dist"));
 });
