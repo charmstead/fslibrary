@@ -86,7 +86,7 @@ The addclass functions accepts parameters.
 ****usage:****
 
 ```
-fsLibrary.addClass(".w-dyn-items",{
+fsLibrary.addClasses(".w-dyn-items",{
     classNames:["bg-red","text-bold"],
     frequency:2,
     start:1
