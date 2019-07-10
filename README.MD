@@ -57,8 +57,8 @@ The addclass functions accepts an object parameter with two key/value pair of
 target element selector and the class selector to add.
 
 {
-    target_selector: ".project-feature",
-    flip_selector: ".flip-row"
+    target: ".project-feature",
+    alt: ".flip-row"
 }
 
 ****usage:****
@@ -78,18 +78,39 @@ the classnames should be added to the list
 The addclass functions accepts parameters.
 1. The css selector of the parent container elem of the list you want to add classnames to.
 2. An object defined as below:
-    {
-        classNames: Array<string>; //list of classnames you want to add
-        frequency: number; //The frequency or order of addition of class to the list
-        start: number; //position of list item to start with
-    }
+{
+    classNames: Array<AltClass>; //list of classnames you want to add
+    frequency: number; //The frequency or order of addition of class to the list
+    start: number; //position of list item to start with
+}
+
+where AltClass is defined as 
+interface AltClass {
+    target: string;
+    alt: string
+}
 ****usage:****
 
 ```
-fsLibrary.addClasses(".w-dyn-items",{
-    classNames:["bg-red","text-bold"],
-    frequency:2,
-    start:1
+let fsAddClass = [
+    {
+        target: ".project-feature",
+        alt: ".flip-row"
+    },
+    {
+        target: ".project-feature-content",
+        alt: ".flip-text"
+    },
+    {
+        target: ".project-feature-image",
+        alt: ".flip-image"
+    }
+]
+
+fsLibrary.addClasses(".w-dyn-items", {
+    classNames: fsAddClass,
+    frequency: 2,
+    start: 1
 })
 
 ```

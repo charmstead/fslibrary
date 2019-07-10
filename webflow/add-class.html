@@ -18,11 +18,11 @@
     <link href="https://daks2k3a4ib2z.cloudfront.net/img/favicon.ico" rel="shortcut icon" type="image/x-icon">
     <link href="https://daks2k3a4ib2z.cloudfront.net/img/webclip.png" rel="apple-touch-icon">
     <style>
-        .bg-red{
+        .bg-red {
             background-color: orangered;
         }
 
-        .text-bold{
+        .text-bold {
             font-weight: bold;
         }
     </style>
@@ -187,28 +187,41 @@
 
 
             // fsLibrary.addClass({
-            //     target_selector: ".project-feature",
-            //     flip_selector: ".flip-row"
+            //     target: ".project-feature",
+            //     alt: ".flip-row"
             // })
 
             // fsLibrary.addClass({
-            //     target_selector: ".project-feature-content",
-            //     flip_selector: ".flip-text"
+            //     target: ".project-feature-content",
+            //     alt: ".flip-text"
             // })
 
             // fsLibrary.addClass({
-            //     target_selector: ".project-feature-image",
-            //     flip_selector: ".flip-image"
+            //     target: ".project-feature-image",
+            //     alt: ".flip-image"
             // })
-
-
 
         })
-       
-        fsLibrary.addClasses(".w-dyn-items",{
-            classNames:[".bg-red",".text-bold"],
-            frequency:2,
-            start:1
+
+        let fsAddClass = [
+            {
+                target: ".project-feature",
+                alt: ".flip-row"
+            },
+            {
+                target: ".project-feature-content",
+                alt: ".flip-text"
+            },
+            {
+                target: ".project-feature-image",
+                alt: ".flip-image"
+            }
+        ]
+
+        fsLibrary.addClasses(".w-dyn-items", {
+            classNames: fsAddClass,
+            frequency: 3,
+            start: 1
         })
 
 

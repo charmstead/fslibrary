@@ -22,21 +22,21 @@ class fsLibrary {
         //get all collections
         const master_collection: any = [].slice.call(document.querySelectorAll(cms_selector));
 
-     
-            //copies the cms items into the first collection list
-            master_collection[0].innerHTML = (
-                [...master_collection].reduce((curr, items) => {
-                    //gets all the items  
-                    return [...curr, ...items.innerHTML]
-                }, []).join("")
-            )
 
-            //deletes the rest collection list
-            master_collection.forEach((elem: Element, i: number) => {
-                if (i > 0) {
-                    elem.outerHTML = ""
-                }
-            })
+        //copies the cms items into the first collection list
+        master_collection[0].innerHTML = (
+            [...master_collection].reduce((curr, items) => {
+                //gets all the items  
+                return [...curr, ...items.innerHTML]
+            }, []).join("")
+        )
+
+        //deletes the rest collection list
+        master_collection.forEach((elem: Element, i: number) => {
+            if (i > 0) {
+                elem.outerHTML = ""
+            }
+        })
 
 
     }
@@ -51,11 +51,11 @@ class fsLibrary {
      */
     public static addClass(object: AltClass) {
         //get all collections
-        const master_collection: any = document.querySelectorAll(object.target_selector);
+        const master_collection: any = document.querySelectorAll(object.target);
         master_collection.forEach((elem, i) => {
 
             if (i % 2 == 1) {
-                elem.className = `${elem.className} ${object.flip_selector.replace(/(.|#)/, "")}`
+                elem.className = `${elem.className} ${object.alt.replace(/(.|#)/, "")}`
             }
         })
     }
@@ -68,34 +68,33 @@ class fsLibrary {
  * }
  * @param object array values of targetSelector element and selector class to add to Element
  */
-/**
- * 
- * @param container The css selector of the parent container elem of the list you want to add classnames to.
- * @param object defined as
- *  {
- *     classNames: Array<string>; //list of classnames you want to add
- *     frequency: number; //The frequency or order of addition of class to the list
- *     start: number; //position of list item to start with
- * }
- */
+    /**
+     * 
+     * @param container The css selector of the parent container elem of the list you want to add classnames to.
+     * @param object defined as
+     *  {
+     *     classNames: Array<AltClass>; //list of classnames you want to add
+     *     frequency: number; //The frequency or order of addition of class to the list
+     *     start: number; //position of list item to start with
+     * }
+     */
     public static addClasses(container, object: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
-        const master_collection: any = document.querySelectorAll(container);
-        const { frequency, start } = object;
-        let ClassNames = object.classNames.join(" ")
-        ClassNames = ClassNames.replace(/\./g, "")
+        const parent: any = document.querySelector(container);
+        const { frequency, start,classNames } = object;
 
-        if(frequency<0){
+
+        if (frequency < 0) {
             throw "unaccepted value passed as frequency";
         }
-        else if (start<1){
+        else if (start < 1) {
             throw "unaccepted value passed as start";
         }
 
-        master_collection.forEach((elem, i) => {
-
-            const children = elem.children;
-            for (let j = start - 1; j < children.length; j += frequency) {
-                children[j].className += " " + ClassNames
+       classNames.map(({ target, alt }) => {
+            const list = parent.querySelectorAll(target);
+            for (let j = start - 1; j < list.length; j += frequency) {
+                
+                list[j].className += " " + alt.replace(/\./g, "")
 
                 if (frequency == 0) {
                     break;
@@ -110,7 +109,7 @@ class fsLibrary {
      * @param cms_selector 
      * @param cms_filter 
      */
-    public static cmsfilter(cms_selector: string, cms_filter: Array<FilterGroup>|string, filter_type: string = 'single') {
+    public static cmsfilter(cms_selector: string, cms_filter: Array<FilterGroup> | string, filter_type: string = 'single') {
 
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
@@ -124,29 +123,29 @@ class fsLibrary {
             cms_filter_master_collection.push(elem.cloneNode(true));
         })
 
-        let filter_group: any[]=[];
-        
+        let filter_group: any[] = [];
+
         if (Array.isArray(cms_filter)) {
             cms_filter.map((val, index) => {
                 let prevClicked;
                 const { filter_option } = val;
 
-                filter_group= [].slice.call(document.querySelectorAll(`${val.filter_group} [data-search]`));
-                assignChangeEventToButtons(index,prevClicked,filter_option)   
-                
+                filter_group = [].slice.call(document.querySelectorAll(`${val.filter_group} [data-search]`));
+                assignChangeEventToButtons(index, prevClicked, filter_option)
+
             })
         }
         else if (typeof cms_filter == "string") {
             let prevClicked;
-            filter_group= [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
-            assignChangeEventToButtons(0,prevClicked)
+            filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
+            assignChangeEventToButtons(0, prevClicked)
         }
         else {
             throw "Incorrect type passed as cms_filter"
         }
-        
 
-        function assignChangeEventToButtons(index,prevClicked,filter_option=filter_type){
+
+        function assignChangeEventToButtons(index, prevClicked, filter_option = filter_type) {
             filter[index] = {} //initialise default values
             filter_group.map((elem, j) => {
                 const id = `${index}${j}`;
@@ -175,7 +174,7 @@ class fsLibrary {
 
                         //only one element should have active class for or
                         if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
-                            if(prevClicked) prevClicked.classList.remove("active")
+                            if (prevClicked) prevClicked.classList.remove("active")
                         }
 
                         prevClicked = event.currentTarget;
@@ -283,12 +282,12 @@ class fsLibrary {
 }
 
 interface AltClass {
-    target_selector: string;
-    flip_selector: string
+    target: string;
+    alt: string
 }
 
 interface AddClass {
-    classNames: Array<string>; //list of classnames you want to add
+    classNames: Array<AltClass>; //list of classnames you want to add
     frequency: number; //The frequency or order of addition of class to the list
     start: number; //position of list item to start with
 }

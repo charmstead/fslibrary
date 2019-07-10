@@ -41,10 +41,10 @@ var fsLibrary = /** @class */ (function () {
      */
     fsLibrary.addClass = function (object) {
         //get all collections
-        var master_collection = document.querySelectorAll(object.target_selector);
+        var master_collection = document.querySelectorAll(object.target);
         master_collection.forEach(function (elem, i) {
             if (i % 2 == 1) {
-                elem.className = elem.className + " " + object.flip_selector.replace(/(.|#)/, "");
+                elem.className = elem.className + " " + object.alt.replace(/(.|#)/, "");
             }
         });
     };
@@ -61,27 +61,26 @@ var fsLibrary = /** @class */ (function () {
      * @param container The css selector of the parent container elem of the list you want to add classnames to.
      * @param object defined as
      *  {
-     *     classNames: Array<string>; //list of classnames you want to add
+     *     classNames: Array<AltClass>; //list of classnames you want to add
      *     frequency: number; //The frequency or order of addition of class to the list
      *     start: number; //position of list item to start with
      * }
      */
     fsLibrary.addClasses = function (container, object) {
         if (object === void 0) { object = { classNames: [], frequency: 2, start: 1 }; }
-        var master_collection = document.querySelectorAll(container);
-        var frequency = object.frequency, start = object.start;
-        var ClassNames = object.classNames.join(" ");
-        ClassNames = ClassNames.replace(/\./g, "");
+        var parent = document.querySelector(container);
+        var frequency = object.frequency, start = object.start, classNames = object.classNames;
         if (frequency < 0) {
             throw "unaccepted value passed as frequency";
         }
         else if (start < 1) {
             throw "unaccepted value passed as start";
         }
-        master_collection.forEach(function (elem, i) {
-            var children = elem.children;
-            for (var j = start - 1; j < children.length; j += frequency) {
-                children[j].className += " " + ClassNames;
+        classNames.map(function (_a) {
+            var target = _a.target, alt = _a.alt;
+            var list = parent.querySelectorAll(target);
+            for (var j = start - 1; j < list.length; j += frequency) {
+                list[j].className += " " + alt.replace(/\./g, "");
                 if (frequency == 0) {
                     break;
                 }
