@@ -5,17 +5,16 @@ class fsLibrary {
     }
 
 
-    private static commonValue(...arr) {
-        let res = arr[0].filter(function (x) {
-            return arr.every((y) => y.includes(x))
-        })
-        return res;
-    }
+    private static addClass:boolean;
+
+    private static addClassConfig:AddClass;
+
+    private static addClassContainer:string;
 
     /**
      * Accepts the cms collector outer wrapper selector
      * and combine all the collection items into one collection.
-     * @param cms_selector cms_outer_wrapper selector
+     * @param cms_selector cms_wrapper selector
      */
     public static combine(cms_selector: string) {
 
@@ -41,47 +40,57 @@ class fsLibrary {
 
     }
 
-    /**
-     * Accept key/value pair
-     * {
-     * target://selector of the target element,
-     * selector: //selector to append to the target element
-     * }
-     * @param object values of targetSelector element and selector class to add to Element
-     */
-    public static addClass(object: AltClass) {
-        //get all collections
-        const master_collection: any = document.querySelectorAll(object.target);
-        master_collection.forEach((elem, i) => {
 
-            if (i % 2 == 1) {
-                elem.className = `${elem.className} ${object.alt.replace(/(.|#)/, "")}`
+
+    public static loadmore(container:string,config:LoadMore={button:"",actualLoadMore:true,initialLoad:12,loadPerClick:12}):void{
+        const parent:any = document.querySelector(container);
+        const collection: any[] = [].slice.call(parent.children);
+        const clone: any[] = [].slice.call(parent.cloneNode(true).children);
+        
+        const {button,actualLoadMore,initialLoad,loadPerClick} = config;
+
+        let reserve = [];
+        reserve = clone.filter((child,i)=>{
+
+            if(i<initialLoad){
+                return false;
             }
-        })
+
+            collection[i].outerHTML="";
+            return true;
+        });
+
+        (<any>document.querySelector(button)).onclick = function(){
+           const addon= reserve.splice(0,loadPerClick);
+            addon.map((elem)=>{
+                document.querySelector(container).appendChild(elem);
+            })
+
+            if(this.addClass && this.container == container){
+                this.addClasses(container,this.config);
+            }
+        }
+        
     }
 
-    /**
- * Accept array of key/value pair
- * {
- * target://selector of the target element,
- * selector: //selector to append to the target element
- * }
- * @param object array values of targetSelector element and selector class to add to Element
- */
+
     /**
      * 
      * @param container The css selector of the parent container elem of the list you want to add classnames to.
-     * @param object defined as
+     * @param config  defined as
      *  {
      *     classNames: Array<AltClass>; //list of classnames you want to add
      *     frequency: number; //The frequency or order of addition of class to the list
      *     start: number; //position of list item to start with
      * }
      */
-    public static addClasses(container, object: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
+    public static addClasses(container, config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
         const parent: any = document.querySelector(container);
-        const { frequency, start,classNames } = object;
-
+        const { frequency, start,classNames } = config;
+        
+        this.addClassContainer=container;
+        this.addClassConfig=config;
+        this.addClass=true;
 
         if (frequency < 0) {
             throw "unaccepted value passed as frequency";
@@ -94,14 +103,16 @@ class fsLibrary {
             const list = parent.querySelectorAll(target);
             for (let j = start - 1; j < list.length; j += frequency) {
                 
-                list[j].className += " " + alt.replace(/\./g, "")
+                const addon = alt.replace(/\./g, "")
+                if(list[j].className.indexOf(addon) <0){
+                    list[j].className += " " + addon  
+                }
 
                 if (frequency == 0) {
                     break;
                 }
             }
-        })
-
+        })        
     }
 
     /**
@@ -114,14 +125,7 @@ class fsLibrary {
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
         //get all collections
-        const master_collection: any = [].slice.call(document.querySelectorAll(cms_selector));
-
-        const cms_filter_master_collection = [];
-
-        //creates a clone of the list
-        master_collection.map((elem) => {
-            cms_filter_master_collection.push(elem.cloneNode(true));
-        })
+        const get_cms_items: any = ()=> [].slice.call(document.querySelectorAll(cms_selector));
 
         let filter_group: any[] = [];
 
@@ -227,7 +231,8 @@ class fsLibrary {
 
 
         function findAndMatchFilterText() {
-            cms_filter_master_collection.map((elem, i) => {
+            const master_collection =get_cms_items();
+            master_collection.map((elem, i) => {
 
                 const search_result = filter.reduce((curr, search) => {
 
@@ -284,6 +289,13 @@ class fsLibrary {
 interface AltClass {
     target: string;
     alt: string
+}
+
+interface LoadMore{
+    button:string;
+    actualLoadMore:boolean;
+    initialLoad:number;
+    loadPerClick:number
 }
 
 interface AddClass {

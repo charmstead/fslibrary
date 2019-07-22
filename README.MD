@@ -5,6 +5,8 @@
 1. combine: To combine all the collection items into one collection.
 2. addClass/addClasses: To add custom class selectors to specific DOM elements.
 3. cmsfilter: To perform filter on collection items.
+4. loadmore: To perform a loadmore contents of a cms collection as they are needed.
+
 
 
 
@@ -47,29 +49,39 @@ fsLibrary.combine('.w-dyn-items')
 ```
 
 
-##  AddClass functionality
+##  LoadMore functionality
 
-To addclass a custom class to an elem can be done using the following functions:
+The loadmore function takes two parameters:
+1. A string which is the
+Css selector of the parent container element of the cms items
+i.e cms collection inner wrapper class selector.
 
-addclass: targets a single element.
+2. An object that defines the configuration of the loadmore which is defined as follow:
 
-The addclass functions accepts an object parameter with two key/value pair of
-target element selector and the class selector to add.
-
-{
-    target: ".project-feature",
-    alt: ".flip-row"
+interface LoadMore{
+    button:string; //css selector of the loadmore button
+    actualLoadMore:boolean;
+    initialLoad:number;
+    loadPerClick:number
 }
+
+The loadmore performs a lazyloading on the specified cms collection items and present to the viewport
+the number of items specified in the initialLoad property. 
+Clicking the loadmore button subsequently loads loadPerClick amount of the collection items and add it to the parent container. 
 
 ****usage:****
 
 ```
-fsLibrary.addClass({
-    target_selector: ".project-feature",
-    flip_selector: ".flip-row"
-})
+var _loadMoreConfig = {
+            button: ".load-more-button",
+            actualLoadMore: true,
+            initialLoad: 12,
+            loadPerClick: 12
+        }
 
+fsLibrary.loadmore('.w-dyn-items', _loadMoreConfig)
 ```
+
 ##  AddClasses functionality
 
 To add classnames to a particular list and also specify additional instructions of how

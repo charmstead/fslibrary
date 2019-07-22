@@ -1819,7 +1819,17 @@
 
         fsLibrary.combine('.w-dyn-items')
 
-        fsLibrary.cmsfilter('.w-dyn-items', ".filter-bar","single")
+        fsLibrary.cmsfilter('.w-dyn-items', ".filter-bar", "single")
+
+        var _loadMoreConfig = {
+            button: ".load-more-button",
+            actualLoadMore: true,
+            initialLoad: 12,
+            loadPerClick: 12
+        }
+
+        fsLibrary.loadmore('.w-dyn-items', _loadMoreConfig)
+
 
     </script>
 </body>
