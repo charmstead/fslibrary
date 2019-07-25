@@ -72,11 +72,16 @@ To include a fadein-out animation, simply include string "fade" in the effects d
 
 ****Animationo property:****
 
-Property | enable | duration | easing | effects
---- | --- | --- | --- |---
-Required | false | true | true | true | 289
---- | --- | --- | --- |---
-Default | true | 1 | linear | fade
+
+Property | Required | Default
+--- | --- | --- 
+enable | false | true
+--- | --- | --- 
+duration | true | 1
+--- | --- | --- 
+easing | true | linear
+--- | --- | --- 
+effects | true | fade
 
 
 ##  Combine functionality
