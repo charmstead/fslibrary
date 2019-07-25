@@ -183,25 +183,8 @@
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     <script src="../dist/index.js"></script>
     <script>
-        $(document).ready(function () {
 
-
-            // fsLibrary.addClass({
-            //     target: ".project-feature",
-            //     alt: ".flip-row"
-            // })
-
-            // fsLibrary.addClass({
-            //     target: ".project-feature-content",
-            //     alt: ".flip-text"
-            // })
-
-            // fsLibrary.addClass({
-            //     target: ".project-feature-image",
-            //     alt: ".flip-image"
-            // })
-
-        })
+        var fslib = new fsLibrary(".w-dyn-items")
 
         let fsAddClass = [
             {
@@ -218,7 +201,7 @@
             }
         ]
 
-        fsLibrary.addClasses(".w-dyn-items", {
+        fslib.addClasses({
             classNames: fsAddClass,
             frequency: 3,
             start: 1

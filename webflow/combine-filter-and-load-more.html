@@ -2060,8 +2060,10 @@
     <script src="../dist/index.js"></script>
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     <script>
+        var fslib = new fsLibrary(".w-dyn-items")
 
-        fsLibrary.combine('.w-dyn-list')
+        fslib.combine();
+
         var _FILTERS = [
             {
                 filter_group: ".filter-cat-1",
@@ -2076,8 +2078,9 @@
                 filter_option: "multi"
             }
         ]
+
         //default is and
-        fsLibrary.cmsfilter('.w-dyn-items', _FILTERS,"multi")
+        fslib.cmsfilter(_FILTERS,"multi")
 
     </script>
 </body>

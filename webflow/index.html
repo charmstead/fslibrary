@@ -1817,18 +1817,25 @@
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     <script>
 
-        fsLibrary.combine('.w-dyn-items')
+        var _animation = {
+            enable: true,
+            duration: 1,
+            easing: 'ease-in-out',
+            effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
+        }
 
-        fsLibrary.cmsfilter('.w-dyn-items', ".filter-bar", "single")
+        var fsLib = new fsLibrary('.w-dyn-items',_animation);
 
-        var _loadMoreConfig = {
+        fsLib.combine()
+
+        fsLib.cmsfilter(".filter-bar","single")
+
+        fsLib.loadmore({
             button: ".load-more-button",
             actualLoadMore: true,
             initialLoad: 12,
             loadPerClick: 12
-        }
-
-        fsLibrary.loadmore('.w-dyn-items', _loadMoreConfig)
+        })
 
 
     </script>

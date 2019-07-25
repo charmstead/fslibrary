@@ -16,26 +16,74 @@ globally accessible with the name "fsLibrary"
 
 Include the /dist/index.js file in your html element.
 
+Create an instance of the fsLibrary and pass in the CSS selector of 
+the cms items parent container element.
+
+The fsLibrary constructor takes an optional second argument object which defines the 
+animation that will be used in the transition of the cms items.
 ```
 <script src="/dist/index.js"></script>
 <script>
+    var _animation = {
+            enable: true,
+            duration: 1,
+            easing: 'ease-in-out',
+            effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
+        }
+
+    var fsLib = new fsLibrary('.w-dyn-items',_animation)
 
     //combine
-    fsLibrary.combine('.w-dyn-items')
+    fsLib.combine()
 
-    //addclass
-    fsLibrary.addClass({
-        target_selector: ".project-feature",
-        flip_selector: ".flip-row"
+    //cms filter
+    fsLib.cmsfilter({
+        cms_filter: ".filter-bar",
+        filter_type: "single"
+    })
+
+    //cms loadmore
+    fsLib.loadmore({
+        button: ".load-more-button",
+        actualLoadMore: true,
+        initialLoad: 12,
+        loadPerClick: 12
+    })
+
+
+    //addclasses
+
+    fslib.addClasses({
+        classNames: fsAddClass,
+        frequency: 3,
+        start: 1
     })
 </script>
 
 ```
+##  Animation
+
+The animation will be disabled if the property "enable" is set to false.
+A custom animation effects can be defined in the "effects" property.
+The effects can be defined as several value of css transform property.
+e.g scale,translate,rotate.
+
+To include a fadein-out animation, simply include string "fade" in the effects definition. 
+
+****Animationo property:****
+
+Property | enable | duration | easing | effects
+--- | --- | --- | --- |---
+Required | false | true | true | true | 289
+--- | --- | --- | --- |---
+Default | true | 1 | linear | fade
+
 
 ##  Combine functionality
 
-The combine function takes a parameter of string which is the
-Css selector of the parent container element of the cms items
+The combine function takes no parameter. The combine is invoked on the 
+Css selector of the parent container element of the cms items passed in as 
+the constructor argument used instantiation of the fsLibrary object.
 i.e cms collection inner wrapper class selector.
 
 The combine function retrieves all the collection items and combine it
@@ -44,19 +92,16 @@ into the first collection wrapper.
 ****usage:****
 
 ```
+var fsLib = new fsLibrary('.w-dyn-items')
 //combine
-fsLibrary.combine('.w-dyn-items')
+fsLib.combine('.w-dyn-items')
 ```
 
 
 ##  LoadMore functionality
 
-The loadmore function takes two parameters:
-1. A string which is the
-Css selector of the parent container element of the cms items
-i.e cms collection inner wrapper class selector.
-
-2. An object that defines the configuration of the loadmore which is defined as follow:
+The loadmore function takes a parameters:
+1. An object that defines the configuration of the loadmore which is defined as follow:
 
 interface LoadMore{
     button:string; //css selector of the loadmore button
@@ -72,6 +117,8 @@ Clicking the loadmore button subsequently loads loadPerClick amount of the colle
 ****usage:****
 
 ```
+var fsLib = new fsLibrary('.w-dyn-items')
+
 var _loadMoreConfig = {
             button: ".load-more-button",
             actualLoadMore: true,
@@ -79,7 +126,7 @@ var _loadMoreConfig = {
             loadPerClick: 12
         }
 
-fsLibrary.loadmore('.w-dyn-items', _loadMoreConfig)
+fsLib.loadmore(_loadMoreConfig)
 ```
 
 ##  AddClasses functionality
@@ -88,8 +135,7 @@ To add classnames to a particular list and also specify additional instructions 
 the classnames should be added to the list
 
 The addclass functions accepts parameters.
-1. The css selector of the parent container elem of the list you want to add classnames to.
-2. An object defined as below:
+1. An object defined as below:
 {
     classNames: Array<AltClass>; //list of classnames you want to add
     frequency: number; //The frequency or order of addition of class to the list
@@ -104,6 +150,8 @@ interface AltClass {
 ****usage:****
 
 ```
+let fsLib = new fsLibrary('.w-dyn-items')
+
 let fsAddClass = [
     {
         target: ".project-feature",
@@ -119,7 +167,7 @@ let fsAddClass = [
     }
 ]
 
-fsLibrary.addClasses(".w-dyn-items", {
+fsLib.addClasses(".w-dyn-items", {
     classNames: fsAddClass,
     frequency: 2,
     start: 1
@@ -132,18 +180,17 @@ fsLibrary.addClasses(".w-dyn-items", {
 
 To perform filter functions on the list of collection items:
 
-The cmsfilter functions takes two parameter and/or and optional third parameter "SINGLE" or "MULTI"
+The cmsfilter functions takes a parameter and/or and optional second parameter "SINGLE" or "MULTI"
 depending on the type of the filter functionality you want to perform.
 
 The "MULTI" shows intersection of filtered results across provided group of filters.
 
-The first parameter is the cms collection wrapper selector
-The second parameter can be a string or Array of objects that contain css selector of the parent container of the filter buttons/elements.
+The first parameter can be a string or Array of objects that contain css selector of the parent container of the filter buttons/elements.
 
-The second parameter is a ****STRING**** for the case of a "SINGLE" filter option. The css selector of the parent container
+The first parameter is a ****STRING**** for the case of a "SINGLE" filter option. The css selector of the parent container
 of the filter buttons/elements is passed as the argument.
 
-The second parameter is a Array of objects with below structure for the case of "MULTI" filter option.
+The first parameter is a Array of objects with below structure for the case of "MULTI" filter option.
 var _FILTERS = [
     {
         filter_group: ".filter-cat-1",
@@ -159,7 +206,7 @@ var _FILTERS = [
     }
 ]
 
-The variable "_FILTER" above is passed as the second argument.
+The variable "_FILTER" above is passed as the first argument.
 
 The ****filter_group**** property is the css selector of the parent container of the filter buttons/elements.
 The ****filter_option**** property is filter option you wish to assign to the current filter group. This becomes
@@ -196,7 +243,9 @@ For SELECT Tag, add the "data-search" attribute to the children elements option 
     </div>
 </div>
 
-fsLibrary.cmsfilter('.w-dyn-list',".filter-bar","single")
+let fsLib = new fsLibrary('.w-dyn-items')
+
+fsLib.cmsfilter(".filter-bar","single")
 
 ```
 
@@ -213,8 +262,9 @@ fsLibrary.cmsfilter('.w-dyn-list',".filter-bar","single")
     <option data-search='CATEGORY E'> Category E</option>
 </select>
 
+let fsLib = new fsLibrary('.w-dyn-items')
 
-fsLibrary.cmsfilter('.w-dyn-list',".select_filter","single")
+fsLib.cmsfilter(".select_filter","single")
 
 ```
 
@@ -283,6 +333,7 @@ fsLibrary.cmsfilter('.w-dyn-list',".select_filter","single")
     </div>
 </div>
 
+let fsLib = new fsLibrary('.w-dyn-items')
 
 var _FILTERS = [
     {
@@ -299,6 +350,6 @@ var _FILTERS = [
     }
 ]
      
-fsLibrary.cmsfilter('.w-dyn-list', _FILTERS,"multi")
+fsLib.cmsfilter(_FILTERS,"multi")
 
 ```

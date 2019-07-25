@@ -1,26 +1,101 @@
 class fsLibrary {
 
-    constructor() {
+    constructor(cms_selector:string,animation?:Animatn) {
 
+        this.cms_selector=cms_selector;
+        
+        if (animation) {
+            animation.enable = !/^false$/.test(String(animation.enable));
+            this.animation=animation;
+           console.log(animation)
+            const effects = animation.effects.replace('fade', '');
+            const { duration, easing } = animation;
+            this.makeStyleSheet({ duration, easing, transform: effects })
+
+        }
+        else {
+            this.makeStyleSheet({});
+        }
     }
 
+    private cms_selector:string;
+    
+    private animation:Animatn={
+        enable:true,
+        duration:1,
+        easing:'linear',
+        effects:'fade'
+    };
 
-    private static addClass:boolean;
+    private addClass: boolean;
 
-    private static addClassConfig:AddClass;
+    private addClassConfig: AddClass;
 
-    private static addClassContainer:string;
+    private animationStyle: string = `
+    
+        .fslib-normal div{
+            opacity:1;
+            transform:scale(0) translate(0) translate3d(0) rotate(0) rotateZ(0) ;
+        }
+        
+        .fslib-animation div{
+            transition-property: all;
+            transition-duration: {{duration}}s;
+            transition-timing-function: {{ease}};
+        }
+    
+        .fslib-fade{
+            opacity:0;
+        }
+       
+        .fslib-transform{
+            transform:{{transform}};
+        }
+        
+    
+          @keyframes fade-in {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+          }
+          
+          .fslib-fadeIn {
+            animation-name: fade-in;
+            animation-duration: 1s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+          }
+    `;
+
+    private makeStyleSheet({ duration = 1, easing = 'linear', transform = 'translate(0)' }) {
+
+        this.animationStyle = this.animationStyle.replace('{{duration}}', '' + duration);
+        this.animationStyle = this.animationStyle.replace('{{ease}}', easing);
+        this.animationStyle = this.animationStyle.replace('{{transform}}', transform);
+
+        const head = document.head || document.getElementsByTagName('head')[0];
+        const style: any = document.createElement('style');
+        head.appendChild(style);
+
+        style.type = 'text/css';
+        if (style.styleSheet) {
+            // This is required for IE8 and below.
+            style.styleSheet.cssText = this.animationStyle;
+        } else {
+            style.appendChild(document.createTextNode(this.animationStyle));
+        }
+    }
 
     /**
-     * Accepts the cms collector outer wrapper selector
-     * and combine all the collection items into one collection.
-     * @param cms_selector cms_wrapper selector
+     * Combine all the collection items into one collection.
      */
-    public static combine(cms_selector: string) {
+    public combine() {
 
         //get all collections
-        const master_collection: any = [].slice.call(document.querySelectorAll(cms_selector));
-
+        const master_collection: any = [].slice.call(document.querySelectorAll(this.cms_selector));
 
         //copies the cms items into the first collection list
         master_collection[0].innerHTML = (
@@ -42,35 +117,36 @@ class fsLibrary {
 
 
 
-    public static loadmore(container:string,config:LoadMore={button:"",actualLoadMore:true,initialLoad:12,loadPerClick:12}):void{
-        const parent:any = document.querySelector(container);
+    public loadmore(config: LoadMore = { button: "", actualLoadMore: true, initialLoad: 12, loadPerClick: 12 }): void {
+        const parent: any = document.querySelector(this.cms_selector);
         const collection: any[] = [].slice.call(parent.children);
         const clone: any[] = [].slice.call(parent.cloneNode(true).children);
-        
-        const {button,actualLoadMore,initialLoad,loadPerClick} = config;
+
+        const { button, actualLoadMore, initialLoad, loadPerClick } = config;
 
         let reserve = [];
-        reserve = clone.filter((child,i)=>{
+        reserve = clone.filter((child, i) => {
 
-            if(i<initialLoad){
+            if (i < initialLoad) {
                 return false;
             }
 
-            collection[i].outerHTML="";
+            collection[i].outerHTML = "";
             return true;
         });
 
-        (<any>document.querySelector(button)).onclick = function(){
-           const addon= reserve.splice(0,loadPerClick);
-            addon.map((elem)=>{
-                document.querySelector(container).appendChild(elem);
+        (<any>document.querySelector(button)).onclick = ()=> {
+            const addon = reserve.splice(0, loadPerClick);
+            addon.map((elem) => {
+                elem.classList.add('fslib-fadeIn')
+                document.querySelector(this.cms_selector).appendChild(elem);
             })
 
-            if(this.addClass && this.container == container){
-                this.addClasses(container,this.config);
+            if (this.addClass) {
+                this.addClasses(this.addClassConfig);
             }
         }
-        
+
     }
 
 
@@ -84,13 +160,12 @@ class fsLibrary {
      *     start: number; //position of list item to start with
      * }
      */
-    public static addClasses(container, config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
-        const parent: any = document.querySelector(container);
-        const { frequency, start,classNames } = config;
-        
-        this.addClassContainer=container;
-        this.addClassConfig=config;
-        this.addClass=true;
+    public addClasses(config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
+        const parent: any = document.querySelector(this.cms_selector);
+        const { frequency, start, classNames } = config;
+
+        this.addClassConfig = config;
+        this.addClass = true;
 
         if (frequency < 0) {
             throw "unaccepted value passed as frequency";
@@ -99,33 +174,36 @@ class fsLibrary {
             throw "unaccepted value passed as start";
         }
 
-       classNames.map(({ target, alt }) => {
+        classNames.map(({ target, alt }) => {
             const list = parent.querySelectorAll(target);
             for (let j = start - 1; j < list.length; j += frequency) {
-                
+
                 const addon = alt.replace(/\./g, "")
-                if(list[j].className.indexOf(addon) <0){
-                    list[j].className += " " + addon  
+                if (list[j].className.indexOf(addon) < 0) {
+                    list[j].className += " " + addon
                 }
 
                 if (frequency == 0) {
                     break;
                 }
             }
-        })        
+        })
     }
+
+
 
     /**
      * 
      * @param cms_selector 
-     * @param cms_filter 
      */
-    public static cmsfilter(cms_selector: string, cms_filter: Array<FilterGroup> | string, filter_type: string = 'single') {
-
+    public cmsfilter(cms_filter= [], filter_type= 'single') {
+        const animation = this.animation;
+        
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
         //get all collections
-        const get_cms_items: any = ()=> [].slice.call(document.querySelectorAll(cms_selector));
+        
+        const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
 
         let filter_group: any[] = [];
 
@@ -134,7 +212,7 @@ class fsLibrary {
                 let prevClicked;
                 const { filter_option } = val;
 
-                filter_group = [].slice.call(document.querySelectorAll(`${val.filter_group} [data-search]`));
+                filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filter_group} [data-search]`));
                 assignChangeEventToButtons(index, prevClicked, filter_option)
 
             })
@@ -225,14 +303,22 @@ class fsLibrary {
 
             }
             findAndMatchFilterText();
-            console.log(filter)
-
+            
         }
 
 
-        function findAndMatchFilterText() {
-            const master_collection =get_cms_items();
+        const findAndMatchFilterText =()=>{
+            const master_collection = get_cms_items();
             master_collection.map((elem, i) => {
+
+                if (!elem.classList.contains('fslib-animation')) {
+                    elem.classList.add('fslib-animation')
+                }
+
+                if (!elem.classList.contains('fslib-normal')) {
+                    elem.classList.add('fslib-normal')
+                }
+
 
                 const search_result = filter.reduce((curr, search) => {
 
@@ -272,11 +358,37 @@ class fsLibrary {
                 }, [])//.join("").trim()
 
                 if (search_result.length > 1) {
-                    console.log(search_result.length);
-
                     [].slice.call(master_collection[i].children)
+
                         .map((child, k) => {
-                            child.style.display = search_result[k].style.display;
+
+                            child.addEventListener("transitionend", (evt) => {
+                                if (child.style.opacity == '0' || child.classList.contains('fslib-transform')) {
+                                    child.style.display = 'none';
+                                }
+                            });
+                            if (animation.enable) {
+                                    console.log(animation)
+                                if (search_result[k].style.display == 'none') {
+                                    if (animation.effects.indexOf('fade') > -1) {
+                                        child.style.opacity = '0'
+                                    }
+                                    child.classList.add('fslib-transform')
+                                }
+                                else {
+                                    child.style.display = 'block';
+                                    requestAnimationFrame(() => {
+                                        child.classList.remove('fslib-transform')
+                                        if (animation.effects.indexOf('fade') > -1) {
+                                            child.style.opacity = '1'
+                                        }
+                                    });
+                                }
+
+                            }
+                            else {
+                                child.style.display = search_result[k].style.display;
+                            }
 
                         })
                 }
@@ -291,11 +403,11 @@ interface AltClass {
     alt: string
 }
 
-interface LoadMore{
-    button:string;
-    actualLoadMore:boolean;
-    initialLoad:number;
-    loadPerClick:number
+interface LoadMore {
+    button: string;
+    actualLoadMore: boolean;
+    initialLoad: number;
+    loadPerClick: number
 }
 
 interface AddClass {
@@ -307,4 +419,17 @@ interface AddClass {
 interface FilterGroup {
     filter_group: string;
     filter_option: string
+}
+
+interface Animatn {
+    enable?: boolean;
+    easing?: string;
+    duration?: number;
+    effects?: string;
+}
+
+
+interface Filter {
+    cms_filter: FilterGroup[] | string;
+    filter_type: string;
 }
