@@ -2060,8 +2060,14 @@
     <script src="../dist/index.js"></script>
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     <script>
-        var fslib = new fsLibrary(".w-dyn-items")
-
+        var _animation = {
+            enable: true,
+            duration:500,
+            easing: 'ease-in-out',
+            effects: 'fade scale(0.2) translate(10px,20px)'
+        }
+        var fslib = new fsLibrary(".w-dyn-items",_animation)
+        
         fslib.combine();
 
         var _FILTERS = [

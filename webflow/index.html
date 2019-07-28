@@ -1819,9 +1819,9 @@
 
         var _animation = {
             enable: true,
-            duration: 1,
+            duration:500,
             easing: 'ease-in-out',
-            effects: 'fade translate(30px,100px) scale(-0.2)'
+            effects: 'fade scale(0.2)'
         }
 
         var fsLib = new fsLibrary('.w-dyn-items',_animation);
@@ -1830,12 +1830,12 @@
 
         fsLib.cmsfilter(".filter-bar","single")
 
-        fsLib.loadmore({
-            button: ".load-more-button",
-            actualLoadMore: true,
-            initialLoad: 12,
-            loadPerClick: 12
-        })
+        // fsLib.loadmore({
+        //     button: ".load-more-button",
+        //     actualLoadMore: true,
+        //     initialLoad: 12,
+        //     loadPerClick: 12
+        // })
 
 
     </script>

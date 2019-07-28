@@ -1,13 +1,13 @@
 class fsLibrary {
 
-    constructor(cms_selector:string,animation?:Animatn) {
+    constructor(cms_selector: string, animation?: Animatn) {
 
-        this.cms_selector=cms_selector;
-        
+        this.cms_selector = cms_selector;
+
         if (animation) {
             animation.enable = !/^false$/.test(String(animation.enable));
-            this.animation=animation;
-           console.log(animation)
+            this.animation = animation;
+
             const effects = animation.effects.replace('fade', '');
             const { duration, easing } = animation;
             this.makeStyleSheet({ duration, easing, transform: effects })
@@ -18,36 +18,34 @@ class fsLibrary {
         }
     }
 
-    private cms_selector:string;
-    
-    private animation:Animatn={
-        enable:true,
-        duration:1,
-        easing:'linear',
-        effects:'fade'
+    private cms_selector: string;
+
+    private animation: Animatn = {
+        enable: true,
+        duration: 250,
+        easing: 'ease-in-out',
+        effects: 'fade'
     };
+
+    private initialLayoutMode;
 
     private addClass: boolean;
 
     private addClassConfig: AddClass;
 
     private animationStyle: string = `
-    
+        
+        .fslib-normal{
+            position:relative;
+        }
         .fslib-normal div{
-            opacity:1;
-            transform:scale(0) translate(0) translate3d(0) rotate(0) rotateZ(0) ;
+            -webkit-transition: all {{duration}}ms {{ease}};
+            -moz-transition: all {{duration}}ms {{ease}};
+            -o-transition: all {{duration}}ms {{ease}};
+            transition: all {{duration}}ms {{ease}};
         }
         
-        .fslib-animation div{
-            transition-property: all;
-            transition-duration: {{duration}}s;
-            transition-timing-function: {{ease}};
-        }
-    
-        .fslib-fade{
-            opacity:0;
-        }
-       
+
         .fslib-transform{
             transform:{{transform}};
         }
@@ -70,7 +68,7 @@ class fsLibrary {
           }
     `;
 
-    private makeStyleSheet({ duration = 1, easing = 'linear', transform = 'translate(0)' }) {
+    private makeStyleSheet({ duration = 250, easing = 'ease-in-out', transform = 'translate(0)' }) {
 
         this.animationStyle = this.animationStyle.replace('{{duration}}', '' + duration);
         this.animationStyle = this.animationStyle.replace('{{ease}}', easing);
@@ -135,7 +133,7 @@ class fsLibrary {
             return true;
         });
 
-        (<any>document.querySelector(button)).onclick = ()=> {
+        (<any>document.querySelector(button)).onclick = () => {
             const addon = reserve.splice(0, loadPerClick);
             addon.map((elem) => {
                 elem.classList.add('fslib-fadeIn')
@@ -145,7 +143,13 @@ class fsLibrary {
             if (this.addClass) {
                 this.addClasses(this.addClassConfig);
             }
+
+            if (reserve.length == 0) {
+                (<any>document.querySelector(button)).style.display = 'none';
+            }
         }
+
+
 
     }
 
@@ -190,20 +194,48 @@ class fsLibrary {
         })
     }
 
+    private setInitialLayoutMode() {
 
+        const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
+
+        //storing initial layoutMode
+        this.initialLayoutMode = this.getLayoutMode();
+    }
+
+    private getLayoutMode() {
+
+        const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
+        return (
+            get_cms_items().map((elem, i) => {
+
+                return (
+                    [].slice.call(elem.children).map((item, j) => {
+                        const coordinates = item.getBoundingClientRect();
+                        return {
+                            x: coordinates.left,
+                            y: coordinates.top
+                        };
+                    }))
+            })
+        );
+    }
 
     /**
      * 
      * @param cms_selector 
      */
-    public cmsfilter(cms_filter= [], filter_type= 'single') {
+    public cmsfilter(cms_filter = [], filter_type = 'single') {
         const animation = this.animation;
-        
+
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
         //get all collections
-        
+
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
+
+        if (!this.initialLayoutMode) {
+            this.setInitialLayoutMode();
+        }
 
         let filter_group: any[] = [];
 
@@ -303,17 +335,15 @@ class fsLibrary {
 
             }
             findAndMatchFilterText();
-            
+
         }
 
 
-        const findAndMatchFilterText =()=>{
+        const findAndMatchFilterText = () => {
+            const lastLayoutMode = this.getLayoutMode();
             const master_collection = get_cms_items();
             master_collection.map((elem, i) => {
 
-                if (!elem.classList.contains('fslib-animation')) {
-                    elem.classList.add('fslib-animation')
-                }
 
                 if (!elem.classList.contains('fslib-normal')) {
                     elem.classList.add('fslib-normal')
@@ -325,20 +355,22 @@ class fsLibrary {
                     //creating a regex to test against
                     const val = `(${Object["values"]((search)).join("|")})`;
 
-                    const result = [].slice.call(elem.cloneNode(true).children).map((item, j) => {
+                    const result = [].slice.call(elem.children).map((item, j) => {
 
                         const re = new RegExp(val, "i");
                         const valid = re.test(item.textContent);
 
+                        const clonedItem = item.cloneNode(true);
+
                         if (valid) {
-                            item.style.display = "block"
+                            clonedItem.style.display = "block"
                         }
                         else {
-                            item.style.display = "none"
+                            clonedItem.style.display = "none"
                         }
 
-                        // return item.outerHTML;
-                        return item;
+                        // return clonedItem.outerHTML;
+                        return clonedItem;
                     })
 
                     if (curr.length < 1) {
@@ -357,40 +389,63 @@ class fsLibrary {
 
                 }, [])//.join("").trim()
 
+                let pos = 0;
+
                 if (search_result.length > 1) {
                     [].slice.call(master_collection[i].children)
-
                         .map((child, k) => {
 
+                            if (!animation.enable) {
+                                child.style.display = search_result[k].style.display;
+                                return;
+                            }
                             child.addEventListener("transitionend", (evt) => {
-                                if (child.style.opacity == '0' || child.classList.contains('fslib-transform')) {
-                                    child.style.display = 'none';
-                                }
-                            });
-                            if (animation.enable) {
-                                    console.log(animation)
                                 if (search_result[k].style.display == 'none') {
-                                    if (animation.effects.indexOf('fade') > -1) {
-                                        child.style.opacity = '0'
-                                    }
-                                    child.classList.add('fslib-transform')
+                                    child.style.position = 'absolute';
+                                    child.classList.remove('fslib-transform')
+
                                 }
                                 else {
-                                    child.style.display = 'block';
-                                    requestAnimationFrame(() => {
-                                        child.classList.remove('fslib-transform')
-                                        if (animation.effects.indexOf('fade') > -1) {
-                                            child.style.opacity = '1'
-                                        }
-                                    });
-                                }
+                                    child.style.position = 'static';
 
+                                }
+                            });
+
+
+
+                            if (search_result[k].style.display == 'none') {
+                                child.classList.add('fslib-transform')
+                                child.style.opacity = '0'
                             }
                             else {
-                                child.style.display = search_result[k].style.display;
+
+                                const lastX = this.initialLayoutMode[i][pos].x;
+                                const lastY = this.initialLayoutMode[i][pos].y;
+
+                                const childDeltaX = lastX - lastLayoutMode[i][k].x
+                                const childDeltaY = lastY - lastLayoutMode[i][k].y;
+
+                                requestAnimationFrame(() => {
+                                    child.style.opacity = '1'
+
+                                });
+
+
+                                console.log(k)
+
+                                child.animate([
+                                    { transform: `none` },
+                                    { transform: `translate(${childDeltaX}px, ${childDeltaY}px)` }
+                                ], { duration: animation.duration, easing: animation.easing });
+
+
+
+
+                                pos++;
                             }
 
-                        })
+                        });
+
                 }
 
             })
@@ -432,4 +487,40 @@ interface Animatn {
 interface Filter {
     cms_filter: FilterGroup[] | string;
     filter_type: string;
+}
+
+function getAbsoluteBoundingRect(el) {
+    var doc = document,
+        win = window,
+        body = doc.body,
+
+        // pageXOffset and pageYOffset work everywhere except IE <9.
+        offsetX = win.pageXOffset !== undefined ? win.pageXOffset :
+            (<any>(doc.documentElement || body.parentNode || body)).scrollLeft,
+        offsetY = win.pageYOffset !== undefined ? win.pageYOffset :
+            (<any>(doc.documentElement || body.parentNode || body)).scrollTop,
+
+        rect = el.getBoundingClientRect();
+
+    if (el !== body) {
+        var parent = el.parentNode;
+
+        // The element's rect will be affected by the scroll positions of
+        // *all* of its scrollable parents, not just the window, so we have
+        // to walk up the tree and collect every scroll offset. Good times.
+        while (parent !== body) {
+            offsetX += parent.scrollLeft;
+            offsetY += parent.scrollTop;
+            parent = parent.parentNode;
+        }
+    }
+
+    return {
+        bottom: rect.bottom + offsetY,
+        height: rect.height,
+        left: rect.left + offsetX,
+        right: rect.right + offsetX,
+        top: rect.top + offsetY,
+        width: rect.width
+    };
 }
