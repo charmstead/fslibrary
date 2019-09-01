@@ -1819,16 +1819,16 @@
 
         var _animation = {
             enable: true,
-            duration:500,
+            duration:1000,
             easing: 'ease-in-out',
-            effects: 'fade scale(0.2)'
+            effects: 'fade scale(0.2) rotateX(90deg)'
         }
 
-        var fsLib = new fsLibrary('.w-dyn-items',_animation);
+        var fsLib = new FsLibrary('.w-dyn-items');
 
         fsLib.combine()
 
-        fsLib.cmsfilter(".filter-bar","single")
+        fsLib.cmsfilter(".filter-bar","single",_animation)
 
         fsLib.loadmore({
             button: ".load-more-button",

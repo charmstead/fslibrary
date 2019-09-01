@@ -2062,13 +2062,17 @@
     <script>
         var _animation = {
             enable: true,
-            duration:500,
+            duration:1000,
             easing: 'ease-in-out',
             effects: 'fade scale(0.2) translate(10px,20px)'
         }
-        var fslib = new fsLibrary(".w-dyn-items",_animation)
+        var fslib = new FsLibrary(".w-dyn-items")
+
+       
         
+
         fslib.combine();
+
 
         var _FILTERS = [
             {
@@ -2086,7 +2090,13 @@
         ]
 
         //default is and
-        fslib.cmsfilter(_FILTERS,"multi")
+        fslib.cmsfilter(_FILTERS,"multi",_animation)
+        // fslib.loadmore({
+        //     button: ".load-more-button",
+        //     actualLoadMore: true,
+        //     initialLoad: 12,
+        //     loadPerClick: 12
+        // })
 
     </script>
 </body>
