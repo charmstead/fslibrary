@@ -7,24 +7,11 @@ class FsLibrary {
 
         this.cms_selector = cms_selector;
 
-
-        // if (animation) {
-        //     animation.enable = !/^false$/.test(String(animation.enable));
-        //     this.animation = animation;
-
-        //     const effects = animation.effects.replace('fade', '');
-        //     const { duration, easing } = animation;
-        //     this.makeStyleSheet({ duration, easing, transform: effects })
-
-        // }
-        // else {
-        //     this.makeStyleSheet({});
-        // }
     }
 
     private cms_selector: string;
 
-    private timeline=new TimelineLite();
+    private timeline = new TimelineLite();
 
     private animation: Animatn = {
         enable: true,
@@ -54,17 +41,19 @@ class FsLibrary {
     @keyframes fade-in {
         0% {
             opacity: 0;
+           transform:{{transform}};
         }
         100% {
-            transform:translate(0) rotate(0) scale(0);
+            transform:translate(0) rotate3d(0) rotate(0) scale(1);
             opacity: 1;
         }
       }
       
       .fslib-fadeIn {
         animation-name: fade-in;
-        animation-duration: 1s;
+        animation-duration: {{duration}}s;
         animation-iteration-count: 1;
+        animation-timing-function: {{easing}};
         animation-fill-mode: forwards;
       }
 `;
@@ -91,24 +80,24 @@ class FsLibrary {
         }
     }
 
-    // private makeStyleSheet({ duration = 250, easing = 'ease-in-out', transform = 'translate(0)' }) {
+    private makeStyleSheet({ duration = 250, easing = 'ease-in-out', transform = 'translate(0)' }) {
 
-    //     this.animationStyle = this.animationStyle.replace('{{duration}}', '' + duration);
-    //     this.animationStyle = this.animationStyle.replace('{{ease}}', easing);
-    //     this.animationStyle = this.animationStyle.replace('{{transform}}', transform);
+        this.animationStyle = this.animationStyle.replace('{{duration}}', '' + duration);
+        this.animationStyle = this.animationStyle.replace('{{ease}}', easing);
+        this.animationStyle = this.animationStyle.replace('{{transform}}', transform);
 
-    //     const head = document.head || document.getElementsByTagName('head')[0];
-    //     const style: any = document.createElement('style');
-    //     head.appendChild(style);
+        const head = document.head || document.getElementsByTagName('head')[0];
+        const style: any = document.createElement('style');
+        head.appendChild(style);
 
-    //     style.type = 'text/css';
-    //     if (style.styleSheet) {
-    //         // This is required for IE8 and below.
-    //         style.styleSheet.cssText = this.animationStyle;
-    //     } else {
-    //         style.appendChild(document.createTextNode(this.animationStyle));
-    //     }
-    // }
+        style.type = 'text/css';
+        if (style.styleSheet) {
+            // This is required for IE8 and below.
+            style.styleSheet.cssText = this.animationStyle;
+        } else {
+            style.appendChild(document.createTextNode(this.animationStyle));
+        }
+    }
 
     /**
      * Combine all the collection items into one collection.
@@ -138,7 +127,20 @@ class FsLibrary {
 
 
 
-    public loadmore(config: LoadMore = { button: "", actualLoadMore: true, initialLoad: 12, loadPerClick: 12,animation:this.animation }): void {
+    public loadmore(config: LoadMore = { button: "", actualLoadMore: true, initialLoad: 12, loadPerClick: 12, animation: this.animation }): void {
+
+        if (config.animation) {
+            const effects = config.animation.effects.replace('fade', '');
+            let { duration, easing } = config.animation;
+            duration = duration? duration/1000 :1;
+            easing = easing || 'linear';
+            this.makeStyleSheet({ duration, easing, transform: effects })
+
+        }
+        else {
+            this.makeStyleSheet({});
+        }
+
         const parent: any = document.querySelector(this.cms_selector);
         const collection: any[] = [].slice.call(parent.children);
         const clone: any[] = [].slice.call(parent.cloneNode(true).children);
@@ -161,6 +163,10 @@ class FsLibrary {
             const addon = reserve.splice(0, loadPerClick);
             addon.map((elem) => {
                 elem.classList.add('fslib-fadeIn')
+                elem.addEventListener(whichAnimationEvent(), () => {
+                    elem.classList.remove('fslib-fadeIn')
+
+                })
                 document.querySelector(this.cms_selector).appendChild(elem);
             })
 
@@ -230,8 +236,8 @@ class FsLibrary {
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
         return (
             get_cms_items().map((elem, i) => {
-                elem.style['justify-content']='left'
-                elem.style['overflow']='hidden'
+                elem.style['justify-content'] = 'left'
+                elem.style['overflow'] = 'hidden'
                 return (
                     [].slice.call(elem.children).map((item, j) => {
                         const coordinates = item.getBoundingClientRect();
@@ -251,7 +257,7 @@ class FsLibrary {
     public cmsfilter(cms_filter = [], filter_type = 'single', animatn?: Animatn) {
 
         let animation;
-        const self=this;
+        const self = this;
         if (animatn) {
             animatn.enable = !/^false$/.test(String(animatn.enable));
             const effects = animatn.effects.replace('fade', '');
@@ -264,11 +270,11 @@ class FsLibrary {
         }
         animation = this.animation;
 
-        let clickCheck=0;
+        let clickCheck = 0;
         const tl = [];
         const queue = [];
 
-        const filterQueue=[]
+        const filterQueue = []
 
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
@@ -312,11 +318,11 @@ class FsLibrary {
                     (<any>elem).onchange = function (event) {
                         let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
-                        if(!self.timeline.isActive()){
+                        if (!self.timeline.isActive()) {
                             filterHelper({ filter_option, id, index, filter_text })
                         }
-                        else{
-                            filterQueue.unshift(()=>filterHelper({ filter_option, id, index, filter_text }))
+                        else {
+                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
                         }
                     }
                 }
@@ -327,11 +333,11 @@ class FsLibrary {
                         if (!event.target.checked) {
                             filter_text = '';
                         }
-                        if(!self.timeline.isActive()){
+                        if (!self.timeline.isActive()) {
                             filterHelper({ filter_option, id, index, filter_text })
                         }
-                        else{
-                            filterQueue.unshift(()=>filterHelper({ filter_option, id, index, filter_text }))
+                        else {
+                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
                         }
                     }
                 }
@@ -354,12 +360,12 @@ class FsLibrary {
                         }
 
                         let filter_text = prevClicked.getAttribute("data-search") || '';
-                  
-                        if(!self.timeline.isActive()){
+
+                        if (!self.timeline.isActive()) {
                             filterHelper({ filter_option, id, index, filter_text })
                         }
-                        else{
-                            filterQueue.unshift(()=>filterHelper({ filter_option, id, index, filter_text }))
+                        else {
+                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
                         }
                     }
                 }
@@ -394,7 +400,7 @@ class FsLibrary {
 
             }
             //try to fix queue here
-              findAndMatchFilterText();
+            findAndMatchFilterText();
 
         }
 
@@ -454,7 +460,7 @@ class FsLibrary {
                 if (search_result.length > 1) {
                     [].slice.call(master_collection[i].children)
                         .map((child, k) => {
-                            const self = this;
+                           
 
                             if (!animation.enable) {
                                 child.style.display = search_result[k].style.display;
@@ -482,8 +488,8 @@ class FsLibrary {
 
                                         }
                                     },
-                                    "end"+clickCheck
-                                   
+                                    "end" + clickCheck
+
                                 )
                                 // tween = [
                                 //     child,
@@ -510,10 +516,12 @@ class FsLibrary {
 
                                 const getProp = () => {
                                     child.style = '';
-                                    const currX = child.getBoundingClientRect().x;
-                                    const currY = child.getBoundingClientRect().y;
-                                    const childDeltaX = finalX - currX;
-                                    const childDeltaY = finalY - currY;
+
+                                    const curr = child.getBoundingClientRect();
+                                  
+                                    const childDeltaX = finalX - curr.x;
+                                    const childDeltaY = finalY - curr.y;
+
                                     return `translate(${childDeltaX}px, ${childDeltaY}px) rotateZ(0)`
                                 }
 
@@ -546,7 +554,7 @@ class FsLibrary {
 
                                         }
                                     },
-                                    "end"+clickCheck
+                                    "end" + clickCheck
                                 )
 
                             }
@@ -555,13 +563,13 @@ class FsLibrary {
 
                         });
 
-                        this.timeline.eventCallback("onComplete",()=>{
-                            let nextTween = filterQueue.shift();
-                            if(nextTween){
-                                nextTween.call(null);
-                            }
-                           
-                        })
+                    this.timeline.eventCallback("onComplete", () => {
+                        let nextTween = filterQueue.shift();
+                        if (nextTween) {
+                            nextTween.call(null);
+                        }
+
+                    })
                 }
 
             })
@@ -579,7 +587,7 @@ interface LoadMore {
     actualLoadMore: boolean;
     initialLoad: number;
     loadPerClick: number;
-    animation?:Animatn
+    animation?: Animatn
 }
 
 interface AddClass {
@@ -622,6 +630,24 @@ function whichTransitionEvent() {
     for (t in transitions) {
         if (el.style[t] !== undefined) {
             return transitions[t];
+        }
+    }
+}
+
+function whichAnimationEvent() {
+    var t,
+        el = document.createElement("fakeelement");
+
+    var animations = {
+        "animation": "animationend",
+        "OAnimationn": "oAnimationnEnd",
+        "MozAnimationn": "animationnend",
+        "WebkitAnimationn": "webkitAnimationnEnd"
+    }
+
+    for (t in animations) {
+        if (el.style[t] !== undefined) {
+            return animations[t];
         }
     }
 }

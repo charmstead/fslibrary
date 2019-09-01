@@ -24,30 +24,29 @@ animation that will be used in the transition of the cms items.
 ```
 <script src="/dist/index.js"></script>
 <script>
-    var _animation = {
-            enable: true,
-            duration: 1,
-            easing: 'ease-in-out',
-            effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
-        }
 
-    var fsLib = new fsLibrary('.w-dyn-items',_animation)
+    var _animation = {
+        enable: true,
+        duration: 1,
+        easing: 'ease-in-out',
+        effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
+    }
+
+    var fsLib = new FsLibrary('.w-dyn-items')
 
     //combine
     fsLib.combine()
 
     //cms filter
-    fsLib.cmsfilter({
-        cms_filter: ".filter-bar",
-        filter_type: "single"
-    })
+     fsLib.cmsfilter(".select_filter","single", _animation)
 
     //cms loadmore
     fsLib.loadmore({
         button: ".load-more-button",
         actualLoadMore: true,
         initialLoad: 12,
-        loadPerClick: 12
+        loadPerClick: 12,
+        animation:_animation
     })
 
 
@@ -105,27 +104,38 @@ fsLib.combine('.w-dyn-items')
 The loadmore function takes a parameters:
 1. An object that defines the configuration of the loadmore which is defined as follow:
 
+
 interface LoadMore{
     button:string; //css selector of the loadmore button
     actualLoadMore:boolean;
     initialLoad:number;
     loadPerClick:number
+    animation:Animation
 }
 
 The loadmore performs a lazyloading on the specified cms collection items and present to the viewport
 the number of items specified in the initialLoad property. 
 Clicking the loadmore button subsequently loads loadPerClick amount of the collection items and add it to the parent container. 
 
+The animation property is optional. If provided, the property will be used to animated in the elements to be added to the page.
+
 ****usage:****
 
 ```
 var fsLib = new fsLibrary('.w-dyn-items')
+var _animation = {
+    enable: true,
+    duration: 1,
+    easing: 'ease-in-out',
+    effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
+}
 
 var _loadMoreConfig = {
             button: ".load-more-button",
             actualLoadMore: true,
             initialLoad: 12,
-            loadPerClick: 12
+            loadPerClick: 12,
+            animation:_animation
         }
 
 fsLib.loadmore(_loadMoreConfig)
@@ -183,7 +193,7 @@ fsLib.addClasses(".w-dyn-items", {
 To perform filter functions on the list of collection items:
 
 The cmsfilter functions takes a parameter and/or and optional second parameter "SINGLE" or "MULTI"
-depending on the type of the filter functionality you want to perform.
+depending on the type of the filter functionality you want to perform and/or an optional animation third parameter.
 
 The "MULTI" shows intersection of filtered results across provided group of filters.
 
@@ -247,7 +257,14 @@ For SELECT Tag, add the "data-search" attribute to the children elements option 
 
 let fsLib = new fsLibrary('.w-dyn-items')
 
-fsLib.cmsfilter(".filter-bar","single")
+var _animation = {
+    enable: true,
+    duration: 1,
+    easing: 'ease-in-out',
+    effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
+}
+
+fsLib.cmsfilter(".filter-bar","single",_animation)
 
 ```
 
@@ -266,7 +283,14 @@ fsLib.cmsfilter(".filter-bar","single")
 
 let fsLib = new fsLibrary('.w-dyn-items')
 
-fsLib.cmsfilter(".select_filter","single")
+var _animation = {
+    enable: true,
+    duration: 1,
+    easing: 'ease-in-out',
+    effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
+}
+
+fsLib.cmsfilter(".select_filter","single", _animation)
 
 ```
 
@@ -351,7 +375,14 @@ var _FILTERS = [
         filter_option: "multi"
     }
 ]
+
+var _animation = {
+    enable: true,
+    duration: 1,
+    easing: 'ease-in-out',
+    effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
+}
      
-fsLib.cmsfilter(_FILTERS,"multi")
+fsLib.cmsfilter(_FILTERS,"multi", _animation)
 
 ```

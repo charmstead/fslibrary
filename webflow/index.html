@@ -1819,22 +1819,28 @@
 
         var _animation = {
             enable: true,
-            duration:1000,
+            duration: 1000,
             easing: 'ease-in-out',
-            effects: 'fade scale(0.2) rotateX(90deg)'
+            effects: 'fade scale(0.2) rotateX(90deg) rotateZ(90deg)'
         }
 
         var fsLib = new FsLibrary('.w-dyn-items');
 
         fsLib.combine()
 
-        fsLib.cmsfilter(".filter-bar","single",_animation)
+        fsLib.cmsfilter(".filter-bar", "single", _animation)
 
         fsLib.loadmore({
             button: ".load-more-button",
             actualLoadMore: true,
             initialLoad: 12,
-            loadPerClick: 12
+            loadPerClick: 12,
+            animation: {
+                enable: true,
+                duration: 1000,
+                easing: 'ease-in-out',
+                effects: 'fade scale(0) rotateZ(360deg)'
+            }
         })
 
 
