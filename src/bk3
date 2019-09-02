@@ -131,9 +131,7 @@ class FsLibrary {
 
         if (config.animation) {
             const effects = config.animation.effects.replace('fade', '');
-            let { duration, easing } = config.animation;
-            duration = duration? duration/1000 :1;
-            easing = easing || 'linear';
+            const { duration, easing } = config.animation;
             this.makeStyleSheet({ duration, easing, transform: effects })
 
         }
@@ -234,11 +232,10 @@ class FsLibrary {
     private getLayoutMode() {
 
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
-        
         return (
             get_cms_items().map((elem, i) => {
-                elem.style['justify-content'] = 'left';
-                elem.style['overflow'] = 'hidden';
+                elem.style['justify-content'] = 'left'
+                elem.style['overflow'] = 'hidden'
                 return (
                     [].slice.call(elem.children).map((item, j) => {
                         const coordinates = item.getBoundingClientRect();
@@ -255,25 +252,21 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public cmsfilter(config={cms_filter :[], filter_type:'single', animation:this.animation}) {
+    public cmsfilter(cms_filter = [], filter_type = 'single', animatn?: Animatn) {
 
-        let {cms_filter,filter_type,animation} =config;
-
-        filter_type = filter_type ? filter_type :(typeof cms_filter =='string')? 'single' : 'multi';
-
+        let animation;
         const self = this;
-        if (animation) {
-            animation.enable = !/^false$/.test(String(animation.enable));
-            const effects = animation.effects.replace('fade', '');
-            animation.effects = effects;
+        if (animatn) {
+            animatn.enable = !/^false$/.test(String(animatn.enable));
+            const effects = animatn.effects.replace('fade', '');
+            animatn.effects = effects;
 
-            if (animation.effects.indexOf('translate') < 0) {
-                animation.effects += ' translate(0px,0px)  '
+            if (animatn.effects.indexOf('translate') < 0) {
+                animatn.effects += ' translate(0px,0px)  '
             }
-            this.animation = animation;
+            this.animation = animatn;
         }
         animation = this.animation;
-        console.log(animation)
 
         let clickCheck = 0;
         const tl = [];
@@ -465,7 +458,7 @@ class FsLibrary {
                 if (search_result.length > 1) {
                     [].slice.call(master_collection[i].children)
                         .map((child, k) => {
-                           
+                            const self = this;
 
                             if (!animation.enable) {
                                 child.style.display = search_result[k].style.display;
@@ -521,12 +514,10 @@ class FsLibrary {
 
                                 const getProp = () => {
                                     child.style = '';
-
-                                    const curr = child.getBoundingClientRect();
-                                  
-                                    const childDeltaX = finalX - curr.x;
-                                    const childDeltaY = finalY - curr.y;
-
+                                    const currX = child.getBoundingClientRect().x;
+                                    const currY = child.getBoundingClientRect().y;
+                                    const childDeltaX = finalX - currX;
+                                    const childDeltaY = finalY - currY;
                                     return `translate(${childDeltaX}px, ${childDeltaY}px) rotateZ(0)`
                                 }
 

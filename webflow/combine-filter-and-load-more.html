@@ -2088,7 +2088,20 @@
         ]
 
         //default is and
-        fslib.cmsfilter(_FILTERS,"multi",_animation)
+
+        fslib.cmsfilter({
+            cms_filter: _FILTERS,
+            filter_type: "multi",
+            animation: _animation
+        })
+
+        //or
+
+        // fslib.cmsfilter({
+        //     cms_filter: _FILTERS,
+        //     animation: _animation
+        // })
+
         fslib.loadmore({
             button: ".load-more-button",
             actualLoadMore: true,

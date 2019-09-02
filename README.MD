@@ -38,7 +38,11 @@ animation that will be used in the transition of the cms items.
     fsLib.combine()
 
     //cms filter
-     fsLib.cmsfilter(".select_filter","single", _animation)
+    fsLib.cmsfilter({
+        cms_filter: _FILTERS,
+        filter_type: "multi",
+        animation: _animation
+    })
 
     //cms loadmore
     fsLib.loadmore({
@@ -192,17 +196,20 @@ fsLib.addClasses(".w-dyn-items", {
 
 To perform filter functions on the list of collection items:
 
-The cmsfilter functions takes a parameter and/or and optional second parameter "SINGLE" or "MULTI"
-depending on the type of the filter functionality you want to perform and/or an optional animation third parameter.
+The cmsfilter functions takes an object parameter with the following keys:
+
+cms_filter,filter_type,animation
+
+The cmsfilter filter_type can be "SINGLE" or "MULTI" depending on the type of the filter functionality you want to perform.
+It is an optional key, if omitted, the filter_type will be determined by the type of cms_filter passed in.
 
 The "MULTI" shows intersection of filtered results across provided group of filters.
 
-The first parameter can be a string or Array of objects that contain css selector of the parent container of the filter buttons/elements.
+The cms_filter key can be a string or Array of objects that contain css selector of the parent container of the filter buttons/elements.
 
-The first parameter is a ****STRING**** for the case of a "SINGLE" filter option. The css selector of the parent container
+The cms_filter key is a ****STRING**** for the case of a "SINGLE" filter option. The css selector of the parent container
 of the filter buttons/elements is passed as the argument.
-
-The first parameter is a Array of objects with below structure for the case of "MULTI" filter option.
+Otherwise it is an Array of objects with below structure for the case of "MULTI" filter option.
 var _FILTERS = [
     {
         filter_group: ".filter-cat-1",
@@ -224,6 +231,9 @@ The ****filter_group**** property is the css selector of the parent container of
 The ****filter_option**** property is filter option you wish to assign to the current filter group. This becomes
 powerful as allows you to mix both "MULTI" and "SINGLE" filter functionalities.
 
+The animation key is also optional. It determines the effects you want to be applied to the filtered elements.
+
+
 
 ****usage:****
 Create the elements you want to use as your filter and add a "data-search" attribute initialized
@@ -241,7 +251,7 @@ For SELECT Tag, add the "data-search" attribute to the children elements option 
     <div data-search='CATEGORY A' class="filter-button cat-a">
         <div>Category A</div>
     </div>
-    <div data-search='CATEGORY B' class="filter-button cat-b">
+    <div  data-search='CATEGORY B' class="filter-button cat-b">
         <div>Category B</div>
     </div>
     <div data-search='CATEGORY C' class="filter-button cat-c">
@@ -264,7 +274,18 @@ var _animation = {
     effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
 }
 
-fsLib.cmsfilter(".filter-bar","single",_animation)
+fsLib.cmsfilter({
+    cms_filter: ".filter-bar",
+    filter_type: "single",
+    animation: _animation
+})
+
+or
+
+fsLib.cmsfilter({
+    cms_filter: ".filter-bar",
+    animation: _animation
+})
 
 ```
 

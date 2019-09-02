@@ -1828,7 +1828,18 @@
 
         fsLib.combine()
 
-        fsLib.cmsfilter(".filter-bar", "single", _animation)
+        // fsLib.cmsfilter({
+        //     cms_filter: ".filter-bar",
+        //     filter_type: "single",
+        //     animation: _animation
+        // })
+
+        //or
+
+        fsLib.cmsfilter({
+            cms_filter: ".filter-bar",
+            animation: _animation
+        })
 
         fsLib.loadmore({
             button: ".load-more-button",

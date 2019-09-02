@@ -1,24 +1,30 @@
-import { TweenLite, TimelineLite } from "gsap";
+class fsLibrary {
 
-
-class FsLibrary {
-
-    constructor(cms_selector: string) {
+    constructor(cms_selector: string, animation?: Animatn) {
 
         this.cms_selector = cms_selector;
 
+        if (animation) {
+            animation.enable = !/^false$/.test(String(animation.enable));
+            this.animation = animation;
+
+            const effects = animation.effects.replace('fade', '');
+            const { duration, easing } = animation;
+            this.makeStyleSheet({ duration, easing, transform: effects })
+
+        }
+        else {
+            this.makeStyleSheet({});
+        }
     }
 
     private cms_selector: string;
-
-    private timeline = new TimelineLite();
 
     private animation: Animatn = {
         enable: true,
         duration: 250,
         easing: 'ease-in-out',
-        // effects: 'fade',
-        effects: 'translate(0px,0px)'
+        effects: 'fade'
     };
 
     private initialLayoutMode;
@@ -32,53 +38,41 @@ class FsLibrary {
         .fslib-normal{
             position:relative;
         }
-
-        .fslib-normal>div{
-            justify-content:left;
+        .fslib-norm{
+            -webkit-transition: all {{duration}}ms {{ease}};
+            -moz-transition: all {{duration}}ms {{ease}};
+            -o-transition: all {{duration}}ms {{ease}};
+            transition: all {{duration}}ms {{ease}};
         }
-
         
-    @keyframes fade-in {
-        0% {
-            opacity: 0;
-           transform:{{transform}};
-        }
-        100% {
-            transform:translate(0) rotate3d(0) rotate(0) scale(1);
-            opacity: 1;
-        }
-      }
-      
-      .fslib-fadeIn {
-        animation-name: fade-in;
-        animation-duration: {{duration}}s;
-        animation-iteration-count: 1;
-        animation-timing-function: {{easing}};
-        animation-fill-mode: forwards;
-      }
-`;
+        .notransition {
+            -webkit-transition: none !important;
+            -moz-transition: none !important;
+            -o-transition: none !important;
+            transition: none !important;
+          }
 
-    private next(tl, queue, getTransform = null) {
-        if (queue.length) {
-            let nextTween = queue.shift();
-
-            if (getTransform) {
-                nextTween[2].transform = getTransform();
+        .fslib-transform{
+            transform:{{transform}};
+        }
+        
+    
+          @keyframes fade-in {
+            0% {
+                opacity: 0;
             }
-
-            tl.add(TweenLite.to.apply(null, nextTween));
-
-        }
-    }
-
-    private enQueue(tl, tween, queue) {
-
-        if (tl.isActive()) {
-            queue.unshift(tween);
-        } else {
-            tl.add(TweenLite.to.apply(null, tween));
-        }
-    }
+            100% {
+                opacity: 1;
+            }
+          }
+          
+          .fslib-fadeIn {
+            animation-name: fade-in;
+            animation-duration: 1s;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+          }
+    `;
 
     private makeStyleSheet({ duration = 250, easing = 'ease-in-out', transform = 'translate(0)' }) {
 
@@ -127,24 +121,10 @@ class FsLibrary {
 
 
 
-    public loadmore(config: LoadMore = { button: "", actualLoadMore: true, initialLoad: 12, loadPerClick: 12, animation: this.animation }): void {
-
-        if (config.animation) {
-            const effects = config.animation.effects.replace('fade', '');
-            let { duration, easing } = config.animation;
-            duration = duration? duration/1000 :1;
-            easing = easing || 'linear';
-            this.makeStyleSheet({ duration, easing, transform: effects })
-
-        }
-        else {
-            this.makeStyleSheet({});
-        }
-
+    public loadmore(config: LoadMore = { button: "", actualLoadMore: true, initialLoad: 12, loadPerClick: 12 }): void {
         const parent: any = document.querySelector(this.cms_selector);
         const collection: any[] = [].slice.call(parent.children);
         const clone: any[] = [].slice.call(parent.cloneNode(true).children);
-        this.setInitialLayoutMode();
 
         const { button, actualLoadMore, initialLoad, loadPerClick } = config;
 
@@ -163,10 +143,6 @@ class FsLibrary {
             const addon = reserve.splice(0, loadPerClick);
             addon.map((elem) => {
                 elem.classList.add('fslib-fadeIn')
-                elem.addEventListener(whichAnimationEvent(), () => {
-                    elem.classList.remove('fslib-fadeIn')
-
-                })
                 document.querySelector(this.cms_selector).appendChild(elem);
             })
 
@@ -227,6 +203,7 @@ class FsLibrary {
     private setInitialLayoutMode() {
 
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
+
         //storing initial layoutMode
         this.initialLayoutMode = this.getLayoutMode();
     }
@@ -234,11 +211,9 @@ class FsLibrary {
     private getLayoutMode() {
 
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
-        
         return (
             get_cms_items().map((elem, i) => {
-                elem.style['justify-content'] = 'left';
-                elem.style['overflow'] = 'hidden';
+
                 return (
                     [].slice.call(elem.children).map((item, j) => {
                         const coordinates = item.getBoundingClientRect();
@@ -255,31 +230,12 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public cmsfilter(config={cms_filter :[], filter_type:'single', animation:this.animation}) {
+    public cmsfilter(cms_filter = [], filter_type = 'single') {
+        const animation = this.animation;
 
-        let {cms_filter,filter_type,animation} =config;
+        const flag = [];
+        const queue = []
 
-        filter_type = filter_type ? filter_type :(typeof cms_filter =='string')? 'single' : 'multi';
-
-        const self = this;
-        if (animation) {
-            animation.enable = !/^false$/.test(String(animation.enable));
-            const effects = animation.effects.replace('fade', '');
-            animation.effects = effects;
-
-            if (animation.effects.indexOf('translate') < 0) {
-                animation.effects += ' translate(0px,0px)  '
-            }
-            this.animation = animation;
-        }
-        animation = this.animation;
-        console.log(animation)
-
-        let clickCheck = 0;
-        const tl = [];
-        const queue = [];
-
-        const filterQueue = []
 
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
@@ -323,12 +279,7 @@ class FsLibrary {
                     (<any>elem).onchange = function (event) {
                         let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
-                        if (!self.timeline.isActive()) {
-                            filterHelper({ filter_option, id, index, filter_text })
-                        }
-                        else {
-                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
-                        }
+                        filterHelper({ filter_option, id, index, filter_text })
                     }
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
@@ -338,12 +289,7 @@ class FsLibrary {
                         if (!event.target.checked) {
                             filter_text = '';
                         }
-                        if (!self.timeline.isActive()) {
-                            filterHelper({ filter_option, id, index, filter_text })
-                        }
-                        else {
-                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
-                        }
+                        filterHelper({ filter_option, id, index, filter_text })
                     }
                 }
                 else {
@@ -365,21 +311,15 @@ class FsLibrary {
                         }
 
                         let filter_text = prevClicked.getAttribute("data-search") || '';
-
-                        if (!self.timeline.isActive()) {
-                            filterHelper({ filter_option, id, index, filter_text })
-                        }
-                        else {
-                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
-                        }
+                        filterHelper({ filter_option, id, index, filter_text })
                     }
                 }
             })
         }
 
 
-        const filterHelper = ({ filter_option, id, index, filter_text }) => {
-            clickCheck++;
+        function filterHelper({ filter_option, id, index, filter_text }) {
+
             if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
 
                 //checks if it has previously been clicked                
@@ -404,7 +344,6 @@ class FsLibrary {
                 }
 
             }
-            //try to fix queue here
             findAndMatchFilterText();
 
         }
@@ -461,120 +400,81 @@ class FsLibrary {
 
                 let pos = 0;
 
-
                 if (search_result.length > 1) {
                     [].slice.call(master_collection[i].children)
                         .map((child, k) => {
-                           
+
+                            if (!queue[k]) {
+                                queue[k] = []
+                            }
 
                             if (!animation.enable) {
                                 child.style.display = search_result[k].style.display;
                                 return;
                             }
 
-                            // if (!queue[k]) {
-                            //     queue[k] = []
-                            //     // tl[k] = new TimelineLite();
-                            // }
+                            child.addEventListener("transitionend", (evt) => {
+                                flag[k]=0;
+                                child.classList.remove('fslib-norm')
 
-                            let tween;
+                                if (search_result[k].style.display == 'none') {
+                                    child.style.position = 'absolute';
+                                    child.classList.remove('fslib-transform')
+
+                                }
+                                else {
+
+                                    child.style.position = 'static';
+                                    child.classList.remove('fslib-norm');
+                                    child.style.transform = 'translate(0)';
+                                }
+
+                            });
+
+
+
                             if (search_result[k].style.display == 'none') {
-                                this.timeline.to(
-                                    child,
-                                    animation.duration / 1000,
-                                    {
-                                        zIndex: 1,
-                                        transform: `${animation.effects}`,
-                                        autoAlpha: 0,
-                                        ease: animation.easing,
-                                        onComplete: () => {
-                                            child.style = 'display:none'
-                                            // self.next(tl[k], queue[k]);
 
-                                        }
-                                    },
-                                    "end" + clickCheck
+                                if (child.style.opacity !== 0) {
 
-                                )
-                                // tween = [
-                                //     child,
-                                //     animation.duration / 1000,
-                                //     {
-                                //         zIndex: 1,
-                                //         transform: `${animation.effects}`,
-                                //         autoAlpha: 0,
-                                //         ease: animation.easing,
-                                //         onComplete: () => {
-                                //             child.style = 'display:none'
-                                //             self.next(tl[k], queue[k]);
+                                    queue[k].push(() => {
+                                        flag[k]=1;
+                                        child.classList.add('fslib-norm')
+                                        child.classList.add('fslib-transform')
+                                        child.style.opacity = '0';
 
-                                //         }
-                                //     }
-                                // ];
+                                    })
+
+                                }
                             }
                             else {
 
                                 const finalX = this.initialLayoutMode[i][pos].x;
                                 const finalY = this.initialLayoutMode[i][pos].y;
 
+                                queue[k].push(() => {
+                                    flag[k]=1;
+                                    const currX = child.getBoundingClientRect().x;
+                                    const currY = child.getBoundingClientRect().y;
+                                    const childDeltaX = finalX - currX;
+                                    const childDeltaY = finalY - currY;
+                                    child.classList.add('fslib-norm');                           
+                                    child.style.opacity = '1'
+                                    child.style.transform = `translate(${childDeltaX}px, ${childDeltaY}px)`;
+                                })
+
                                 pos++;
-
-                                const getProp = () => {
-                                    child.style = '';
-
-                                    const curr = child.getBoundingClientRect();
-                                  
-                                    const childDeltaX = finalX - curr.x;
-                                    const childDeltaY = finalY - curr.y;
-
-                                    return `translate(${childDeltaX}px, ${childDeltaY}px) rotateZ(0)`
-                                }
-
-                                // tween = [
-                                //     child,
-                                //     animation.duration / 1000,
-                                //     {
-                                //         autoAlpha: 1,
-                                //         zIndex: 2,
-                                //         transform: getProp(),
-                                //         ease: animation.easing,
-                                //         onComplete: function () {
-                                //             child.style = ''
-                                //             self.next(tl[k], queue[k], getProp);
-                                //         },
-                                //     }
-                                // ];
-
-                                this.timeline.to(
-                                    child,
-                                    animation.duration / 1000,
-                                    {
-                                        zIndex: 3,
-                                        transform: getProp(),
-                                        autoAlpha: 1,
-                                        ease: animation.easing,
-                                        onComplete: () => {
-                                            child.style = ''
-                                            // self.next(tl[k], queue[k]);
-
-                                        }
-                                    },
-                                    "end" + clickCheck
-                                )
-
                             }
-
-                            // this.enQueue(tl[k], tween, queue[k])
+                            if (!flag[k]) {
+                                const item =queue[k].shift();
+                                if(item){
+                                    requestAnimationFrame(item)
+                                }
+                            }
+                            
 
                         });
 
-                    this.timeline.eventCallback("onComplete", () => {
-                        let nextTween = filterQueue.shift();
-                        if (nextTween) {
-                            nextTween.call(null);
-                        }
-
-                    })
                 }
 
             })
@@ -591,8 +491,7 @@ interface LoadMore {
     button: string;
     actualLoadMore: boolean;
     initialLoad: number;
-    loadPerClick: number;
-    animation?: Animatn
+    loadPerClick: number
 }
 
 interface AddClass {
@@ -619,42 +518,38 @@ interface Filter {
     filter_type: string;
 }
 
+function getAbsoluteBoundingRect(el) {
+    var doc = document,
+        win = window,
+        body = doc.body,
 
-// Function from David Walsh: http://davidwalsh.name/css-animation-callback
-function whichTransitionEvent() {
-    var t,
-        el = document.createElement("fakeelement");
+        // pageXOffset and pageYOffset work everywhere except IE <9.
+        offsetX = win.pageXOffset !== undefined ? win.pageXOffset :
+            (<any>(doc.documentElement || body.parentNode || body)).scrollLeft,
+        offsetY = win.pageYOffset !== undefined ? win.pageYOffset :
+            (<any>(doc.documentElement || body.parentNode || body)).scrollTop,
 
-    var transitions = {
-        "transition": "transitionend",
-        "OTransition": "oTransitionEnd",
-        "MozTransition": "transitionend",
-        "WebkitTransition": "webkitTransitionEnd"
-    }
+        rect = el.getBoundingClientRect();
 
-    for (t in transitions) {
-        if (el.style[t] !== undefined) {
-            return transitions[t];
+    if (el !== body) {
+        var parent = el.parentNode;
+
+        // The element's rect will be affected by the scroll positions of
+        // *all* of its scrollable parents, not just the window, so we have
+        // to walk up the tree and collect every scroll offset. Good times.
+        while (parent !== body) {
+            offsetX += parent.scrollLeft;
+            offsetY += parent.scrollTop;
+            parent = parent.parentNode;
         }
     }
+
+    return {
+        bottom: rect.bottom + offsetY,
+        height: rect.height,
+        left: rect.left + offsetX,
+        right: rect.right + offsetX,
+        top: rect.top + offsetY,
+        width: rect.width
+    };
 }
-
-function whichAnimationEvent() {
-    var t,
-        el = document.createElement("fakeelement");
-
-    var animations = {
-        "animation": "animationend",
-        "OAnimationn": "oAnimationnEnd",
-        "MozAnimationn": "animationnend",
-        "WebkitAnimationn": "webkitAnimationnEnd"
-    }
-
-    for (t in animations) {
-        if (el.style[t] !== undefined) {
-            return animations[t];
-        }
-    }
-}
-
-(window as any).FsLibrary = FsLibrary;
