@@ -362,7 +362,7 @@ class FsLibrary {
             //try to fix queue here
             if (animation.enable) {
                 const target = document.querySelector(this.cms_selector);
-                Animate.methods.animate(findAndMatchFilterText, target, animation).then(console.log);
+                Animate.methods.animate(findAndMatchFilterText, target, animation);
             }
             else {
                 findAndMatchFilterText();
@@ -418,17 +418,7 @@ class FsLibrary {
                 if (search_result.length > 1) {
                     [].slice.call(master_collection[i].children)
                         .map((child, k) => {
-
-                            if (search_result[k].style.display == 'none') {
-                                child.style.display = search_result[k].style.display;
-                                const effect = String(animation.effects).replace(/^fade /gi, "");
-                                child.style.transform = effect;
-                            }
-                            else {
-                                child.style.display = search_result[k].style.display;
-                                child.style.transform = 'rotateZ(0) translate(0) scale(1)';
-                            }
-
+                            child.style.display = search_result[k].style.display;
                         });
 
                 }

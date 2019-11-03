@@ -13,7 +13,6 @@ export function transition(element, props, duration = 400, timing = 'linear') {
             for (const name in props) {
                 const value = css(element, name);
                 if (value === '') {
-                    console.log(name)
                     css(element, name, value);
                 }
             }
