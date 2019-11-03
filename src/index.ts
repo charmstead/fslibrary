@@ -1,5 +1,4 @@
-import { TweenLite, TimelineLite } from "gsap";
-
+import Animate from './animate'
 
 class FsLibrary {
 
@@ -11,13 +10,10 @@ class FsLibrary {
 
     private cms_selector: string;
 
-    private timeline = new TimelineLite();
-
     private animation: Animatn = {
         enable: true,
         duration: 250,
         easing: 'ease-in-out',
-        // effects: 'fade',
         effects: 'translate(0px,0px)'
     };
 
@@ -29,15 +25,7 @@ class FsLibrary {
 
     private animationStyle: string = `
         
-        .fslib-normal{
-            position:relative;
-        }
 
-        .fslib-normal>div{
-            justify-content:left;
-        }
-
-        
     @keyframes fade-in {
         0% {
             opacity: 0;
@@ -58,29 +46,8 @@ class FsLibrary {
       }
 `;
 
-    private next(tl, queue, getTransform = null) {
-        if (queue.length) {
-            let nextTween = queue.shift();
 
-            if (getTransform) {
-                nextTween[2].transform = getTransform();
-            }
-
-            tl.add(TweenLite.to.apply(null, nextTween));
-
-        }
-    }
-
-    private enQueue(tl, tween, queue) {
-
-        if (tl.isActive()) {
-            queue.unshift(tween);
-        } else {
-            tl.add(TweenLite.to.apply(null, tween));
-        }
-    }
-
-    private makeStyleSheet({ duration = 250, easing = 'ease-in-out', transform = 'translate(0)' }) {
+    private makeStyleSheet({ duration = 1, easing = 'ease-in-out', transform = 'translate(0)' }) {
 
         this.animationStyle = this.animationStyle.replace('{{duration}}', '' + duration);
         this.animationStyle = this.animationStyle.replace('{{ease}}', easing);
@@ -97,6 +64,8 @@ class FsLibrary {
         } else {
             style.appendChild(document.createTextNode(this.animationStyle));
         }
+
+        return style;
     }
 
     /**
@@ -127,12 +96,16 @@ class FsLibrary {
 
 
 
-    public loadmore(config: LoadMore = { button: "", actualLoadMore: true, initialLoad: 12, loadPerClick: 12, animation: this.animation }): void {
+    public loadmore(config: LoadMore = { button: "", actualLoadMore: false, initialLoad: 12, loadPerClick: 12, animation: this.animation }): void {
+
+
+        if (!config.actualLoadMore) return;
+
 
         if (config.animation) {
             const effects = config.animation.effects.replace('fade', '');
             let { duration, easing } = config.animation;
-            duration = duration? duration/1000 :1;
+            duration = duration ? duration / 1000 : 1;
             easing = easing || 'linear';
             this.makeStyleSheet({ duration, easing, transform: effects })
 
@@ -234,7 +207,7 @@ class FsLibrary {
     private getLayoutMode() {
 
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
-        
+
         return (
             get_cms_items().map((elem, i) => {
                 elem.style['justify-content'] = 'left';
@@ -255,11 +228,11 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public cmsfilter(config={cms_filter :[], filter_type:'single', animation:this.animation}) {
+    public cmsfilter(config = { cms_filter: [], filter_type: 'single', animation: this.animation }) {
 
-        let {cms_filter,filter_type,animation} =config;
+        let { cms_filter, filter_type, animation } = config;
 
-        filter_type = filter_type ? filter_type :(typeof cms_filter =='string')? 'single' : 'multi';
+        filter_type = filter_type ? filter_type : (typeof cms_filter == 'string') ? 'single' : 'multi';
 
         const self = this;
         if (animation) {
@@ -273,14 +246,8 @@ class FsLibrary {
             this.animation = animation;
         }
         animation = this.animation;
-        console.log(animation)
 
-        let clickCheck = 0;
-        const tl = [];
-        const queue = [];
-
-        const filterQueue = []
-
+        
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
         //get all collections
@@ -323,12 +290,8 @@ class FsLibrary {
                     (<any>elem).onchange = function (event) {
                         let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
-                        if (!self.timeline.isActive()) {
-                            filterHelper({ filter_option, id, index, filter_text })
-                        }
-                        else {
-                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
-                        }
+                        filterHelper({ filter_option, id, index, filter_text })
+                       
                     }
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
@@ -338,12 +301,8 @@ class FsLibrary {
                         if (!event.target.checked) {
                             filter_text = '';
                         }
-                        if (!self.timeline.isActive()) {
-                            filterHelper({ filter_option, id, index, filter_text })
-                        }
-                        else {
-                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
-                        }
+                        filterHelper({ filter_option, id, index, filter_text })
+                   
                     }
                 }
                 else {
@@ -366,12 +325,9 @@ class FsLibrary {
 
                         let filter_text = prevClicked.getAttribute("data-search") || '';
 
-                        if (!self.timeline.isActive()) {
-                            filterHelper({ filter_option, id, index, filter_text })
-                        }
-                        else {
-                            filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
-                        }
+                        // if (!self.timeline.isActive()) {
+                        filterHelper({ filter_option, id, index, filter_text })
+                       
                     }
                 }
             })
@@ -379,7 +335,6 @@ class FsLibrary {
 
 
         const filterHelper = ({ filter_option, id, index, filter_text }) => {
-            clickCheck++;
             if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
 
                 //checks if it has previously been clicked                
@@ -405,7 +360,14 @@ class FsLibrary {
 
             }
             //try to fix queue here
-            findAndMatchFilterText();
+            if (animation.enable) {
+                const target = document.querySelector(this.cms_selector);
+                Animate.methods.animate(findAndMatchFilterText, target, animation).then(console.log);
+            }
+            else {
+                findAndMatchFilterText();
+            }
+
 
         }
 
@@ -413,12 +375,6 @@ class FsLibrary {
         const findAndMatchFilterText = () => {
             const master_collection = get_cms_items();
             master_collection.map((elem, i) => {
-
-
-                if (!elem.classList.contains('fslib-normal')) {
-                    elem.classList.add('fslib-normal')
-                }
-
 
                 const search_result = filter.reduce((curr, search) => {
 
@@ -459,122 +415,22 @@ class FsLibrary {
 
                 }, [])//.join("").trim()
 
-                let pos = 0;
-
-
                 if (search_result.length > 1) {
                     [].slice.call(master_collection[i].children)
                         .map((child, k) => {
-                           
 
-                            if (!animation.enable) {
-                                child.style.display = search_result[k].style.display;
-                                return;
-                            }
-
-                            // if (!queue[k]) {
-                            //     queue[k] = []
-                            //     // tl[k] = new TimelineLite();
-                            // }
-
-                            let tween;
                             if (search_result[k].style.display == 'none') {
-                                this.timeline.to(
-                                    child,
-                                    animation.duration / 1000,
-                                    {
-                                        zIndex: 1,
-                                        transform: `${animation.effects}`,
-                                        autoAlpha: 0,
-                                        ease: animation.easing,
-                                        onComplete: () => {
-                                            child.style = 'display:none'
-                                            // self.next(tl[k], queue[k]);
-
-                                        }
-                                    },
-                                    "end" + clickCheck
-
-                                )
-                                // tween = [
-                                //     child,
-                                //     animation.duration / 1000,
-                                //     {
-                                //         zIndex: 1,
-                                //         transform: `${animation.effects}`,
-                                //         autoAlpha: 0,
-                                //         ease: animation.easing,
-                                //         onComplete: () => {
-                                //             child.style = 'display:none'
-                                //             self.next(tl[k], queue[k]);
-
-                                //         }
-                                //     }
-                                // ];
+                                child.style.display = search_result[k].style.display;
+                                const effect = String(animation.effects).replace(/^fade /gi, "");
+                                child.style.transform = effect;
                             }
                             else {
-
-                                const finalX = this.initialLayoutMode[i][pos].x;
-                                const finalY = this.initialLayoutMode[i][pos].y;
-
-                                pos++;
-
-                                const getProp = () => {
-                                    child.style = '';
-
-                                    const curr = child.getBoundingClientRect();
-                                  
-                                    const childDeltaX = finalX - curr.x;
-                                    const childDeltaY = finalY - curr.y;
-
-                                    return `translate(${childDeltaX}px, ${childDeltaY}px) rotateZ(0)`
-                                }
-
-                                // tween = [
-                                //     child,
-                                //     animation.duration / 1000,
-                                //     {
-                                //         autoAlpha: 1,
-                                //         zIndex: 2,
-                                //         transform: getProp(),
-                                //         ease: animation.easing,
-                                //         onComplete: function () {
-                                //             child.style = ''
-                                //             self.next(tl[k], queue[k], getProp);
-                                //         },
-                                //     }
-                                // ];
-
-                                this.timeline.to(
-                                    child,
-                                    animation.duration / 1000,
-                                    {
-                                        zIndex: 3,
-                                        transform: getProp(),
-                                        autoAlpha: 1,
-                                        ease: animation.easing,
-                                        onComplete: () => {
-                                            child.style = ''
-                                            // self.next(tl[k], queue[k]);
-
-                                        }
-                                    },
-                                    "end" + clickCheck
-                                )
-
+                                child.style.display = search_result[k].style.display;
+                                child.style.transform = 'rotateZ(0) translate(0) scale(1)';
                             }
-
-                            // this.enQueue(tl[k], tween, queue[k])
 
                         });
 
-                    this.timeline.eventCallback("onComplete", () => {
-                        let nextTween = filterQueue.shift();
-                        if (nextTween) {
-                            nextTween.call(null);
-                        }
-
-                    })
                 }
 
             })

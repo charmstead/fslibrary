@@ -2062,9 +2062,9 @@
     <script>
         var _animation = {
             enable: true,
-            duration:3000,
+            duration:300,
             easing: 'ease-in-out',
-            effects: 'fade scale(0.2) translate(10px,20px)'
+            effects: 'fade scale(0.2) translate(10px,20px) rotateZ(360deg)'
         }
         var fslib = new FsLibrary(".w-dyn-items")
 
@@ -2106,7 +2106,8 @@
             button: ".load-more-button",
             actualLoadMore: true,
             initialLoad: 12,
-            loadPerClick: 12
+            loadPerClick: 12,
+            animation: _animation
         })
 
     </script>
