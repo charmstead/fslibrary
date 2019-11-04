@@ -138,10 +138,11 @@ class FsLibrary {
             const addon = reserve.splice(0, loadPerClick);
             addon.map((elem) => {
                 elem.classList.add('fslib-fadeIn')
-                elem.addEventListener(whichAnimationEvent(), () => {
-                    elem.classList.remove('fslib-fadeIn')
 
+                once(elem, whichAnimationEvent(), ({type}) => {
+                    elem.classList.remove('fslib-fadeIn')
                 })
+                
                 document.querySelector(this.cms_selector).appendChild(elem);
             })
 
@@ -252,7 +253,7 @@ class FsLibrary {
         animation = this.animation;
 
         let filterActive = false;
-        const filterQueue = [];
+        let filterQueue = [];
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
         //get all collections
@@ -339,15 +340,16 @@ class FsLibrary {
         }
 
         const initFilter = ({ filter_option, id, index, filter_text }) => {
-            if (animation.queue && filterActive && filterQueue.length<=1) {
-                return filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
+            if (animation.queue && filterActive) {
+                return filterQueue.push(() => filterHelper({ filter_option, id, index, filter_text }));
             }
 
             return filterHelper({ filter_option, id, index, filter_text })
-
         }
 
         const filterHelper = ({ filter_option, id, index, filter_text }) => {
+            filterActive = true;
+
             if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
 
                 //checks if it has previously been clicked                
@@ -381,6 +383,7 @@ class FsLibrary {
                     if (nextAnimation) {
                         nextAnimation.call(null);
                     }
+
                 });
             }
             else {
@@ -391,7 +394,7 @@ class FsLibrary {
 
 
         const findAndMatchFilterText = () => {
-            filterActive = true;
+            // filterActive = true;
             const master_collection = get_cms_items();
             master_collection.map((elem, i) => {
 
