@@ -270,6 +270,7 @@ let fsLib = new fsLibrary('.w-dyn-items')
 var _animation = {
     enable: true,
     duration: 1,
+    queue:false, //default true
     easing: 'ease-in-out',
     effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
 }
