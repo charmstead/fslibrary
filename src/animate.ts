@@ -139,6 +139,7 @@ export function reset(el) {
         left: '',
         opacity: '',
         pointerEvents: '',
+        transform:'',
         position: '',
         top: '',
         width: ''
@@ -164,7 +165,7 @@ function addStyle() {
     style.insertRule(
         `.${targetClass} > * {
             margin-top: 0 !important;
-            /*transform: none !important;/*
+            /*transform: none !important;*/
         }`, 0
     );
 }

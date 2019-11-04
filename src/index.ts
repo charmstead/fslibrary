@@ -1,4 +1,5 @@
 import Animate from './animate'
+import { once } from '../js/util/index';
 
 class FsLibrary {
 
@@ -14,7 +15,8 @@ class FsLibrary {
         enable: true,
         duration: 250,
         easing: 'ease-in-out',
-        effects: 'translate(0px,0px)'
+        effects: 'translate(0px,0px)',
+        queue: true
     };
 
     private initialLayoutMode;
@@ -232,6 +234,8 @@ class FsLibrary {
 
         let { cms_filter, filter_type, animation } = config;
 
+        animation = {...this.animation,...animation};
+
         filter_type = filter_type ? filter_type : (typeof cms_filter == 'string') ? 'single' : 'multi';
 
         const self = this;
@@ -247,7 +251,8 @@ class FsLibrary {
         }
         animation = this.animation;
 
-        
+        let filterActive = false;
+        const filterQueue = [];
         let filter: Array<{ [key: string]: string }> = []//2D array to hold categories of filter selectors and their corresponding
 
         //get all collections
@@ -290,8 +295,8 @@ class FsLibrary {
                     (<any>elem).onchange = function (event) {
                         let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
-                        filterHelper({ filter_option, id, index, filter_text })
-                       
+                        initFilter({ filter_option, id, index, filter_text })
+
                     }
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
@@ -301,8 +306,9 @@ class FsLibrary {
                         if (!event.target.checked) {
                             filter_text = '';
                         }
-                        filterHelper({ filter_option, id, index, filter_text })
-                   
+
+                        initFilter({ filter_option, id, index, filter_text })
+
                     }
                 }
                 else {
@@ -325,14 +331,21 @@ class FsLibrary {
 
                         let filter_text = prevClicked.getAttribute("data-search") || '';
 
-                        // if (!self.timeline.isActive()) {
-                        filterHelper({ filter_option, id, index, filter_text })
-                       
+                        initFilter({ filter_option, id, index, filter_text })
+
                     }
                 }
             })
         }
 
+        const initFilter = ({ filter_option, id, index, filter_text }) => {
+            if (animation.queue && filterActive && filterQueue.length<=1) {
+                return filterQueue.unshift(() => filterHelper({ filter_option, id, index, filter_text }))
+            }
+
+            return filterHelper({ filter_option, id, index, filter_text })
+
+        }
 
         const filterHelper = ({ filter_option, id, index, filter_text }) => {
             if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
@@ -362,17 +375,23 @@ class FsLibrary {
             //try to fix queue here
             if (animation.enable) {
                 const target = document.querySelector(this.cms_selector);
-                Animate.methods.animate(findAndMatchFilterText, target, animation);
+                Animate.methods.animate(findAndMatchFilterText, target, animation).then(() => {
+                    filterActive = false;
+                    const nextAnimation = filterQueue.shift();
+                    if (nextAnimation) {
+                        nextAnimation.call(null);
+                    }
+                });
             }
             else {
                 findAndMatchFilterText();
             }
 
-
         }
 
 
         const findAndMatchFilterText = () => {
+            filterActive = true;
             const master_collection = get_cms_items();
             master_collection.map((elem, i) => {
 
@@ -457,6 +476,7 @@ interface Animatn {
     easing?: string;
     duration?: number;
     effects?: string;
+    queue?: boolean
 }
 
 
