@@ -19,8 +19,6 @@ class FsLibrary {
         queue: true
     };
 
-    private initialLayoutMode;
-
     private addClass: boolean;
 
     private addClassConfig: AddClass;
@@ -119,7 +117,6 @@ class FsLibrary {
         const parent: any = document.querySelector(this.cms_selector);
         const collection: any[] = [].slice.call(parent.children);
         const clone: any[] = [].slice.call(parent.cloneNode(true).children);
-        this.setInitialLayoutMode();
 
         const { button, actualLoadMore, initialLoad, loadPerClick } = config;
 
@@ -200,32 +197,6 @@ class FsLibrary {
         })
     }
 
-    private setInitialLayoutMode() {
-
-        const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
-        //storing initial layoutMode
-        this.initialLayoutMode = this.getLayoutMode();
-    }
-
-    private getLayoutMode() {
-
-        const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
-
-        return (
-            get_cms_items().map((elem, i) => {
-                elem.style['justify-content'] = 'left';
-                elem.style['overflow'] = 'hidden';
-                return (
-                    [].slice.call(elem.children).map((item, j) => {
-                        const coordinates = item.getBoundingClientRect();
-                        return {
-                            x: coordinates.left,
-                            y: coordinates.top
-                        };
-                    }))
-            })
-        );
-    }
 
     /**
      * 
@@ -260,11 +231,8 @@ class FsLibrary {
 
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
 
-        if (!this.initialLayoutMode) {
-            this.setInitialLayoutMode();
-        }
-
         let filter_group: any[] = [];
+        let resetButtonIndex;
 
         if (Array.isArray(cms_filter)) {
             cms_filter.map((val, index) => {
@@ -285,6 +253,19 @@ class FsLibrary {
             throw "Incorrect type passed as cms_filter"
         }
 
+        function conditionalReset(filter_text,index){
+            const isEmpty = !filter_text.trim();
+            const tag=Object.values(filter[index]);
+
+            if(isEmpty && tag.includes(filter_text)){
+                return false;
+            }
+
+            if(isEmpty && !tag.length){
+                return false;
+            }
+            return true;
+        }
 
         function assignChangeEventToButtons(index, prevClicked, filter_option = filter_type) {
             filter[index] = {} //initialise default values
@@ -292,23 +273,27 @@ class FsLibrary {
                 const id = `${index}${j}`;
                 const tag_element = elem && elem.tagName;
 
+                let filter_text;
+
                 if (tag_element == "SELECT") {
                     (<any>elem).onchange = function (event) {
-                        let filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
-                        initFilter({ filter_option, id, index, filter_text })
+                        filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
+
+                        conditionalReset(filter_text,index) && initFilter({ filter_option, id, index, filter_text })
 
                     }
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
                     (<any>elem).onchange = function (event) {
-                        let filter_text = event.currentTarget.getAttribute("data-search") || '';
+                        filter_text = event.currentTarget.getAttribute("data-search") || '';
 
                         if (!event.target.checked) {
                             filter_text = '';
                         }
 
-                        initFilter({ filter_option, id, index, filter_text })
+                        conditionalReset(filter_text,index) && initFilter({ filter_option, id, index, filter_text })
+                        
 
                     }
                 }
@@ -330,9 +315,11 @@ class FsLibrary {
                             prevClicked.classList.add("active")
                         }
 
-                        let filter_text = prevClicked.getAttribute("data-search") || '';
+                        filter_text = prevClicked.getAttribute("data-search") || '';
 
-                        initFilter({ filter_option, id, index, filter_text })
+                        //prevent further filter if filter is empty and reset button is clicked.
+
+                        conditionalReset(filter_text,index) && initFilter({ filter_option, id, index, filter_text })
 
                     }
                 }

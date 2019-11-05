@@ -1819,40 +1819,40 @@
 
         var _animation = {
             enable: true,
-            duration: 1000,
-            easing: 'ease-in-out',
-            effects: 'fade scale(0.2) rotateX(90deg) rotateZ(90deg)'
+            duration: 3000,
+            easing: 'ease-in',
+            effects: 'fade scale(0.2) rotateZ(90deg)'
         }
 
         var fsLib = new FsLibrary('.w-dyn-items');
 
         fsLib.combine()
 
-        // fsLib.cmsfilter({
-        //     cms_filter: ".filter-bar",
-        //     filter_type: "single",
-        //     animation: _animation
-        // })
-
-        //or
-
         fsLib.cmsfilter({
             cms_filter: ".filter-bar",
+            filter_type: "single",
             animation: _animation
         })
 
-        fsLib.loadmore({
-            button: ".load-more-button",
-            actualLoadMore: true,
-            initialLoad: 12,
-            loadPerClick: 12,
-            animation: {
-                enable: true,
-                duration: 1000,
-                easing: 'ease-in-out',
-                effects: 'fade scale(0) rotateZ(360deg)'
-            }
-        })
+        //or
+
+        // fsLib.cmsfilter({
+        //     cms_filter: ".filter-bar",
+        //     animation: _animation
+        // })
+
+        // fsLib.loadmore({
+        //     button: ".load-more-button",
+        //     actualLoadMore: true,
+        //     initialLoad: 12,
+        //     loadPerClick: 12,
+        //     animation: {
+        //         enable: true,
+        //         duration: 1000,
+        //         easing: 'ease-in-out',
+        //         effects: 'fade scale(0) rotateZ(360deg)'
+        //     }
+        // })
 
 
     </script>
