@@ -20,10 +20,14 @@ Create an instance of the fsLibrary and pass in the CSS selector of
 the cms items parent container element.
 
 The fsLibrary constructor takes an optional second argument object which defines the 
-animation that will be used in the transition of the cms items.
+type of lazy loading feature to be enabled on the cms items.
+
+Type 1: Using background image on div
+Type 2: using image img tag.
 ```
 <script src="/dist/index.js"></script>
 <script>
+document.addEventListener("DOMContentLoaded", function(event) { 
 
     var _animation = {
         enable: true,
@@ -32,7 +36,12 @@ animation that will be used in the transition of the cms items.
         effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
     }
 
-    var fsLib = new FsLibrary('.w-dyn-items')
+    var lazyLoadOption={
+        type:1,
+        className:"bg-none"
+    }
+
+    var fsLib = new FsLibrary('.w-dyn-items',lazyLoadOption)
 
     //combine
     fsLib.combine()
@@ -61,6 +70,8 @@ animation that will be used in the transition of the cms items.
         frequency: 3,
         start: 1
     })
+
+});
 </script>
 
 ```

@@ -113,7 +113,7 @@ export default {
                     });
                     reset(target);
                     // this.$update(target);
-                    fastdom.flush(); // needed for IE11
+                    fastdom.flush(); // needed for IE11ssa
                 }, noop);
 
         }
