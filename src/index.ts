@@ -1,6 +1,6 @@
 import Animate from './animate'
-import { once } from '../js/util/index';
-import { registerListener, isInViewport } from './utility';
+import { once,Promise } from '../js/util/index';
+import { registerListener, isInViewport,isVisible,createDocument } from './utility';
 
 class FsLibrary {
 
@@ -24,6 +24,9 @@ class FsLibrary {
     };
 
     private addClass: boolean;
+    private index: number=0;
+
+    private hidden_collections:any[];
 
     private addClassConfig: AddClass;
 
@@ -124,33 +127,97 @@ class FsLibrary {
     public combine() {
 
         //get all collections
-        const master_collection: any = [].slice.call(document.querySelectorAll(this.cms_selector));
+        const visible_collection: any =  [].slice.call(document.querySelectorAll(this.cms_selector)).filter(isVisible);
 
         //copies the cms items into the first collection list
-        master_collection[0].innerHTML = (
-            [...master_collection].reduce((curr, items) => {
+        visible_collection[0].innerHTML = (
+            visible_collection.reduce((curr, items) => {
                 //gets all the items  
-                return [...curr, ...items.innerHTML]
+                return [...curr, ...items.innerHTML];
             }, []).join("")
-        )
+        );
 
         //deletes the rest collection list
-        master_collection.forEach((elem: Element, i: number) => {
+        visible_collection.forEach((elem: Element, i: number) => {
             if (i > 0) {
-                elem.outerHTML = ""
+                elem.outerHTML = "";
             }
         })
 
 
     }
 
+    private getMasterCollection(){
+        return document.querySelector(this.cms_selector)
+    }
+
+    private  getNextData(url, done) {
+        
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        xhr.send();
+        xhr.onload = ()=>{
+
+            if (xhr.status == 200) {
+                done(xhr.response);
+            }
+        };
+    }
+
+    private appendPaginatedData(data:string) {
+        const newDoc = createDocument(data,"newDoc");
+        const collection = newDoc.querySelectorAll(this.cms_selector)[this.index];
+        const nextHref = newDoc.querySelectorAll('.w-pagination-next')[this.index];
+
+        this.appendToCms(collection.children);
+        this.setLoadmoreHref('');
+        nextHref ? this.setLoadmoreHref((<any>nextHref).href) :this.setLoadmoreHref('');
+
+        if(!this.hidden_collections.length && !nextHref){
+            (<any>document.querySelector('.w-pagination-wrapper')).style.display='none'
+        }
 
 
-    public loadmore(config: LoadMore = { button: "", actualLoadMore: false, initialLoad: 12, loadPerClick: 12, animation: this.animation }): void {
+    }
 
+    private appendToCms(collection){
+        const master_collection = this.getMasterCollection();
+
+        [].slice.call(collection).forEach(element => {
+            element.classList.add('fslib-fadeIn')
+
+            once(element, whichAnimationEvent(), ({type}) => {
+                element.classList.remove('fslib-fadeIn')
+            });
+
+            master_collection.appendChild(element);
+            if (this.addClass) {
+                this.addClasses(this.addClassConfig);
+            }
+        });
+    }
+
+    private setLoadmoreHref(url){
+        const master_collection = this.getMasterCollection();
+        master_collection.parentElement.querySelector("a.w-pagination-next").setAttribute('data-href',url);
+    }
+
+    private getHiddenCollections():any[]{
+        return [].slice.call(document.querySelectorAll(this.cms_selector)).filter(e=>!isVisible(e));
+    }
+
+    private setHiddenCollections(){
+        const collection= this.getHiddenCollections();
+        this.hidden_collections =collection.map(val=>val.parentElement.cloneNode(true));
+
+        collection.forEach(val=>val.parentNode.outerHTML="");
+    }
+
+    public loadmore(config: LoadMore = { button: "a.w-pagination-next", actualLoadMore: false, animation: this.animation }): void {
+
+        this.setHiddenCollections();
 
         if (!config.actualLoadMore) return;
-
 
         if (config.animation) {
             const effects = config.animation.effects.replace('fade', '');
@@ -164,45 +231,31 @@ class FsLibrary {
             this.makeStyleSheet({});
         }
 
-        const parent: any = document.querySelector(this.cms_selector);
-        const collection: any[] = [].slice.call(parent.children);
-        const clone: any[] = [].slice.call(parent.cloneNode(true).children);
 
-        const { button, actualLoadMore, initialLoad, loadPerClick } = config;
+        const { button} = config;
 
-        let reserve = [];
-        reserve = clone.filter((child, i) => {
+        const nextButton = document.querySelector(button);
+        nextButton.setAttribute("data-href",(<any>nextButton).href);
+        nextButton.removeAttribute('href');
 
-            if (i < initialLoad) {
-                return false;
-            }
+        (<any>document.querySelector(button)).onclick = (evt) => {
 
-            collection[i].outerHTML = "";
-            return true;
-        });
-
-        (<any>document.querySelector(button)).onclick = () => {
-            const addon = reserve.splice(0, loadPerClick);
-            addon.map((elem) => {
-                elem.classList.add('fslib-fadeIn')
-
-                once(elem, whichAnimationEvent(), ({type}) => {
-                    elem.classList.remove('fslib-fadeIn')
-                })
+                const href = evt.currentTarget.getAttribute("data-href");
+         
+                if(href){
+                  return this.getNextData(href,this.appendPaginatedData.bind(this));
+                }
+              
+                const nextcollection = this.hidden_collections.shift();
                 
-                document.querySelector(this.cms_selector).appendChild(elem);
-            })
+                if(nextcollection){
+                    this.appendToCms(nextcollection.firstElementChild.children); 
+                    const aHref = nextcollection.querySelector('.w-pagination-next');   
+                    this.setLoadmoreHref(aHref.href);     
+                    this.index++;       
+                }
 
-            if (this.addClass) {
-                this.addClasses(this.addClassConfig);
-            }
-
-            if (reserve.length == 0) {
-                (<any>document.querySelector(button)).style.display = 'none';
-            }
         }
-
-
 
     }
 
@@ -495,8 +548,8 @@ interface AltClass {
 interface LoadMore {
     button: string;
     actualLoadMore: boolean;
-    initialLoad: number;
-    loadPerClick: number;
+    initialLoad?: number;
+    loadPerClick?: number;
     animation?: Animatn
 }
 

@@ -16,3 +16,16 @@ export function registerListener(event, func) {
         (window as any).attachEvent('on' + event, func)
     }
 }
+
+export function isVisible(elem) {
+  const {width,height}= elem.getBoundingClientRect();
+
+  return !(height === width && height===0)
+}
+
+
+export function createDocument(html, title) {
+    const doc = document.implementation.createHTMLDocument(title)
+    doc.documentElement.innerHTML = html
+    return doc
+  }
