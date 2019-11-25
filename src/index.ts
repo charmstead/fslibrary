@@ -1,5 +1,5 @@
 import Animate from './animate'
-import { once,Promise } from '../js/util/index';
+import { once } from '../js/util/index';
 import { registerListener, isInViewport,isVisible,createDocument } from './utility';
 
 class FsLibrary {
@@ -152,16 +152,19 @@ class FsLibrary {
     }
 
     private  getNextData(url, done) {
-        
+      return new Promise((resolve)=>{
         let xhr = new XMLHttpRequest();
-        xhr.open('GET', url);
+        xhr.open('GET', "https://cms-library.webflow.io/combine-filter-and-load-more?83fe5bda_page=2");
         xhr.send();
         xhr.onload = ()=>{
 
             if (xhr.status == 200) {
                 done(xhr.response);
+                return resolve(xhr.response);
             }
         };
+      })
+      .then(res=>res)
     }
 
     private appendPaginatedData(data:string) {
@@ -170,10 +173,10 @@ class FsLibrary {
         const nextHref = newDoc.querySelectorAll('.w-pagination-next')[this.index];
 
         this.appendToCms(collection.children);
-        this.setLoadmoreHref('');
         nextHref ? this.setLoadmoreHref((<any>nextHref).href) :this.setLoadmoreHref('');
 
         if(!this.hidden_collections.length && !nextHref){
+
             (<any>document.querySelector('.w-pagination-wrapper')).style.display='none'
         }
 
@@ -237,13 +240,21 @@ class FsLibrary {
         const nextButton = document.querySelector(button);
         nextButton.setAttribute("data-href",(<any>nextButton).href);
         nextButton.removeAttribute('href');
+        let busy =false;
 
         (<any>document.querySelector(button)).onclick = (evt) => {
 
+                if(busy) return false;
+
                 const href = evt.currentTarget.getAttribute("data-href");
-         
+               
+                busy=true;
                 if(href){
-                  return this.getNextData(href,this.appendPaginatedData.bind(this));
+                   
+                  return this.getNextData(href,this.appendPaginatedData.bind(this)).then(res=>{
+                        //enable button
+                        busy=false;
+                  });
                 }
               
                 const nextcollection = this.hidden_collections.shift();
@@ -254,7 +265,7 @@ class FsLibrary {
                     this.setLoadmoreHref(aHref.href);     
                     this.index++;       
                 }
-
+                busy=false;
         }
 
     }
