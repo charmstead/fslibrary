@@ -316,7 +316,7 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public cmsfilter(config = { cms_filter: [], filter_type: 'single', animation: this.animation }) {
+    public filter(config = { cms_filter: [], filter_type: 'single', animation: this.animation }) {
 
         let { cms_filter, filter_type, animation } = config;
 
