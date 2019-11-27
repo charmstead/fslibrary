@@ -42,6 +42,7 @@
                     <div class="filter-button" data-search='CATEGORY E'>
                         <div>E</div>
                     </div>
+                    
                 </div>
                 <div class="filter-cat-2">
                     <div class="filter-button red" data-search='RED'>
@@ -52,6 +53,9 @@
                     </div>
                     <div class="filter-button blue" data-search='BLUE'>
                         <div>Blue</div>
+                    </div>
+                    <div class="" >
+                        <input data-search='' name="search" type="text"/>
                     </div>
                 </div>
                 <div class="filter-cat-3">
@@ -2089,7 +2093,7 @@
 
         //default is and
 
-        fslib.cmsfilter({
+        fslib.filter({
             cms_filter: _FILTERS,
             filter_type: "multi",
             animation: _animation

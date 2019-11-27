@@ -1,14 +1,14 @@
 import Animate from './animate'
 import { once } from '../js/util/index';
-import { registerListener, isInViewport,isVisible,createDocument } from './utility';
+import { registerListener, isInViewport, isVisible, createDocument } from './utility';
 
 class FsLibrary {
 
-    constructor(cms_selector: string,opt:LazyLoad={type:1,className:"image"}) {
-     
+    constructor(cms_selector: string, opt: LazyLoad = { type: 1, className: "image" }) {
+
         //   this.lazyLoadOpt={type:1,...opt};
-        opt && this.lazyLoad(cms_selector,opt.className)
-          
+        opt && this.lazyLoad(cms_selector, opt.className)
+
         this.cms_selector = cms_selector;
 
     }
@@ -24,9 +24,9 @@ class FsLibrary {
     };
 
     private addClass: boolean;
-    private index: number=0;
+    private index: number = 0;
 
-    private hidden_collections:any[];
+    private hidden_collections: any[];
 
     private addClassConfig: AddClass;
 
@@ -53,11 +53,11 @@ class FsLibrary {
       }
 `;
 
-    private tinyImgBase64=`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`;
+    private tinyImgBase64 = `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`;
 
 
 
-    private lazyLoad(cms_selector,className){
+    private lazyLoad(cms_selector, className) {
 
         let lazy: any = [];
         registerListener('load', setLazy);
@@ -65,36 +65,36 @@ class FsLibrary {
         registerListener('scroll', lazyLoad);
         registerListener('resize', lazyLoad);
 
-        function setLazy(){            
+        function setLazy() {
             lazy = [].slice.call(document.querySelectorAll(`${cms_selector} .${className}`));
 
-        } 
+        }
 
-        function lazyLoad(){
-            for(var i=0; i<lazy.length; i++){
-                if(isInViewport(lazy[i])){
-                   
+        function lazyLoad() {
+            for (var i = 0; i < lazy.length; i++) {
+                if (isInViewport(lazy[i])) {
+
                     // if (lazy[i].getAttribute('data-src')){
                     //     lazy[i].src = lazy[i].getAttribute('data-src');
                     //     lazy[i].removeAttribute('data-src');
                     // }
 
-                    if(lazy[i].classList.contains(className)){
+                    if (lazy[i].classList.contains(className)) {
                         lazy[i].classList.remove(className)
                     }
                 }
             }
-            
+
             cleanLazy();
         }
 
-        function cleanLazy(){
+        function cleanLazy() {
             // lazy = [].filter.call(lazy, function(l){ return l.getAttribute('data-src');});
-            lazy = [].filter.call(lazy, (elem)=>{ 
+            lazy = [].filter.call(lazy, (elem) => {
                 return elem.classList.contains(className)
             });
         }
-        
+
     }
 
 
@@ -105,11 +105,11 @@ class FsLibrary {
         this.animationStyle = this.animationStyle.replace('{{transform}}', transform);
 
         const head = document.head || document.getElementsByTagName('head')[0];
-        const lazyLoadCss =`<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.css">`;
+        const lazyLoadCss = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/progressive-image.js/dist/progressive-image.css">`;
         head.innerHTML += lazyLoadCss;
         const style: any = document.createElement('style');
         head.appendChild(style);
-        
+
         style.type = 'text/css';
         if (style.styleSheet) {
             // This is required for IE8 and below.
@@ -127,7 +127,7 @@ class FsLibrary {
     public combine() {
 
         //get all collections
-        const visible_collection: any =  [].slice.call(document.querySelectorAll(this.cms_selector)).filter(isVisible);
+        const visible_collection: any = [].slice.call(document.querySelectorAll(this.cms_selector)).filter(isVisible);
 
         //copies the cms items into the first collection list
         visible_collection[0].innerHTML = (
@@ -147,49 +147,49 @@ class FsLibrary {
 
     }
 
-    private getMasterCollection(){
+    private getMasterCollection() {
         return document.querySelector(this.cms_selector)
     }
 
-    private  getNextData(url, done) {
-      return new Promise((resolve)=>{
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', "https://cms-library.webflow.io/combine-filter-and-load-more?83fe5bda_page=2");
-        xhr.send();
-        xhr.onload = ()=>{
+    private getNextData(url, done) {
+        return new Promise((resolve) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', "https://cms-library.webflow.io/combine-filter-and-load-more?83fe5bda_page=2");
+            xhr.send();
+            xhr.onload = () => {
 
-            if (xhr.status == 200) {
-                done(xhr.response);
-                return resolve(xhr.response);
-            }
-        };
-      })
-      .then(res=>res)
+                if (xhr.status == 200) {
+                    done(xhr.response);
+                    return resolve(xhr.response);
+                }
+            };
+        })
+            .then(res => res)
     }
 
-    private appendPaginatedData(data:string) {
-        const newDoc = createDocument(data,"newDoc");
+    private appendPaginatedData(data: string) {
+        const newDoc = createDocument(data, "newDoc");
         const collection = newDoc.querySelectorAll(this.cms_selector)[this.index];
         const nextHref = newDoc.querySelectorAll('.w-pagination-next')[this.index];
 
         this.appendToCms(collection.children);
-        nextHref ? this.setLoadmoreHref((<any>nextHref).href) :this.setLoadmoreHref('');
+        nextHref ? this.setLoadmoreHref((<any>nextHref).href) : this.setLoadmoreHref('');
 
-        if(!this.hidden_collections.length && !nextHref){
+        if (!this.hidden_collections.length && !nextHref) {
 
-            (<any>document.querySelector('.w-pagination-wrapper')).style.display='none'
+            (<any>document.querySelector('.w-pagination-wrapper')).style.display = 'none'
         }
 
 
     }
 
-    private appendToCms(collection){
+    private appendToCms(collection) {
         const master_collection = this.getMasterCollection();
 
         [].slice.call(collection).forEach(element => {
             element.classList.add('fslib-fadeIn')
 
-            once(element, whichAnimationEvent(), ({type}) => {
+            once(element, whichAnimationEvent(), ({ type }) => {
                 element.classList.remove('fslib-fadeIn')
             });
 
@@ -200,20 +200,20 @@ class FsLibrary {
         });
     }
 
-    private setLoadmoreHref(url){
+    private setLoadmoreHref(url) {
         const master_collection = this.getMasterCollection();
-        master_collection.parentElement.querySelector("a.w-pagination-next").setAttribute('data-href',url);
+        master_collection.parentElement.querySelector("a.w-pagination-next").setAttribute('data-href', url);
     }
 
-    private getHiddenCollections():any[]{
-        return [].slice.call(document.querySelectorAll(this.cms_selector)).filter(e=>!isVisible(e));
+    private getHiddenCollections(): any[] {
+        return [].slice.call(document.querySelectorAll(this.cms_selector)).filter(e => !isVisible(e));
     }
 
-    private setHiddenCollections(){
-        const collection= this.getHiddenCollections();
-        this.hidden_collections =collection.map(val=>val.parentElement.cloneNode(true));
+    private setHiddenCollections() {
+        const collection = this.getHiddenCollections();
+        this.hidden_collections = collection.map(val => val.parentElement.cloneNode(true));
 
-        collection.forEach(val=>val.parentNode.outerHTML="");
+        collection.forEach(val => val.parentNode.outerHTML = "");
     }
 
     public loadmore(config: LoadMore = { button: "a.w-pagination-next", actualLoadMore: false, animation: this.animation }): void {
@@ -235,37 +235,37 @@ class FsLibrary {
         }
 
 
-        const { button} = config;
+        const { button } = config;
 
         const nextButton = document.querySelector(button);
-        nextButton.setAttribute("data-href",(<any>nextButton).href);
+        nextButton.setAttribute("data-href", (<any>nextButton).href);
         nextButton.removeAttribute('href');
-        let busy =false;
+        let busy = false;
 
         (<any>document.querySelector(button)).onclick = (evt) => {
 
-                if(busy) return false;
+            if (busy) return false;
 
-                const href = evt.currentTarget.getAttribute("data-href");
-               
-                busy=true;
-                if(href){
-                   
-                  return this.getNextData(href,this.appendPaginatedData.bind(this)).then(res=>{
-                        //enable button
-                        busy=false;
-                  });
-                }
-              
-                const nextcollection = this.hidden_collections.shift();
-                
-                if(nextcollection){
-                    this.appendToCms(nextcollection.firstElementChild.children); 
-                    const aHref = nextcollection.querySelector('.w-pagination-next');   
-                    this.setLoadmoreHref(aHref.href);     
-                    this.index++;       
-                }
-                busy=false;
+            const href = evt.currentTarget.getAttribute("data-href");
+
+            busy = true;
+            if (href) {
+
+                return this.getNextData(href, this.appendPaginatedData.bind(this)).then(res => {
+                    //enable button
+                    busy = false;
+                });
+            }
+
+            const nextcollection = this.hidden_collections.shift();
+
+            if (nextcollection) {
+                this.appendToCms(nextcollection.firstElementChild.children);
+                const aHref = nextcollection.querySelector('.w-pagination-next');
+                this.setLoadmoreHref(aHref.href);
+                this.index++;
+            }
+            busy = false;
         }
 
     }
@@ -320,7 +320,7 @@ class FsLibrary {
 
         let { cms_filter, filter_type, animation } = config;
 
-        animation = {...this.animation,...animation};
+        animation = { ...this.animation, ...animation };
 
         filter_type = filter_type ? filter_type : (typeof cms_filter == 'string') ? 'single' : 'multi';
 
@@ -345,7 +345,6 @@ class FsLibrary {
 
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
 
-        let filter_group: any[] = [];
         let resetButtonIndex;
 
         if (Array.isArray(cms_filter)) {
@@ -353,63 +352,72 @@ class FsLibrary {
                 let prevClicked;
                 const { filter_option } = val;
 
-                filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filter_group} [data-search]`));
-                assignChangeEventToButtons(index, prevClicked, filter_option)
+                const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filter_group} [data-search]`));
+                assignChangeEventToButtons({ index, prevClicked, filter_option, filter_group })
 
             })
         }
         else if (typeof cms_filter == "string") {
             let prevClicked;
-            filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
-            assignChangeEventToButtons(0, prevClicked)
+            const filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
+            assignChangeEventToButtons({ index: 0, prevClicked, filter_group })
         }
         else {
             throw "Incorrect type passed as cms_filter"
         }
 
-        function conditionalReset(filter_text,index){
+        function conditionalReset(filter_text, index) {
             const isEmpty = !filter_text.trim();
-            const tag=Object.values(filter[index]);
+            const tag = Object.values(filter[index]);
 
-            if(isEmpty && tag.includes(filter_text)){
+            if (isEmpty && tag.includes(filter_text)) {
                 return false;
             }
 
-            if(isEmpty && !tag.length){
+            if (isEmpty && !tag.length) {
                 return false;
             }
             return true;
         }
 
-        function assignChangeEventToButtons(index, prevClicked, filter_option = filter_type) {
+        function assignChangeEventToButtons({ index, prevClicked, filter_option = filter_type, filter_group }) {
             filter[index] = {} //initialise default values
             filter_group.map((elem, j) => {
                 const id = `${index}${j}`;
                 const tag_element = elem && elem.tagName;
 
-                let filter_text;
-
+                
                 if (tag_element == "SELECT") {
                     (<any>elem).onchange = function (event) {
 
-                        filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
+                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
-                        conditionalReset(filter_text,index) && initFilter({ filter_option, id, index, filter_text })
+                        conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
 
                     }
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
-                    (<any>elem).onchange = function (event) {
-                        filter_text = event.currentTarget.getAttribute("data-search") || '';
 
-                        if (!event.target.checked) {
-                            filter_text = '';
-                        }
+                    switch (elem.type) {
 
-                        conditionalReset(filter_text,index) && initFilter({ filter_option, id, index, filter_text })
-                        
+                        case 'text':
+                            // (<any>elem).oninput = function (event) {
+                               
+                            // };
+                            (<any>elem).addEventListener('input', debounce( (event) => {
+                                const filter_text = event.target.value;
+                                conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text,wildcard:true })
+                            }, 500))
+                            break;
+                        default:
+                            (<any>elem).onchange = function (event) {
+                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("data-search") || '';
 
+                                conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
+                            }
+                            break;
                     }
+
                 }
                 else {
                     (<any>elem).onclick = function (event) {
@@ -429,32 +437,34 @@ class FsLibrary {
                             prevClicked.classList.add("active")
                         }
 
-                        filter_text = prevClicked.getAttribute("data-search") || '';
+                        const filter_text = prevClicked.getAttribute("data-search") || '';
 
                         //prevent further filter if filter is empty and reset button is clicked.
 
-                        conditionalReset(filter_text,index) && initFilter({ filter_option, id, index, filter_text })
+                        conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
 
                     }
                 }
             })
         }
 
-        const initFilter = ({ filter_option, id, index, filter_text }) => {
+        const initFilter = ({ filter_option, id, index, filter_text,wildcard=false }) => {
+            console.log("filter before",filter)
+
             if (animation.queue && filterActive) {
-                return filterQueue.push(() => filterHelper({ filter_option, id, index, filter_text }));
+                return filterQueue.push(() => filterHelper({ filter_option, id, index, filter_text,wildcard }));
             }
 
-            return filterHelper({ filter_option, id, index, filter_text })
+            return filterHelper({ filter_option, id, index, filter_text,wildcard })
         }
 
-        const filterHelper = ({ filter_option, id, index, filter_text }) => {
+        const filterHelper = ({ filter_option, id, index, filter_text,wildcard=false }) => {
             filterActive = true;
 
             if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
 
                 //checks if it has previously been clicked                
-                if (id in filter[index]) {
+                if (id in filter[index] && !wildcard) {
                     delete filter[index][id];
                 }
                 else {
@@ -466,7 +476,7 @@ class FsLibrary {
             else {//it is definitely "multi"
 
                 //checks if it has previously been clicked
-                if (id in filter[index]) {
+                if (id in filter[index] && !wildcard) {
 
                     delete filter[index][id];
                 }
@@ -475,15 +485,18 @@ class FsLibrary {
                 }
 
             }
+            console.log("filter after",filter);
             //try to fix queue here
             if (animation.enable) {
                 const target = document.querySelector(this.cms_selector);
                 Animate.methods.animate(findAndMatchFilterText, target, animation).then(() => {
-                    filterActive = false;
-                    const nextAnimation = filterQueue.shift();
-                    if (nextAnimation) {
-                        nextAnimation.call(null);
-                    }
+                    
+                        filterActive = false;
+
+                        const nextAnimation = filterQueue.shift();
+                        if (nextAnimation) {
+                            nextAnimation.call(null);
+                        }
 
                 });
             }
@@ -506,7 +519,7 @@ class FsLibrary {
 
                     const result = [].slice.call(elem.children).map((item, j) => {
 
-                        const re = new RegExp(val, "i");
+                        const re = new RegExp(val, "gi");
                         const valid = re.test(item.textContent);
 
                         const clonedItem = item.cloneNode(true);
@@ -631,5 +644,14 @@ function whichAnimationEvent() {
         }
     }
 }
+
+function debounce(callback, wait) {
+    let timeout;
+    return (...args) => {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => callback.apply(context, args), wait);
+    };
+  }
 
 (window as any).FsLibrary = FsLibrary;
