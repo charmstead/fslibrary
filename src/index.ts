@@ -449,8 +449,7 @@ class FsLibrary {
         }
 
         const initFilter = ({ filter_option, id, index, filter_text,wildcard=false }) => {
-            console.log("filter before",filter)
-
+           
             if (animation.queue && filterActive) {
                 return filterQueue.push(() => filterHelper({ filter_option, id, index, filter_text,wildcard }));
             }
@@ -485,7 +484,6 @@ class FsLibrary {
                 }
 
             }
-            console.log("filter after",filter);
             //try to fix queue here
             if (animation.enable) {
                 const target = document.querySelector(this.cms_selector);
