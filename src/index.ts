@@ -154,7 +154,7 @@ class FsLibrary {
     private getNextData(url, done) {
         return new Promise((resolve) => {
             let xhr = new XMLHttpRequest();
-            xhr.open('GET', "https://cms-library.webflow.io/combine-filter-and-load-more?83fe5bda_page=2");
+            xhr.open('GET', url);
             xhr.send();
             xhr.onload = () => {
 
