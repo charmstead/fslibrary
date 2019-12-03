@@ -152,8 +152,6 @@ class FsLibrary {
     }
 
     private getNextData(url) {
-       url=url.replace("http://127.0.0.1:5500","https://cms-library.webflow.io");
-       url = url.replace(".html","")
         return new Promise((resolve) => {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', url);
