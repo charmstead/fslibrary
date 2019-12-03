@@ -151,7 +151,9 @@ class FsLibrary {
         return document.querySelector(this.cms_selector)
     }
 
-    private getNextData(url, done) {
+    private getNextData(url) {
+       url=url.replace("http://127.0.0.1:5500","https://cms-library.webflow.io");
+       url = url.replace(".html","")
         return new Promise((resolve) => {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', url);
@@ -159,7 +161,7 @@ class FsLibrary {
             xhr.onload = () => {
 
                 if (xhr.status == 200) {
-                    done(xhr.response);
+                    // done(xhr.response);
                     return resolve(xhr.response);
                 }
             };
@@ -168,16 +170,15 @@ class FsLibrary {
     }
 
     private appendPaginatedData(data: string) {
-        const newDoc = createDocument(data, "newDoc");
+        const newDoc = createDocument(data, "newDoc"+Date.now());
         const collection = newDoc.querySelectorAll(this.cms_selector)[this.index];
-        const nextHref = newDoc.querySelectorAll('.w-pagination-next')[this.index];
-
-        this.appendToCms(collection.children);
+        const paginationWrapper = newDoc.querySelectorAll('.w-pagination-wrapper')[this.index];
+        const nextHref = paginationWrapper.querySelector(".w-pagination-next");
+        collection && this.appendToCms(collection.children);
         nextHref ? this.setLoadmoreHref((<any>nextHref).href) : this.setLoadmoreHref('');
 
-        if (!this.hidden_collections.length && !nextHref) {
-
-            (<any>document.querySelector('.w-pagination-wrapper')).style.display = 'none'
+        if(!this.hidden_collections.length && !nextHref){
+            (<any>document.querySelector('.w-pagination-wrapper')).outerHTML= ''
         }
 
 
@@ -218,9 +219,10 @@ class FsLibrary {
 
     public loadmore(config: LoadMore = { button: "a.w-pagination-next", actualLoadMore: false, animation: this.animation }): void {
 
-        this.setHiddenCollections();
 
         if (!config.actualLoadMore) return;
+        this.setHiddenCollections();
+
 
         if (config.animation) {
             const effects = config.animation.effects.replace('fade', '');
@@ -243,7 +245,6 @@ class FsLibrary {
         let busy = false;
 
         (<any>document.querySelector(button)).onclick = (evt) => {
-
             if (busy) return false;
 
             const href = evt.currentTarget.getAttribute("data-href");
@@ -251,8 +252,9 @@ class FsLibrary {
             busy = true;
             if (href) {
 
-                return this.getNextData(href, this.appendPaginatedData.bind(this)).then(res => {
+                return this.getNextData(href).then(res => {
                     //enable button
+                    this.appendPaginatedData(<any>res);
                     busy = false;
                 });
             }
@@ -265,6 +267,7 @@ class FsLibrary {
                 this.setLoadmoreHref(aHref.href);
                 this.index++;
             }
+            
             busy = false;
         }
 
