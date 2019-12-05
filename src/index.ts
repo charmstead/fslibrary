@@ -282,9 +282,9 @@ class FsLibrary {
      *     start: number; //position of list item to start with
      * }
      */
-    public addClasses(config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
+    public addClasses(config: AddClass = { classArray: [], frequency: 2, start: 1 }): void {
         const parent: any = document.querySelector(this.cms_selector);
-        const { frequency, start, classNames } = config;
+        const { frequency, start, classArray: classNames } = config;
 
         this.addClassConfig = config;
         this.addClass = true;
@@ -296,11 +296,11 @@ class FsLibrary {
             throw "unaccepted value passed as start";
         }
 
-        classNames.map(({ target, alt }) => {
-            const list = parent.querySelectorAll(target);
+        classNames.map(({ classTarget, classToAdd }) => {
+            const list = parent.querySelectorAll(classTarget);
             for (let j = start - 1; j < list.length; j += frequency) {
 
-                const addon = alt.replace(/\./g, "")
+                const addon = classToAdd.replace(/\./g, "")
                 if (list[j].className.indexOf(addon) < 0) {
                     list[j].className += " " + addon
                 }
@@ -317,15 +317,15 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public filter(config = { cms_filter: [], filter_type: 'single', animation: this.animation }) {
+    public filter(config = { cms_filter: [], filter_type: 'exclusive', animation: this.animation }) {
 
         let { cms_filter, filter_type, animation } = config;
 
         animation = { ...this.animation, ...animation };
 
-        filter_type = filter_type ? filter_type : (typeof cms_filter == 'string') ? 'single' : 'multi';
+        filter_type = filter_type ? filter_type : (typeof cms_filter == 'string') ? 'exclusive' : 'multi';
 
-        const self = this;
+    
         if (animation) {
             animation.enable = !/^false$/.test(String(animation.enable));
             const effects = animation.effects.replace('fade', '');
@@ -346,21 +346,20 @@ class FsLibrary {
 
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
 
-        let resetButtonIndex;
 
         if (Array.isArray(cms_filter)) {
             cms_filter.map((val, index) => {
                 let prevClicked;
                 const { filter_option } = val;
 
-                const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filter_group} [data-search]`));
+                const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filter_group} [filter-by]`));
                 assignChangeEventToButtons({ index, prevClicked, filter_option, filter_group })
 
             })
         }
         else if (typeof cms_filter == "string") {
             let prevClicked;
-            const filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
+            const filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [filter-by]`));
             assignChangeEventToButtons({ index: 0, prevClicked, filter_group })
         }
         else {
@@ -391,7 +390,7 @@ class FsLibrary {
                 if (tag_element == "SELECT") {
                     (<any>elem).onchange = function (event) {
 
-                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
+                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("filter-by") || '';
 
                         conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
 
@@ -412,7 +411,7 @@ class FsLibrary {
                             break;
                         default:
                             (<any>elem).onchange = function (event) {
-                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("data-search") || '';
+                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("filter-by") || '';
 
                                 conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
                             }
@@ -438,7 +437,7 @@ class FsLibrary {
                             prevClicked.classList.add("active")
                         }
 
-                        const filter_text = prevClicked.getAttribute("data-search") || '';
+                        const filter_text = prevClicked.getAttribute("filter-by") || '';
 
                         //prevent further filter if filter is empty and reset button is clicked.
 
@@ -564,8 +563,8 @@ class FsLibrary {
 }
 
 interface AltClass {
-    target: string;
-    alt: string
+    classTarget: string;
+    classToAdd: string
 }
 
 interface LoadMore {
@@ -577,14 +576,14 @@ interface LoadMore {
 }
 
 interface AddClass {
-    classNames: Array<AltClass>; //list of classnames you want to add
+    classArray: Array<AltClass>; //list of classnames you want to add
     frequency: number; //The frequency or order of addition of class to the list
     start: number; //position of list item to start with
 }
 
 interface FilterGroup {
-    filter_group: string;
-    filter_option: string
+    filterWrapper: string;
+    filterType: string
 }
 
 interface Animatn {
