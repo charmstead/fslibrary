@@ -282,9 +282,9 @@ class FsLibrary {
      *     start: number; //position of list item to start with
      * }
      */
-    public addClasses(config: AddClass = { classArray: [], frequency: 2, start: 1 }): void {
+    public addClasses(config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
         const parent: any = document.querySelector(this.cms_selector);
-        const { frequency, start, classArray: classNames } = config;
+        const { frequency, start, classNames } = config;
 
         this.addClassConfig = config;
         this.addClass = true;
@@ -296,11 +296,11 @@ class FsLibrary {
             throw "unaccepted value passed as start";
         }
 
-        classNames.map(({ classTarget, classToAdd }) => {
-            const list = parent.querySelectorAll(classTarget);
+        classNames.map(({ classTarget: target, alt }) => {
+            const list = parent.querySelectorAll(target);
             for (let j = start - 1; j < list.length; j += frequency) {
 
-                const addon = classToAdd.replace(/\./g, "")
+                const addon = alt.replace(/\./g, "")
                 if (list[j].className.indexOf(addon) < 0) {
                     list[j].className += " " + addon
                 }
@@ -317,9 +317,9 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public filter(config = { cms_filter: [], filter_type: 'exclusive', animation: this.animation }) {
+    public filter(config = { filterOptions: [], filterType: 'exclusive', animation: this.animation }) {
 
-        let { cms_filter, filter_type, animation } = config;
+        let { filterOptions: cms_filter, filterType: filter_type, animation } = config;
 
         animation = { ...this.animation, ...animation };
 
@@ -352,14 +352,14 @@ class FsLibrary {
                 let prevClicked;
                 const { filter_option } = val;
 
-                const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filter_group} [filter-by]`));
+                const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filterWrapper} [data-search]`));
                 assignChangeEventToButtons({ index, prevClicked, filter_option, filter_group })
 
             })
         }
         else if (typeof cms_filter == "string") {
             let prevClicked;
-            const filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [filter-by]`));
+            const filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
             assignChangeEventToButtons({ index: 0, prevClicked, filter_group })
         }
         else {
@@ -390,7 +390,7 @@ class FsLibrary {
                 if (tag_element == "SELECT") {
                     (<any>elem).onchange = function (event) {
 
-                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("filter-by") || '';
+                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
 
                         conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
 
@@ -411,7 +411,7 @@ class FsLibrary {
                             break;
                         default:
                             (<any>elem).onchange = function (event) {
-                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("filter-by") || '';
+                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("data-search") || '';
 
                                 conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
                             }
@@ -437,7 +437,7 @@ class FsLibrary {
                             prevClicked.classList.add("active")
                         }
 
-                        const filter_text = prevClicked.getAttribute("filter-by") || '';
+                        const filter_text = prevClicked.getAttribute("data-search") || '';
 
                         //prevent further filter if filter is empty and reset button is clicked.
 
@@ -564,7 +564,7 @@ class FsLibrary {
 
 interface AltClass {
     classTarget: string;
-    classToAdd: string
+    alt: string
 }
 
 interface LoadMore {
@@ -576,14 +576,14 @@ interface LoadMore {
 }
 
 interface AddClass {
-    classArray: Array<AltClass>; //list of classnames you want to add
+    classNames: Array<AltClass>; //list of classnames you want to add
     frequency: number; //The frequency or order of addition of class to the list
     start: number; //position of list item to start with
 }
 
 interface FilterGroup {
-    filterWrapper: string;
-    filterType: string
+    filter_group: string;
+    filter_option: string
 }
 
 interface Animatn {

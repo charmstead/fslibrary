@@ -2078,24 +2078,24 @@
 
         var _FILTERS = [
             {
-                filter_group: ".filter-cat-1",
-                filter_option: "single"
+                filterWrapper: ".filter-cat-1",
+                filterType: "single"
             },
             {
-                filter_group: ".filter-cat-2",
-                filter_option: "multi"
+                filterWrapper: ".filter-cat-2",
+                filterType: "multi"
             },
             {
-                filter_group: ".filter-cat-3",
-                filter_option: "multi"
+                filterWrapper: ".filter-cat-3",
+                filterType: "multi"
             }
         ]
 
         //default is and
 
         fslib.filter({
-            cms_filter: _FILTERS,
-            filter_type: "multi",
+            filterOptions: _FILTERS,
+            filterType: "multi",
             animation: _animation
         })
 
