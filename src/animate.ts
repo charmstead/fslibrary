@@ -29,6 +29,7 @@ export default {
 
             let children = toNodes(target.children);
             let propsFrom = children.map(el => getProps(el, true));
+            let childrenMargin = children.map(el=>css(el, 'margin'));
 
             const oldHeight = height(target);
             const oldScrollY = window.pageYOffset;
@@ -86,11 +87,12 @@ export default {
             });
 
             css(target, 'height', oldHeight);
+            children.map((el,i)=>css(el,"margin",childrenMargin[i]))
             scrollTop(window, oldScrollY);
 
             return Promise.all(
                 children.map((el, i) => {
-
+                    
                     if (propsFrom[i] && propsTo[i]) {
                         if(propsTo[i].opacity==0){
                             propsTo[i].transform=effect;
@@ -120,14 +122,18 @@ export default {
     }
 };
 
+
 function getProps(el, opacity?) {
     const zIndex = css(el, 'zIndex');
+    // const margin = css(el, 'margin');
+
     return isVisible(el)
         ? assign({
             display: '',
             opacity: opacity ? css(el, 'opacity') : '0',
             pointerEvents: 'none',
             position: 'absolute',
+            // margin,
             zIndex: zIndex === 'auto' ? index(el) : zIndex
         }, getPositionWithMargin(el))
         : false;
