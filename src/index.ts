@@ -140,7 +140,7 @@ class FsLibrary {
         //deletes the rest collection list
         visible_collection.forEach((elem: Element, i: number) => {
             if (i > 0) {
-                elem.outerHTML = "";
+                elem.parentElement.outerHTML = "";
             }
         })
 
