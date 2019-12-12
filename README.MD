@@ -287,7 +287,6 @@ var _animation = {
 
 fsLib.filter({
     filterOptions: ".filter-bar",
-    filterType: "exclusive",
     animation: _animation
 })
 

@@ -315,13 +315,13 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public filter(config = { filterOptions: [], filterType: 'exclusive', animation: this.animation }) {
+    public filter(config = { filterOptions: [], animation: this.animation }) {
 
-        let { filterOptions: cms_filter, filterType: filter_type, animation } = config;
+        let { filterOptions: cms_filter, animation } = config;
 
         animation = { ...this.animation, ...animation };
 
-        filter_type = filter_type ? filter_type : (typeof cms_filter == 'string') ? 'exclusive' : 'multi';
+        let filter_type = (typeof cms_filter == 'string') ? 'exclusive' : 'multi';
 
     
         if (animation) {
