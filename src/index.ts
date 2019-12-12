@@ -215,12 +215,10 @@ class FsLibrary {
         collection.forEach(val => val.parentNode.outerHTML = "");
     }
 
-    public loadmore(config: LoadMore = { button: "a.w-pagination-next", actualLoadMore: false, animation: this.animation }): void {
+    public loadmore(config: LoadMore = { button: "a.w-pagination-next", animation: this.animation }): void {
 
 
-        if (!config.actualLoadMore) return;
         this.setHiddenCollections();
-
 
         if (config.animation) {
             const effects = config.animation.effects.replace('fade', '');
@@ -569,9 +567,6 @@ interface AltClass {
 
 interface LoadMore {
     button: string;
-    actualLoadMore: boolean;
-    initialLoad?: number;
-    loadPerClick?: number;
     animation?: Animatn
 }
 
