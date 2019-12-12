@@ -87,7 +87,7 @@ export default {
             });
 
             css(target, 'height', oldHeight);
-            children.map((el,i)=>css(el,"margin",childrenMargin[i]))
+            children.map((el,i)=>el.style["margin"]=childrenMargin[i])
             scrollTop(window, oldScrollY);
 
             return Promise.all(
@@ -125,7 +125,6 @@ export default {
 
 function getProps(el, opacity?) {
     const zIndex = css(el, 'zIndex');
-    // const margin = css(el, 'margin');
 
     return isVisible(el)
         ? assign({
@@ -133,7 +132,6 @@ function getProps(el, opacity?) {
             opacity: opacity ? css(el, 'opacity') : '0',
             pointerEvents: 'none',
             position: 'absolute',
-            // margin,
             zIndex: zIndex === 'auto' ? index(el) : zIndex
         }, getPositionWithMargin(el))
         : false;
@@ -148,7 +146,8 @@ export function reset(el) {
         transform:'',
         position: '',
         top: '',
-        width: ''
+        width: '',
+        margin:''
     });
     removeClass(el, targetClass);
     css(el, 'height', '');
@@ -175,3 +174,20 @@ function addStyle() {
         }`, 0
     );
 }
+
+function fGetCSSProperty(s, e) {
+    try { return s.currentStyle ? s.currentStyle[e] : window.getComputedStyle(s)[e]; }
+    catch (x) { return null; } 
+}
+function fGetOffSetParent(s) {
+    var a = s.offsetParent || document.body;
+
+    while (a && a.tagName && a != document.body && fGetCSSProperty(a, 'position') == 'static')
+        a = a.offsetParent;
+    return a;
+}
+function GetPosition(s) {
+    var b = fGetOffSetParent(s);
+
+    return { Left: (b.offsetLeft + s.offsetLeft), Top: (b.offsetTop + s.offsetTop) };
+}   

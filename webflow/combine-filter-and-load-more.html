@@ -42,7 +42,7 @@
                     <div class="filter-button" data-search='CATEGORY E'>
                         <div>E</div>
                     </div>
-                    
+
                 </div>
                 <div class="filter-cat-2">
                     <div class="filter-button red" data-search='RED'>
@@ -54,8 +54,8 @@
                     <div class="filter-button blue" data-search='BLUE'>
                         <div>Blue</div>
                     </div>
-                    <div class="" >
-                        <input data-search='' name="search" type="text"/>
+                    <div class="">
+                        <input data-search='' name="search" type="text" />
                     </div>
                 </div>
                 <div class="filter-cat-3">
@@ -2064,55 +2064,59 @@
     <script src="../dist/index.js"></script>
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     <script>
-        var _animation = {
-            enable: true,
-            duration:1000,
-            easing: 'ease-in',
-            effects: 'scale(0) translate(10px,20px) rotateZ(360deg)'
-        }
-        var fslib = new FsLibrary(".w-dyn-items")
+        (function() {
 
-       
-        fslib.combine();
-
-
-        var _FILTERS = [
-            {
-                filterWrapper: ".filter-cat-1",
-                filterType: "single"
-            },
-            {
-                filterWrapper: ".filter-cat-2",
-                filterType: "multi"
-            },
-            {
-                filterWrapper: ".filter-cat-3",
-                filterType: "multi"
+            var _animation = {
+                enable: true,
+                duration: 1000,
+                easing: 'ease-in',
+                effects: 'scale(0) translate(10px,20px) rotateZ(360deg)'
             }
-        ]
+            var fslib = new FsLibrary(".w-dyn-items")
 
-        //default is and
 
-        fslib.filter({
-            filterOptions: _FILTERS,
-            filterType: "multi",
-            animation: _animation
-        })
+            fslib.combine();
 
-        //or
 
-        // fslib.cmsfilter({
-        //     cms_filter: _FILTERS,
-        //     animation: _animation
-        // })
+            var _FILTERS = [
+                {
+                    filterWrapper: ".filter-cat-1",
+                    filterType: "single"
+                },
+                {
+                    filterWrapper: ".filter-cat-2",
+                    filterType: "multi"
+                },
+                {
+                    filterWrapper: ".filter-cat-3",
+                    filterType: "multi"
+                }
+            ]
 
-        fslib.loadmore({
-            button: ".load-more-button",
-            actualLoadMore: true,
-            initialLoad: 12,
-            loadPerClick: 12,
-            animation: _animation
-        })
+            //default is and
+
+            fslib.filter({
+                filterOptions: _FILTERS,
+                filterType: "multi",
+                animation: _animation
+            })
+
+            //or
+
+            // fslib.cmsfilter({
+            //     cms_filter: _FILTERS,
+            //     animation: _animation
+            // })
+
+            fslib.loadmore({
+                button: ".load-more-button",
+                actualLoadMore: true,
+                initialLoad: 12,
+                loadPerClick: 12,
+                animation: _animation
+            })
+
+        })();
 
     </script>
 </body>

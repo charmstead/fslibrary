@@ -4,7 +4,7 @@
 
 1. combine: To combine all the collection items into one collection.
 2. addClass/addClasses: To add custom class selectors to specific DOM elements.
-3. cmsfilter: To perform filter on collection items.
+3. filter: To perform filter on collection items.
 4. loadmore: To perform a loadmore contents of a cms collection as they are needed.
 
 
@@ -47,9 +47,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     fsLib.combine()
 
     //cms filter
-    fsLib.cmsfilter({
-        cms_filter: _FILTERS,
-        filter_type: "multi",
+    fsLib.filter({
+        filterOptions: _FILTERS,
+        filterType: "multi",
         animation: _animation
     })
 
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     //addclasses
 
     fslib.addClasses({
-        classNames: fsAddClass,
+        classArray: fsAddClass,
         frequency: 3,
         start: 1
     })
@@ -108,7 +108,7 @@ into the first collection wrapper.
 ****usage:****
 
 ```
-var fsLib = new fsLibrary('.w-dyn-items')
+var fsLib = new FsLibrary('.w-dyn-items')
 //combine
 fsLib.combine('.w-dyn-items')
 ```
@@ -137,7 +137,7 @@ The animation property is optional. If provided, the property will be used to an
 ****usage:****
 
 ```
-var fsLib = new fsLibrary('.w-dyn-items')
+var fsLib = new FsLibrary('.w-dyn-items')
 var _animation = {
     enable: true,
     duration: 1,
@@ -164,38 +164,38 @@ the classnames should be added to the list
 The addclass functions accepts parameters.
 1. An object defined as below:
 {
-    classNames: Array<AltClass>; //list of classnames you want to add
+    classArray: Array<AltClass>; //list of classnames you want to add
     frequency: number; //The frequency or order of addition of class to the list
     start: number; //position of list item to start with
 }
 
 where AltClass is defined as 
 interface AltClass {
-    target: string;
-    alt: string
+    classTarget: string;
+    classToAdd: string
 }
 ****usage:****
 
 ```
-let fsLib = new fsLibrary('.w-dyn-items')
+let fsLib = new FsLibrary('.w-dyn-items')
 
 let fsAddClass = [
     {
-        target: ".project-feature",
-        alt: ".flip-row"
+        classTarget: ".project-feature",
+        classToAdd: ".flip-row"
     },
     {
-        target: ".project-feature-content",
-        alt: ".flip-text"
+        classTarget: ".project-feature-content",
+        classToAdd: ".flip-text"
     },
     {
-        target: ".project-feature-image",
-        alt: ".flip-image"
+        classTarget: ".project-feature-image",
+        classToAdd: ".flip-image"
     }
 ]
 
 fsLib.addClasses(".w-dyn-items", {
-    classNames: fsAddClass,
+    classArray: fsAddClass,
     frequency: 2,
     start: 1
 })
@@ -203,80 +203,79 @@ fsLib.addClasses(".w-dyn-items", {
 ```
 
 
-##  cmsfilter functionality
+##  filter functionality
 
 To perform filter functions on the list of collection items:
 
-The cmsfilter functions takes an object parameter with the following keys:
+The filter functions takes an object parameter with the following keys:
 
-cms_filter,filter_type,animation
+filterOptions,filterType,animation
 
-The cmsfilter filter_type can be "SINGLE" or "MULTI" depending on the type of the filter functionality you want to perform.
-It is an optional key, if omitted, the filter_type will be determined by the type of cms_filter passed in.
+The filter filterType can be "exclusive" or "MULTI" depending on the type of the filter functionality you want to perform.
+It is an optional key, if omitted, the filterType will be determined by the type of filter passed in.
 
 The "MULTI" shows intersection of filtered results across provided group of filters.
 
-The cms_filter key can be a string or Array of objects that contain css selector of the parent container of the filter buttons/elements.
+The filterOptions key can be a string or Array of objects that contain css selector of the parent container of the filter buttons/elements.
 
-The cms_filter key is a ****STRING**** for the case of a "SINGLE" filter option. The css selector of the parent container
-of the filter buttons/elements is passed as the argument.
+The filterOptions key is a ****STRING**** for the case of a "exclusive" filter option. The css selector of the parent container of the filter buttons/elements is passed as the argument.
 Otherwise it is an Array of objects with below structure for the case of "MULTI" filter option.
 var _FILTERS = [
     {
-        filter_group: ".filter-cat-1",
-        filter_option: "single"
+        filterWrapper: ".filter-cat-1",
+        filterType: "exclusive"
     },
     {
-        filter_group: ".filter-cat-2",
-        filter_option: "multi"
+        filterWrapper: ".filter-cat-2",
+        filterType: "multi"
     },
     {
-        filter_group: ".filter-cat-3",
-        filter_option: "multi"
+        filterWrapper: ".filter-cat-3",
+        filterType: "multi"
     }
 ]
 
 The variable "_FILTER" above is passed as the first argument.
 
-The ****filter_group**** property is the css selector of the parent container of the filter buttons/elements.
-The ****filter_option**** property is filter option you wish to assign to the current filter group. This becomes
-powerful as allows you to mix both "MULTI" and "SINGLE" filter functionalities.
+The ****filterWrapper**** property is the css selector of the parent container of the filter buttons/elements.
+The ****filterType**** property is filter option you wish to assign to the current filter group. This becomes
+powerful as allows you to mix both "MULTI" and "exclusive" filter functionalities.
 
 The animation key is also optional. It determines the effects you want to be applied to the filtered elements.
 
 
 
 ****usage:****
-Create the elements you want to use as your filter and add a "data-search" attribute initialized
+Create the elements you want to use as your filter and add a "filter-by" attribute initialized
 to the corresponding search string you want to match in the collection items.
 
-For SELECT Tag, add the "data-search" attribute to the children elements option tags.
+For SELECT Tag, add the "filter-by" attribute to the children elements option tags.
 
 ```
-//Example for "SINGLE" filter
+//Example for "exclusive" filter
 
 <div class="filter-bar"><!--parent container elem-->
     <div  class="filter-button cat-reset">
         <div>All</div>
     </div>
-    <div data-search='CATEGORY A' class="filter-button cat-a">
+    <div filter-by='CATEGORY A' class="filter-button cat-a">
         <div>Category A</div>
     </div>
-    <div  data-search='CATEGORY B' class="filter-button cat-b">
+    <div  filter-by='CATEGORY B' class="filter-button cat-b">
         <div>Category B</div>
     </div>
-    <div data-search='CATEGORY C' class="filter-button cat-c">
+    <div filter-by='CATEGORY C' class="filter-button cat-c">
         <div>Category C</div>
     </div>
-    <div data-search='CATEGORY D' class="filter-button cat-d">
+    <div filter-by='CATEGORY D' class="filter-button cat-d">
         <div>Category D</div>
     </div>
-    <div data-search='CATEGORY E' class="filter-button cat-e">
+    <div filter-by='CATEGORY E' class="filter-button cat-e">
         <div>Category E</div>
     </div>
 </div>
 
-let fsLib = new fsLibrary('.w-dyn-items')
+let fsLib = new FsLibrary('.w-dyn-items')
 
 var _animation = {
     enable: true,
@@ -286,35 +285,35 @@ var _animation = {
     effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
 }
 
-fsLib.cmsfilter({
-    cms_filter: ".filter-bar",
-    filter_type: "single",
+fsLib.filter({
+    filterOptions: ".filter-bar",
+    filterType: "exclusive",
     animation: _animation
 })
 
 or
 
-fsLib.cmsfilter({
-    cms_filter: ".filter-bar",
+fsLib.filter({
+    filterOptions: ".filter-bar",
     animation: _animation
 })
 
 ```
 
 ```
-//Example for "SINGLE" filter with select
+//Example for "exclusive" filter with select
 //For SELECT Tag, use the css selector of the select as the parent container elem
 
 <select name="my_filter" class="select_filter"><!--parent container elem-->
-    <option data-search=''>RESET</option>
-    <option data-search='CATEGORY A'> Category A</option>
-    <option data-search='CATEGORY B'> Category B</option>
-    <option data-search='CATEGORY C'> Category C</option>
-    <option data-search='CATEGORY D'> Category D</option>
-    <option data-search='CATEGORY E'> Category E</option>
+    <option filter-by=''>RESET</option>
+    <option filter-by='CATEGORY A'> Category A</option>
+    <option filter-by='CATEGORY B'> Category B</option>
+    <option filter-by='CATEGORY C'> Category C</option>
+    <option filter-by='CATEGORY D'> Category D</option>
+    <option filter-by='CATEGORY E'> Category E</option>
 </select>
 
-let fsLib = new fsLibrary('.w-dyn-items')
+let fsLib = new FsLibrary('.w-dyn-items')
 
 var _animation = {
     enable: true,
@@ -323,7 +322,7 @@ var _animation = {
     effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
 }
 
-fsLib.cmsfilter(".select_filter","single", _animation)
+fsLib.filter(".select_filter","exclusive", _animation)
 
 ```
 
@@ -332,80 +331,80 @@ fsLib.cmsfilter(".select_filter","single", _animation)
 
 <div class="filter-bar">
     <div class="filter-cat-1">
-        <div class="filter-button" data-search='CATEGORY A'>
+        <div class="filter-button" filter-by='CATEGORY A'>
             <div>A</div>
         </div>
-        <div class="filter-button" data-search='CATEGORY B'>
+        <div class="filter-button" filter-by='CATEGORY B'>
             <div>B</div>
         </div>
-        <div class="filter-button" data-search='CATEGORY C'>
+        <div class="filter-button" filter-by='CATEGORY C'>
             <div>C</div>
         </div>
-        <div class="filter-button" data-search='CATEGORY D'>
+        <div class="filter-button" filter-by='CATEGORY D'>
             <div>D</div>
         </div>
-        <div class="filter-button" data-search='CATEGORY E'>
+        <div class="filter-button" filter-by='CATEGORY E'>
             <div>E</div>
         </div>
     </div>
     <div class="filter-cat-2">
-        <div class="filter-button" data-search='RED'>
+        <div class="filter-button" filter-by='RED'>
             <div>Red</div>
         </div>
-        <div class="filter-button" data-search='GREEN'>
+        <div class="filter-button" filter-by='GREEN'>
             <div>Green</div>
         </div>
-        <div class="filter-button" data-search='BLUE'>
+        <div class="filter-button" filter-by='BLUE'>
             <div>Blue</div>
         </div>
     </div>
     <div class="filter-cat-3">
         <div class="w-checkbox checkbox">
-            <input type="checkbox" id="checkbox" name="jan" data-search="Jan" class="w-checkbox-input">
+            <input type="checkbox" id="checkbox" name="jan" filter-by="Jan" class="w-checkbox-input">
             <label for="checkbox" class="w-form-label">Jan</label>
         </div>
         <div class="w-checkbox checkbox">
-            <input type="checkbox" id="checkbox-2" name="may" data-search="May" class="w-checkbox-input">
+            <input type="checkbox" id="checkbox-2" name="may" filter-by="May" class="w-checkbox-input">
             <label for="checkbox-2" class="w-form-label">May</label>
         </div>
         <div class="w-checkbox checkbox">
-            <input type="checkbox" id="checkbox-3" name="dec" data-search="Dec" class="w-checkbox-input">
+            <input type="checkbox" id="checkbox-3" name="dec" filter-by="Dec" class="w-checkbox-input">
             <label for="checkbox-3" class="w-form-label">Dec</label>
         </div>
         <div class="w-checkbox checkbox">
-            <input type="checkbox" id="checkbox-4" name="april" data-search="April"
+            <input type="checkbox" id="checkbox-4" name="april" filter-by="April"
                 class="w-checkbox-input">
             <label for="checkbox-4" class="w-form-label">April</label>
         </div>
         <div class="w-checkbox checkbox">
-            <input type="checkbox" id="checkbox-5" name="sept" data-search="Sept" class="w-checkbox-input">
+            <input type="checkbox" id="checkbox-5" name="sept" filter-by="Sept" class="w-checkbox-input">
             <label for="checkbox-5" class="w-form-label">Sept</label>
         </div>
         <div class="w-checkbox checkbox">
-            <input type="checkbox" id="checkbox-6" name="feb" data-search="Feb" class="w-checkbox-input">
+            <input type="checkbox" id="checkbox-6" name="feb" filter-by="Feb" class="w-checkbox-input">
             <label for="checkbox-6" class="w-form-label">Feb</label>
         </div>
         <div class="w-checkbox checkbox">
-            <input type="checkbox" id="checkbox-7" name="june" data-search="June" class="w-checkbox-input">
+            <input type="checkbox" id="checkbox-7" name="june" filter-by="June" class="w-checkbox-input">
             <label for="checkbox-7" class="w-form-label">June</label>
         </div>
     </div>
 </div>
 
-let fsLib = new fsLibrary('.w-dyn-items')
+let fsLib = new FsLibrary('.w-dyn-items')
 
 var _FILTERS = [
     {
-        filter_group: ".filter-cat-1",
-        filter_option: "single"
+        filterWrapper: ".filter-cat-1",
+        filterType: "exclusive"
     },
     {
-        filter_group: ".filter-cat-2",
-        filter_option: "multi"
+        filterWrapper: ".filter-cat-2",
+        filterType: "multi"
     },
     {
-        filter_group: ".filter-cat-3",
-        filter_option: "multi"
+        filterWrapper: ".filter-cat-3",
+        filterType: "multi"
     }
 ]
 
@@ -416,6 +415,6 @@ var _animation = {
     effects: 'fade translate(30px,100px) rotate(200deg) scale(0.2)'
 }
      
-fsLib.cmsfilter(_FILTERS,"multi", _animation)
+fsLib.filter(_FILTERS,"multi", _animation)
 
 ```

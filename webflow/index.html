@@ -1816,6 +1816,7 @@
     <script src="../dist/index.js"></script>
     <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
     <script>
+    (function(){
 
         var _animation = {
             enable: true,
@@ -1828,33 +1829,13 @@
 
         fsLib.combine()
 
-        fsLib.cmsfilter({
-            cms_filter: ".filter-bar",
-            filter_type: "single",
+        fsLib.filter({
+            filterOptions: ".filter-bar",
+            filterType: "single",
             animation: _animation
         })
 
-        //or
-
-        // fsLib.cmsfilter({
-        //     cms_filter: ".filter-bar",
-        //     animation: _animation
-        // })
-
-        // fsLib.loadmore({
-        //     button: ".load-more-button",
-        //     actualLoadMore: true,
-        //     initialLoad: 12,
-        //     loadPerClick: 12,
-        //     animation: {
-        //         enable: true,
-        //         duration: 1000,
-        //         easing: 'ease-in-out',
-        //         effects: 'fade scale(0) rotateZ(360deg)'
-        //     }
-        // })
-
-
+    })();
     </script>
 </body>
 
