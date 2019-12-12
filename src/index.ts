@@ -350,14 +350,14 @@ class FsLibrary {
                 let prevClicked;
                 const { filter_option } = val;
 
-                const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filterWrapper} [data-search]`));
+                const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filterWrapper} [filter-by]`));
                 assignChangeEventToButtons({ index, prevClicked, filter_option, filter_group })
 
             })
         }
         else if (typeof cms_filter == "string") {
             let prevClicked;
-            const filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [data-search]`));
+            const filter_group = [].slice.call(document.querySelectorAll(`${cms_filter} [filter-by]`));
             assignChangeEventToButtons({ index: 0, prevClicked, filter_group })
         }
         else {
@@ -388,7 +388,7 @@ class FsLibrary {
                 if (tag_element == "SELECT") {
                     (<any>elem).onchange = function (event) {
 
-                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("data-search") || '';
+                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("filter-by") || '';
 
                         conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
 
@@ -409,7 +409,7 @@ class FsLibrary {
                             break;
                         default:
                             (<any>elem).onchange = function (event) {
-                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("data-search") || '';
+                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("filter-by") || '';
 
                                 conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
                             }
@@ -435,7 +435,7 @@ class FsLibrary {
                             prevClicked.classList.add("active")
                         }
 
-                        const filter_text = prevClicked.getAttribute("data-search") || '';
+                        const filter_text = prevClicked.getAttribute("filter-by") || '';
 
                         //prevent further filter if filter is empty and reset button is clicked.
 
