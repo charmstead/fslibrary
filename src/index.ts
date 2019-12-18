@@ -367,7 +367,7 @@ class FsLibrary {
         if (Array.isArray(cms_filter)) {
             cms_filter.map((val, index) => {
                 let prevClicked;
-                const { filter_option } = val;
+                const { filterType:filter_option } = val;
 
                 const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filterWrapper} [filter-by]`));
                 assignChangeEventToButtons({ index, prevClicked, filter_option, filter_group })
