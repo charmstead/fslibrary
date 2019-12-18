@@ -29,3 +29,7 @@ export function createDocument(html, title) {
     doc.documentElement.innerHTML = html
     return doc
   }
+
+  export const escapeRegExp = (string)=>{
+    return string.replace(/[*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}

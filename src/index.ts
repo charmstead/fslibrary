@@ -1,6 +1,6 @@
 import Animate from './animate'
 import { once } from '../js/util/index';
-import { registerListener, isInViewport, isVisible, createDocument } from './utility';
+import { registerListener, isInViewport, isVisible, createDocument, escapeRegExp } from './utility';
 
 class FsLibrary {
 
@@ -143,14 +143,23 @@ class FsLibrary {
         this.setNextButtonIndex();
         //get all collections
         const visible_collection: any = [].slice.call(document.querySelectorAll(this.cms_selector)).filter(isVisible);
+        let nextButton=null;
 
         //copies the cms items into the first collection list
         visible_collection[0].innerHTML = (
-            visible_collection.reduce((curr, items) => {
+            visible_collection.reduce((curr, item) => {
                 //gets all the items  
-                return [...curr, ...items.innerHTML];
+                const aNextButton = item.nextElementSibling;
+                if(aNextButton && isVisible(aNextButton) && !nextButton){
+                    nextButton= aNextButton.outerHTML;
+                }
+                return [...curr, item.innerHTML];
             }, []).join("")
         );
+
+        if(nextButton){
+            nextButton.outerHTML =nextButton.outerHTML+nextButton;
+        }
 
         //deletes the rest collection list
         visible_collection.forEach((elem: Element, i: number) => {
@@ -410,7 +419,6 @@ class FsLibrary {
                         const filter_text = event.target.selectedOptions[0].value || '';
 
                         conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text,wildcard:true })
-
                     }
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
@@ -471,12 +479,12 @@ class FsLibrary {
                 return filterQueue.push(() => filterHelper({ filter_option, id, index, filter_text,wildcard }));
             }
 
-            return filterHelper({ filter_option, id, index, filter_text,wildcard })
+            return filterHelper({ filter_option, id, index, filter_text,wildcard });
         }
 
         const filterHelper = ({ filter_option, id, index, filter_text,wildcard=false }) => {
             filterActive = true;
-
+            filter_text=escapeRegExp(filter_text.replace(/\*/gi,'')); 
             if (/^exclusive$/i.test(filter_type) || /^exclusive$/i.test(filter_option)) {
 
                 //checks if it has previously been clicked                
