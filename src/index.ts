@@ -407,7 +407,7 @@ class FsLibrary {
                 if (tag_element == "SELECT") {
                     (<any>elem).onchange = function (event) {
 
-                        const filter_text = event.currentTarget.selectedOptions[0].getAttribute("filter-by") || '';
+                        const filter_text = event.target.selectedOptions[0].value || '';
 
                         conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
 
