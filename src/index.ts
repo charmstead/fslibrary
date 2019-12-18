@@ -409,7 +409,7 @@ class FsLibrary {
 
                         const filter_text = event.target.selectedOptions[0].value || '';
 
-                        conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
+                        conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text,wildcard:true })
 
                     }
                 }
