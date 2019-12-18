@@ -12,6 +12,7 @@ class FsLibrary {
         this.cms_selector = cms_selector;
 
     }
+    private indexSet: boolean;
 
     private cms_selector: string;
 
@@ -121,11 +122,25 @@ class FsLibrary {
         return style;
     }
 
+    private setNextButtonIndex(){
+
+        const cmsList =document.querySelectorAll(this.cms_selector);
+
+        for(let i=0; i<cmsList.length; i++){
+            const nextSibling = cmsList[i].nextElementSibling;
+            if(nextSibling && isVisible(nextSibling) && nextSibling.querySelector('w-pagination-next')){
+                this.index=i;
+            }
+        }
+        this.indexSet=true;
+
+    }
+
     /**
      * Combine all the collection items into one collection.
      */
     public combine() {
-
+        this.setNextButtonIndex();
         //get all collections
         const visible_collection: any = [].slice.call(document.querySelectorAll(this.cms_selector)).filter(isVisible);
 
@@ -217,7 +232,9 @@ class FsLibrary {
 
     public loadmore(config: LoadMore = { button: "a.w-pagination-next", animation: this.animation }): void {
 
-
+        if(!this.indexSet){
+            this.setNextButtonIndex();
+        }
         this.setHiddenCollections();
 
         if (config.animation) {
@@ -231,6 +248,7 @@ class FsLibrary {
         else {
             this.makeStyleSheet({});
         }
+
 
 
         const { button } = config;
@@ -315,9 +333,10 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public filter(config = { filterOptions: [], animation: this.animation }) {
+    public filter(config = { filterOptions: [], animation: this.animation,activeClass:'active' }) {
 
-        let { filterOptions: cms_filter, animation } = config;
+        let { filterOptions: cms_filter, animation,activeClass } = config;
+        activeClass = activeClass || 'active';
 
         animation = { ...this.animation, ...animation };
 
@@ -422,17 +441,17 @@ class FsLibrary {
                         const active = event.currentTarget.className;
 
                         //only one element should have active class for or
-                        if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
-                            if (prevClicked) prevClicked.classList.remove("active")
+                        if (/^exclusive$/i.test(filter_type) || /^exclusive$/i.test(filter_option)) {
+                            if (prevClicked) prevClicked.classList.remove(activeClass)
                         }
 
                         prevClicked = event.currentTarget;
 
-                        if (active.includes("active")) {
-                            prevClicked.classList.remove("active")
+                        if (active.includes(activeClass)) {
+                            prevClicked.classList.remove(activeClass)
                         }
                         else {
-                            prevClicked.classList.add("active")
+                            prevClicked.classList.add(activeClass)
                         }
 
                         const filter_text = prevClicked.getAttribute("filter-by") || '';
@@ -458,7 +477,7 @@ class FsLibrary {
         const filterHelper = ({ filter_option, id, index, filter_text,wildcard=false }) => {
             filterActive = true;
 
-            if (/^single$/i.test(filter_type) || /^single$/i.test(filter_option)) {
+            if (/^exclusive$/i.test(filter_type) || /^exclusive$/i.test(filter_option)) {
 
                 //checks if it has previously been clicked                
                 if (id in filter[index] && !wildcard) {
