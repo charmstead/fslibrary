@@ -5,7 +5,7 @@ import { registerListener, isInViewport, isVisible, createDocument, escapeRegExp
 class FsLibrary {
 
     constructor(cms_selector: string, opt: LazyLoad = { type: 1, className: "image" }) {
-
+     
         //   this.lazyLoadOpt={type:1,...opt};
         opt && this.lazyLoad(cms_selector, opt.className)
 
@@ -218,7 +218,7 @@ class FsLibrary {
 
             master_collection.appendChild(element);
             if (this.addClass) {
-                this.addClasses(this.addClassConfig);
+                this.addclasses(this.addClassConfig);
             }
         });
     }
@@ -307,7 +307,7 @@ class FsLibrary {
      *     start: number; //position of list item to start with
      * }
      */
-    public addClasses(config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
+    public addclasses(config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
         const parent: any = document.querySelector(this.cms_selector);
         const { frequency, start, classNames } = config;
 
