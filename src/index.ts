@@ -302,14 +302,14 @@ class FsLibrary {
      * @param container The css selector of the parent container elem of the list you want to add classnames to.
      * @param config  defined as
      *  {
-     *     classNames: Array<AltClass>; //list of classnames you want to add
+     *     classArray: Array<AltClass>; //list of classnames you want to add
      *     frequency: number; //The frequency or order of addition of class to the list
      *     start: number; //position of list item to start with
      * }
      */
-    public addclasses(config: AddClass = { classNames: [], frequency: 2, start: 1 }): void {
+    public addclasses(config: AddClass = { classArray: [], frequency: 2, start: 1 }): void {
         const parent: any = document.querySelector(this.cms_selector);
-        const { frequency, start, classNames } = config;
+        const { frequency, start, classArray: classNames } = config;
 
         this.addClassConfig = config;
         this.addClass = true;
@@ -342,9 +342,9 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public filter(config = { filterOptions: [], animation: this.animation,activeClass:'active' }) {
+    public filter(config = { filterArray: [], animation: this.animation,activeClass:'active' }) {
 
-        let { filterOptions: cms_filter, animation,activeClass } = config;
+        let { filterArray: cms_filter, animation,activeClass } = config;
         activeClass = activeClass || 'active';
 
         animation = { ...this.animation, ...animation };
@@ -598,7 +598,7 @@ interface LoadMore {
 }
 
 interface AddClass {
-    classNames: Array<AltClass>; //list of classnames you want to add
+    classArray: Array<AltClass>; //list of classnames you want to add
     frequency: number; //The frequency or order of addition of class to the list
     start: number; //position of list item to start with
 }
