@@ -321,7 +321,7 @@ class FsLibrary {
             throw "unaccepted value passed as start";
         }
 
-        classNames.map(({ classTarget: target, alt }) => {
+        classNames.map(({ classTarget: target, classToAdd:alt }) => {
             const list = parent.querySelectorAll(target);
             for (let j = start - 1; j < list.length; j += frequency) {
 
@@ -589,7 +589,7 @@ class FsLibrary {
 
 interface AltClass {
     classTarget: string;
-    alt: string
+    classToAdd: string
 }
 
 interface LoadMore {
