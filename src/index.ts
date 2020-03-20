@@ -629,7 +629,8 @@ class FsLibrary {
 
                 (<any>elem).addEventListener('change', debounce((event) => {
                     const sortTarget = event.target.getAttribute("sort-target") || '';
-                    event.target.classList.toggle(activeClass);
+                    const active = String(activeClass).replace('.','');
+                    event.target.classList.toggle(active);
                     sortHelper({ sortTarget, sortReverse });
                 }, 200));
             }
