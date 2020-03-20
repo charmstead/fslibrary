@@ -1,11 +1,12 @@
 import Animate from './animate'
-import { once } from '../js/util/index';
+import { once, css, toNode } from '../js/util/index';
+import { getPositionWithMargin } from './animate'
 import { registerListener, isInViewport, isVisible, createDocument, escapeRegExp } from './utility';
 
 class FsLibrary {
 
     constructor(cms_selector: string, opt: LazyLoad = { type: 1, className: "image" }) {
-     
+
         //   this.lazyLoadOpt={type:1,...opt};
         opt && this.lazyLoad(cms_selector, opt.className)
 
@@ -122,17 +123,17 @@ class FsLibrary {
         return style;
     }
 
-    private setNextButtonIndex(){
+    private setNextButtonIndex() {
 
-        const cmsList =document.querySelectorAll(this.cms_selector);
+        const cmsList = document.querySelectorAll(this.cms_selector);
 
-        for(let i=0; i<cmsList.length; i++){
+        for (let i = 0; i < cmsList.length; i++) {
             const nextSibling = cmsList[i].nextElementSibling;
-            if(nextSibling && isVisible(nextSibling) && nextSibling.querySelector('w-pagination-next')){
-                this.index=i;
+            if (nextSibling && isVisible(nextSibling) && nextSibling.querySelector('w-pagination-next')) {
+                this.index = i;
             }
         }
-        this.indexSet=true;
+        this.indexSet = true;
 
     }
 
@@ -143,22 +144,22 @@ class FsLibrary {
         this.setNextButtonIndex();
         //get all collections
         const visible_collection: any = [].slice.call(document.querySelectorAll(this.cms_selector)).filter(isVisible);
-        let nextButton=null;
+        let nextButton = null;
 
         //copies the cms items into the first collection list
         visible_collection[0].innerHTML = (
             visible_collection.reduce((curr, item) => {
                 //gets all the items  
                 const aNextButton = item.nextElementSibling;
-                if(aNextButton && isVisible(aNextButton) && !nextButton){
-                    nextButton= aNextButton.outerHTML;
+                if (aNextButton && isVisible(aNextButton) && !nextButton) {
+                    nextButton = aNextButton.outerHTML;
                 }
                 return [...curr, item.innerHTML];
             }, []).join("")
         );
 
-        if(nextButton){
-            nextButton.outerHTML =nextButton.outerHTML+nextButton;
+        if (nextButton) {
+            nextButton.outerHTML = nextButton.outerHTML + nextButton;
         }
 
         //deletes the rest collection list
@@ -192,15 +193,15 @@ class FsLibrary {
     }
 
     private appendPaginatedData(data: string) {
-        const newDoc = createDocument(data, "newDoc"+Date.now());
+        const newDoc = createDocument(data, "newDoc" + Date.now());
         const collection = newDoc.querySelectorAll(this.cms_selector)[this.index];
         const paginationWrapper = newDoc.querySelectorAll('.w-pagination-wrapper')[this.index];
         const nextHref = paginationWrapper.querySelector(".w-pagination-next");
         collection && this.appendToCms(collection.children);
         nextHref ? this.setLoadmoreHref((<any>nextHref).href) : this.setLoadmoreHref('');
 
-        if(!this.hidden_collections.length && !nextHref){
-            (<any>document.querySelector('.w-pagination-wrapper')).outerHTML= ''
+        if (!this.hidden_collections.length && !nextHref) {
+            (<any>document.querySelector('.w-pagination-wrapper')).outerHTML = ''
         }
 
 
@@ -241,7 +242,7 @@ class FsLibrary {
 
     public loadmore(config: LoadMore = { button: "a.w-pagination-next", animation: this.animation }): void {
 
-        if(!this.indexSet){
+        if (!this.indexSet) {
             this.setNextButtonIndex();
         }
         this.setHiddenCollections();
@@ -290,7 +291,7 @@ class FsLibrary {
                 this.setLoadmoreHref(aHref.href);
                 this.index++;
             }
-            
+
             busy = false;
         }
 
@@ -321,7 +322,7 @@ class FsLibrary {
             throw "unaccepted value passed as start";
         }
 
-        classNames.map(({ classTarget: target, classToAdd:alt }) => {
+        classNames.map(({ classTarget: target, classToAdd: alt }) => {
             const list = parent.querySelectorAll(target);
             for (let j = start - 1; j < list.length; j += frequency) {
 
@@ -342,16 +343,16 @@ class FsLibrary {
      * 
      * @param cms_selector 
      */
-    public filter(config = { filterArray: [], animation: this.animation,activeClass:'active' }) {
+    public filter(config = { filterArray: [], animation: this.animation, activeClass: 'active' }) {
 
-        let { filterArray: cms_filter, animation,activeClass } = config;
+        let { filterArray: cms_filter, animation, activeClass } = config;
         activeClass = activeClass || 'active';
 
         animation = { ...this.animation, ...animation };
 
         let filter_type = (typeof cms_filter == 'string') ? 'exclusive' : 'multi';
 
-    
+
         if (animation) {
             animation.enable = !/^false$/.test(String(animation.enable));
             const effects = animation.effects.replace('fade', '');
@@ -376,7 +377,7 @@ class FsLibrary {
         if (Array.isArray(cms_filter)) {
             cms_filter.map((val, index) => {
                 let prevClicked;
-                const { filterType:filter_option } = val;
+                const { filterType: filter_option } = val;
 
                 const filter_group = [].slice.call(document.querySelectorAll(`${(<any>val).filterWrapper} [filter-by]`));
                 assignChangeEventToButtons({ index, prevClicked, filter_option, filter_group })
@@ -412,40 +413,37 @@ class FsLibrary {
                 const id = `${index}${j}`;
                 const tag_element = elem && elem.tagName;
 
-                
+
                 if (tag_element == "SELECT") {
-                    (<any>elem).onchange = function (event) {
+                    (<any>elem).addEventListener('change', debounce((event) => {
 
                         const filter_text = event.target.selectedOptions[0].value || '';
 
-                        conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text,wildcard:true })
-                    }
+                        conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text, wildcard: true })
+                    }, 500))
                 }
                 else if (tag_element == "INPUT") {//handle checkbox and radio button
 
                     switch (elem.type) {
 
                         case 'text':
-                            // (<any>elem).oninput = function (event) {
-                               
-                            // };
-                            (<any>elem).addEventListener('input', debounce( (event) => {
+                            (<any>elem).addEventListener('input', debounce((event) => {
                                 const filter_text = event.target.value;
-                                conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text,wildcard:true })
+                                conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text, wildcard: true })
                             }, 500))
                             break;
                         default:
-                            (<any>elem).onchange = function (event) {
-                                const filter_text = (!event.target.checked )? '': event.currentTarget.getAttribute("filter-by") || '';
-
+                            (<any>elem).addEventListener('change', debounce((event) => {
+                                const filter_text = (!event.target.checked) ? '' : event.currentTarget.getAttribute("filter-by") || '';
                                 conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
-                            }
+                            }, 500));
                             break;
                     }
 
                 }
                 else {
-                    (<any>elem).onclick = function (event) {
+                    (<any>elem).onclick= ((event) => {
+                        
                         const active = event.currentTarget.className;
 
                         //only one element should have active class for or
@@ -468,23 +466,23 @@ class FsLibrary {
 
                         conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
 
-                    }
+                    })
                 }
             })
         }
 
-        const initFilter = ({ filter_option, id, index, filter_text,wildcard=false }) => {
-           
+        const initFilter = ({ filter_option, id, index, filter_text, wildcard = false }) => {
+
             if (animation.queue && filterActive) {
-                return filterQueue.push(() => filterHelper({ filter_option, id, index, filter_text,wildcard }));
+                return filterQueue.push(() => filterHelper({ filter_option, id, index, filter_text, wildcard }));
             }
 
-            return filterHelper({ filter_option, id, index, filter_text,wildcard });
+            return filterHelper({ filter_option, id, index, filter_text, wildcard });
         }
 
-        const filterHelper = ({ filter_option, id, index, filter_text,wildcard=false }) => {
+        const filterHelper = ({ filter_option, id, index, filter_text, wildcard = false }) => {
             filterActive = true;
-            filter_text=escapeRegExp(filter_text.replace(/\*/gi,'')); 
+            filter_text = escapeRegExp(filter_text.replace(/\*/gi, ''));
             if (/^exclusive$/i.test(filter_type) || /^exclusive$/i.test(filter_option)) {
 
                 //checks if it has previously been clicked                
@@ -513,13 +511,13 @@ class FsLibrary {
             if (animation.enable) {
                 const target = document.querySelector(this.cms_selector);
                 Animate.methods.animate(findAndMatchFilterText, target, animation).then(() => {
-                    
-                        filterActive = false;
 
-                        const nextAnimation = filterQueue.shift();
-                        if (nextAnimation) {
-                            nextAnimation.call(null);
-                        }
+                    filterActive = false;
+
+                    const nextAnimation = filterQueue.shift();
+                    if (nextAnimation) {
+                        nextAnimation.call(null);
+                    }
 
                 });
             }
@@ -583,6 +581,118 @@ class FsLibrary {
                 }
 
             })
+        }
+    }
+
+
+    public sort({
+        sortTrigger,
+        sortReverse,
+        activeClass,
+        animation = this.animation
+    }) {
+
+        animation = { ...this.animation, ...animation };
+        if (animation) {
+            animation.enable = !/^false$/.test(String(animation.enable));
+            const effects = animation.effects.replace('fade', '');
+            animation.effects = effects;
+
+            if (animation.effects.indexOf('translate') < 0) {
+                animation.effects += ' translate(0px,0px)  '
+            }
+            this.animation = animation;
+        }
+        animation = this.animation;
+
+        const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
+
+
+        const triggerElem = [].slice.call(document.querySelectorAll(sortTrigger));
+
+
+        triggerElem.map((elem) => {
+
+            const triggerTag = elem && elem.tagName;
+
+            if (triggerTag == "SELECT") {
+                (<any>elem).addEventListener('change', debounce((event) => {
+
+                    let sortTarget = event.target.selectedOptions[0].value;
+                    sortTarget = sortTarget || event.getAttribute('sort-target');
+
+                    sortHelper({ sortTarget, sortReverse });
+
+                }, 200))
+            }
+            else if (triggerTag == "INPUT") {//handle checkbox and radio button
+
+                (<any>elem).addEventListener('change', debounce((event) => {
+                    const sortTarget = event.target.getAttribute("sort-target") || '';
+                    event.target.classList.toggle(activeClass);
+                    sortHelper({ sortTarget, sortReverse });
+                }, 200));
+            }
+        })
+
+
+
+
+        const sortHelper = ({ sortTarget, sortReverse }) => {
+
+            let sortedTarget = [].slice.call(document.querySelectorAll(sortTarget));
+
+            sortedTarget.sort((a, b) => {
+                const x = a.textContent;
+                const y = b.textContent;
+                if (x > y) {
+                    return sortReverse ? -1 : 1;
+                }
+                if (y > x) {
+                    return sortReverse ? 1 : -1;
+                }
+                return 0;
+            });
+
+            const initSort = () => sortMasterCollection({ sortReverse, sortTarget });
+
+
+            if (animation.enable) {
+
+                const target = document.querySelector(this.cms_selector);
+                Animate.methods.animate(initSort, target, animation)
+            }
+            else {
+                initSort();
+            }
+
+        }
+
+        const sortMasterCollection = ({ sortTarget, sortReverse }) => {
+            const master_collection = get_cms_items();
+
+            master_collection.map((elem) => {
+
+                return (
+                    [].slice.call(elem.children)
+                        .sort((a, b) => {
+                            const x = a.querySelector(sortTarget).textContent;
+                            const y = b.querySelector(sortTarget).textContent;
+
+                            if (x < y) {
+                                return sortReverse ? 1 : -1;
+                            }
+                            if (x > y) {
+                                return sortReverse ? -1 : 1;
+                            }
+                            return 0;
+                        })
+                        .map((sortedElem) => {
+                            elem.appendChild(sortedElem)
+                        })
+                )
+            }
+            )
         }
     }
 }
@@ -666,12 +776,13 @@ function whichAnimationEvent() {
 }
 
 function debounce(callback, wait) {
+
     let timeout;
     return (...args) => {
         const context = this;
         clearTimeout(timeout);
         timeout = setTimeout(() => callback.apply(context, args), wait);
     };
-  }
+}
 
 (window as any).FsLibrary = FsLibrary;

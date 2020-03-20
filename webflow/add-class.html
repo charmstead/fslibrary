@@ -184,25 +184,25 @@
     <script src="../dist/index.js"></script>
     <script>
 
-        var fslib = new fsLibrary(".w-dyn-items")
+        var fslib = new FsLibrary(".w-dyn-items")
 
         let fsAddClass = [
             {
-                target: ".project-feature",
-                alt: ".flip-row"
+                classTarget: ".project-feature",
+                classToAdd: ".flip-row"
             },
             {
-                target: ".project-feature-content",
-                alt: ".flip-text"
+                classTarget: ".project-feature-content",
+                classToAdd: ".flip-text"
             },
             {
-                target: ".project-feature-image",
-                alt: ".flip-image"
+                classTarget: ".project-feature-image",
+                classToAdd: ".flip-image"
             }
         ]
 
-        fslib.addClasses({
-            classNames: fsAddClass,
+        fslib.addclasses({
+            classArray: fsAddClass,
             frequency: 3,
             start: 1
         })

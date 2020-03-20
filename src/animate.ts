@@ -153,7 +153,7 @@ export function reset(el) {
     css(el, 'height', '');
 }
 
-function getPositionWithMargin(el) {
+export function getPositionWithMargin(el) {
     const { height, width } = el.getBoundingClientRect();
     let { top, left } = position(el);
     top += toFloat(css(el, 'marginTop'));

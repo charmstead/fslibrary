@@ -6,6 +6,7 @@
 2. addClass/addClasses: To add custom class selectors to specific DOM elements.
 3. filter: To perform filter on collection items.
 4. loadmore: To perform a loadmore contents of a cms collection as they are needed.
+5. sort: To perform a sort operation on contents of a cms collection.
 
 
 
@@ -416,4 +417,65 @@ var _animation = {
      
 fsLib.filter(_FILTERS,"multi", _animation)
 
+```
+
+##  Sort
+
+To perform sort functions on the list of collection items:
+
+The sort functions takes an object parameter with the following keys:
+
+sortTrigger,sortReverse,animation,activeClass
+
+
+The sortReverse is a boolean which is either true or false.
+The sortTrigger is the className of the trigger handler.
+The activeClass is the classname that will be appended to the currently active clicked trigger.
+
+Note: The sortTrigger element must contain an attribute "sort-target" assigned the value 
+className of the sortTarget. see below.
+
+
+```
+    <select name="my_filter" class="select_filter">
+        <option value=''>RESET</option>
+        <option value='.project-number'>Project number</option>
+        <option value='.project-category'>Project Category</option>
+        <option value='.project-name'>Project Name</option>
+    </select>
+    
+    <div class="filter-cat-3">
+        <div class="w-checkbox checkbox">
+            <input type="radio" id="radio" name="sort" sort-target=".project-number" class="w-checkbox-input">
+            <label for="radio" class="w-form-label">Jan</label>
+        </div>
+        <div class="w-checkbox checkbox">
+            <input type="radio" id="radio-2" name="sort" sort-target=".project-category"
+                class="w-checkbox-input">
+            <label for="radio-2" class="w-form-label">May</label>
+        </div>
+        <div class="w-checkbox checkbox">
+            <input type="radio" id="radio-3" name="sort" sort-target=".project-name" class="w-checkbox-input">
+            <label for="radio-3" class="w-form-label">Dec</label>
+        </div>
+    </div>
+
+
+    var _animation = {
+            enable: true,
+            duration: 500,
+            easing: 'ease-in',
+            effects: 'fade scale(0.2) rotateZ(90deg)'
+    }
+
+        var fsLib = new FsLibrary('.w-dyn-items');
+
+        fsLib.combine()
+        
+        fsLib.sort({
+            sortTrigger:`.filter-cat-3 input`,
+            sortReverse:false,
+            activeClass:"active",
+            animation: _animation
+        })
 ```
