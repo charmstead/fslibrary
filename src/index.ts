@@ -1,7 +1,8 @@
 import Animate from './animate'
-import { once, css, toNode } from '../js/util/index';
-import { getPositionWithMargin } from './animate'
+import { once } from '../js/util/index';
 import { registerListener, isInViewport, isVisible, createDocument, escapeRegExp } from './utility';
+
+
 
 class FsLibrary {
 
@@ -227,6 +228,10 @@ class FsLibrary {
     private setLoadmoreHref(url) {
         const master_collection = this.getMasterCollection();
         master_collection.parentElement.querySelector("a.w-pagination-next").setAttribute('data-href', url);
+       
+        (<any>window).Webflow.destroy();
+        (<any>window).Webflow.ready();
+        (<any>window).Webflow.require("ix2").init();
     }
 
     private getHiddenCollections(): any[] {
