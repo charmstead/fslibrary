@@ -640,8 +640,8 @@ class FsLibrary {
 
                     const sortTarget = event.target.getAttribute("sort-target") || '';
                     const active = String(activeClass).replace('.', '');
-                   
-                    removeActiveClassFromTriggers(sortTarget,active);
+
+                    removeActiveClassFromTriggers(sortTarget, active);
 
                     event.target.classList.toggle(active);
                     sortHelper({ sortTarget, sortReverse });
@@ -655,7 +655,7 @@ class FsLibrary {
 
                     const previouslyClicked = target.classList.contains(active);
 
-                    removeActiveClassFromTriggers(target,active);
+                    removeActiveClassFromTriggers(target, active);
 
                     elem.classList.toggle(active);
                     sortHelper({ sortTarget, sortReverse: previouslyClicked });
@@ -665,7 +665,7 @@ class FsLibrary {
         })
 
 
-        const removeActiveClassFromTriggers=(target,activeClass)=>{
+        const removeActiveClassFromTriggers = (target, activeClass) => {
             triggerElem.forEach((elem) => {
                 if (elem.outerHTML != target.outerHTML) {
                     elem.classList.remove(activeClass);
@@ -673,21 +673,19 @@ class FsLibrary {
             });
         }
 
+
+        const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+
         const sortHelper = ({ sortTarget, sortReverse }) => {
 
-            let sortedTarget = [].slice.call(document.querySelectorAll(sortTarget));
+            // let sortedTarget = [].slice.call(document.querySelectorAll(sortTarget));
 
-            sortedTarget.sort((a, b) => {
-                const x = a.textContent;
-                const y = b.textContent;
-                if (x > y) {
-                    return sortReverse ? -1 : 1;
-                }
-                if (y > x) {
-                    return sortReverse ? 1 : -1;
-                }
-                return 0;
-            });
+            // sortedTarget.sort((a, b) => {
+            //     return collator.compare(a.textContent, b.textContent);
+            // })
+            // .map((elem,i)=>{
+            //     console.log(elem)
+            // })
 
             const initSort = () => sortMasterCollection({ sortReverse, sortTarget });
 
@@ -695,7 +693,7 @@ class FsLibrary {
             if (animation.enable) {
 
                 const target = document.querySelector(this.cms_selector);
-                Animate.methods.animate(initSort, target, animation)
+                Animate.methods.animate(initSort, target, animation);
             }
             else {
                 initSort();
@@ -714,15 +712,14 @@ class FsLibrary {
                             const x = a.querySelector(sortTarget).textContent;
                             const y = b.querySelector(sortTarget).textContent;
 
-                            if (x < y) {
-                                return sortReverse ? 1 : -1;
-                            }
-                            if (x > y) {
-                                return sortReverse ? -1 : 1;
-                            }
-                            return 0;
+                            return collator.compare(x, y);
+
                         })
                         .map((sortedElem) => {
+                            if (sortReverse) {
+                                elem.insertBefore(sortedElem, elem.firstChild)
+                                return;
+                            }
                             elem.appendChild(sortedElem)
                         })
                 )
