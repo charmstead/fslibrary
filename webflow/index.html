@@ -18,7 +18,12 @@
     <link href="https://daks2k3a4ib2z.cloudfront.net/img/webclip.png" rel="apple-touch-icon">
 
 </head>
-
+<style>
+    .snysds{
+        background-color: #e6e6e6 !important;
+        color: #000;
+    }
+</style>
 <body>
     <div class="page-wrapper">
         <div class="page-content">
@@ -41,6 +46,19 @@
                 <div filter-by='CATEGORY E' class="filter-button cat-e">
                     <div>Category E</div>
                 </div>
+            </div>
+            <div class="sort-handler">
+
+                <button sort-target=".project-number" class="filter-button">
+                    Number
+                </button>
+                <button sort-target=".project-category" class="filter-button">
+                    Category
+                </button>
+                <button sort-target=".project-name" class="filter-button">
+                    Name
+                </button>
+
             </div>
             <div class="filter-cat-3">
                 <div class="w-checkbox checkbox">
@@ -1850,9 +1868,16 @@
                 filterArray: ".filter-bar",
                 animation: _animation
             })
-
+            
             fsLib.sort({
                 sortTrigger:`.filter-cat-3 input`,
+                sortReverse:false,
+                activeClass:".snysds",
+                animation: _animation
+            })
+
+            fsLib.sort({
+                sortTrigger:`.sort-handler button`,
                 sortReverse:false,
                 activeClass:".snysds",
                 animation: _animation
