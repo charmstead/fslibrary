@@ -49,29 +49,29 @@
             </div>
             <div class="sort-handler">
 
-                <button sort-target=".project-number" class="filter-button">
+                <button sort-by=".project-number" class="filter-button">
                     Number
                 </button>
-                <button sort-target=".project-category" class="filter-button">
+                <button sort-by=".project-category" class="filter-button">
                     Category
                 </button>
-                <button sort-target=".project-name" class="filter-button">
+                <button sort-by=".project-name" class="filter-button">
                     Name
                 </button>
 
             </div>
             <div class="filter-cat-3">
                 <div class="w-checkbox checkbox">
-                    <input type="radio" id="radio" name="sort" sort-target=".project-number" class="w-checkbox-input">
+                    <input type="radio" id="radio" name="sort" sort-by=".project-number" class="w-checkbox-input">
                     <label for="radio" class="w-form-label">Jan</label>
                 </div>
                 <div class="w-checkbox checkbox">
-                    <input type="radio" id="radio-2" name="sort" sort-target=".project-category"
+                    <input type="radio" id="radio-2" name="sort" sort-by=".project-category"
                         class="w-checkbox-input">
                     <label for="radio-2" class="w-form-label">May</label>
                 </div>
                 <div class="w-checkbox checkbox">
-                    <input type="radio" id="radio-3" name="sort" sort-target=".project-name" class="w-checkbox-input">
+                    <input type="radio" id="radio-3" name="sort" sort-by=".project-name" class="w-checkbox-input">
                     <label for="radio-3" class="w-form-label">Dec</label>
                 </div>
             </div>
@@ -1855,7 +1855,7 @@
 
             var _animation = {
                 enable: true,
-                duration: 500,
+                duration: 200,
                 easing: 'ease-in',
                 effects: 'fade scale(0.2) rotateZ(90deg)'
             }
@@ -1871,7 +1871,7 @@
             
             fsLib.sort({
                 sortTrigger:`.filter-cat-3 input`,
-                sortReverse:false,
+                sortReverse:true,
                 activeClass:".snysds",
                 animation: _animation
             })

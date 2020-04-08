@@ -442,10 +442,10 @@ class FsLibrary {
                             }, 500))
                             break;
                         default:
-                            (<any>elem).addEventListener('change', debounce((event) => {
+                            (<any>elem).addEventListener('change', (event) => {
                                 const filter_text = (!event.target.checked) ? '' : event.currentTarget.getAttribute("filter-by") || '';
                                 conditionalReset(filter_text, index) && initFilter({ filter_option, id, index, filter_text })
-                            }, 500));
+                            });
                             break;
                     }
 
@@ -614,6 +614,7 @@ class FsLibrary {
         }
         animation = this.animation;
 
+       
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
 
 
@@ -628,7 +629,7 @@ class FsLibrary {
                 (<any>elem).addEventListener('change', debounce((event) => {
 
                     let sortTarget = event.target.selectedOptions[0].value;
-                    sortTarget = sortTarget || event.getAttribute('sort-target');
+                    sortTarget = sortTarget || event.getAttribute('sort-by');
 
                     sortHelper({ sortTarget, sortReverse });
 
@@ -638,7 +639,7 @@ class FsLibrary {
 
                 (<any>elem).addEventListener('change', debounce((event) => {
 
-                    const sortTarget = event.target.getAttribute("sort-target") || '';
+                    const sortTarget = event.target.getAttribute("sort-by") || '';
                     const active = String(activeClass).replace('.', '');
 
                     removeActiveClassFromTriggers(sortTarget, active);
@@ -650,7 +651,7 @@ class FsLibrary {
             else {
                 (<any>elem).addEventListener('click', (event) => {
                     const target = event.currentTarget;
-                    const sortTarget = target.getAttribute("sort-target") || '';
+                    const sortTarget = target.getAttribute("sort-by") || '';
                     const active = String(activeClass).replace('.', '');
 
                     const previouslyClicked = target.classList.contains(active);
@@ -658,7 +659,11 @@ class FsLibrary {
                     removeActiveClassFromTriggers(target, active);
 
                     elem.classList.toggle(active);
-                    sortHelper({ sortTarget, sortReverse: previouslyClicked });
+
+
+                    const isReversed = previouslyClicked?!sortReverse:sortReverse;
+
+                    sortHelper({ sortTarget, sortReverse: isReversed });
 
                 });
             }
@@ -678,17 +683,7 @@ class FsLibrary {
 
         const sortHelper = ({ sortTarget, sortReverse }) => {
 
-            // let sortedTarget = [].slice.call(document.querySelectorAll(sortTarget));
-
-            // sortedTarget.sort((a, b) => {
-            //     return collator.compare(a.textContent, b.textContent);
-            // })
-            // .map((elem,i)=>{
-            //     console.log(elem)
-            // })
-
             const initSort = () => sortMasterCollection({ sortReverse, sortTarget });
-
 
             if (animation.enable) {
 
