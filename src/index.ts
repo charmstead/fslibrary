@@ -247,7 +247,7 @@ class FsLibrary {
         collection.forEach(val => val.parentNode.outerHTML = "");
     }
 
-    public loadmore(config: LoadMore = { button: "a.w-pagination-next",loadAll:false, animation: this.animation }): void {
+    public loadmore(config: LoadMore = { button: "a.w-pagination-next", loadAll: false, animation: this.animation }): void {
 
         if (!this.indexSet) {
             this.setNextButtonIndex();
@@ -267,7 +267,7 @@ class FsLibrary {
         }
 
 
-        const { button,loadAll=false } = config;
+        const { button, loadAll = false } = config;
 
         const nextButton = document.querySelector(button);
         nextButton.setAttribute("data-href", (<any>nextButton).href);
@@ -279,13 +279,13 @@ class FsLibrary {
             initFetch();
         }
 
-        document.addEventListener("DOMContentLoaded", function(event) {
-           
+        document.addEventListener("DOMContentLoaded", function (event) {
+
             loadAll && initFetch(true);
 
         });
 
-        const initFetch=(recursive=false)=>{
+        const initFetch = (recursive = false) => {
 
             if (busy) return false;
 
@@ -300,15 +300,15 @@ class FsLibrary {
                     this.appendPaginatedData(<any>res);
                     busy = false;
 
-                    if(recursive){
+                    if (recursive) {
                         initFetch(true);
                     }
-                    
+
                 });
             }
 
             const nextcollection = this.hidden_collections.shift();
-            
+
 
             if (nextcollection) {
 
@@ -317,7 +317,10 @@ class FsLibrary {
                 this.setLoadmoreHref(aHref.href);
                 this.index++;
                 busy = false;
-                initFetch(true);
+
+                if (recursive) {
+                    initFetch(true);
+                }
 
             }
 
@@ -637,7 +640,7 @@ class FsLibrary {
         }
         animation = this.animation;
 
-       
+
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
 
 
@@ -684,7 +687,7 @@ class FsLibrary {
                     elem.classList.toggle(active);
 
 
-                    const isReversed = previouslyClicked?!sortReverse:sortReverse;
+                    const isReversed = previouslyClicked ? !sortReverse : sortReverse;
 
                     sortHelper({ sortTarget, sortReverse: isReversed });
 
@@ -754,7 +757,7 @@ interface AltClass {
 
 interface LoadMore {
     button: string;
-    loadAll:boolean;
+    loadAll: boolean;
     animation?: Animatn
 }
 
