@@ -273,7 +273,6 @@ class FsLibrary {
         nextButton.setAttribute("data-href", (<any>nextButton).href);
         nextButton.removeAttribute('href');
         let busy = false;
-        let done =false;
 
 
         (<any>nextButton).onclick = (evt) => {
@@ -282,11 +281,11 @@ class FsLibrary {
 
         document.addEventListener("DOMContentLoaded", function(event) {
            
-            initFetch(loadAll);
+            loadAll && initFetch(true);
 
         });
 
-        const initFetch=(recursive=null)=>{
+        const initFetch=(recursive=false)=>{
 
             if (busy) return false;
 
@@ -301,10 +300,10 @@ class FsLibrary {
                     this.appendPaginatedData(<any>res);
                     busy = false;
 
-                    if(!done && recursive){
-                        initFetch(recursive);
+                    if(recursive){
+                        initFetch(true);
                     }
-
+                    
                 });
             }
 
@@ -312,22 +311,18 @@ class FsLibrary {
             
 
             if (nextcollection) {
+
                 this.appendToCms(nextcollection.firstElementChild.children);
                 const aHref = nextcollection.querySelector('.w-pagination-next');
                 this.setLoadmoreHref(aHref.href);
                 this.index++;
-            }
-            else{
-                //All pages fetched and rendered
-                done=true;
-            }
-
-
-            busy = false;
-
-            if(!done && recursive){
+                busy = false;
                 initFetch(true);
+
             }
+
+
+
         }
 
     }
