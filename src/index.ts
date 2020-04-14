@@ -247,7 +247,7 @@ class FsLibrary {
         collection.forEach(val => val.parentNode.outerHTML = "");
     }
 
-    public loadmore(config: LoadMore = { button: "a.w-pagination-next", animation: this.animation }): void {
+    public loadmore(config: LoadMore = { button: "a.w-pagination-next",loadAll:false, animation: this.animation }): void {
 
         if (!this.indexSet) {
             this.setNextButtonIndex();
@@ -267,30 +267,49 @@ class FsLibrary {
         }
 
 
-
-        const { button } = config;
+        const { button,loadAll=false } = config;
 
         const nextButton = document.querySelector(button);
         nextButton.setAttribute("data-href", (<any>nextButton).href);
         nextButton.removeAttribute('href');
         let busy = false;
+        let done =false;
 
-        (<any>document.querySelector(button)).onclick = (evt) => {
+
+        (<any>nextButton).onclick = (evt) => {
+            initFetch();
+        }
+
+        document.addEventListener("DOMContentLoaded", function(event) {
+           
+            initFetch(loadAll);
+
+        });
+
+        const initFetch=(recursive=null)=>{
+
             if (busy) return false;
 
-            const href = evt.currentTarget.getAttribute("data-href");
+            const href = nextButton.getAttribute("data-href");
 
             busy = true;
+
             if (href) {
 
                 return this.getNextData(href).then(res => {
                     //enable button
                     this.appendPaginatedData(<any>res);
                     busy = false;
+
+                    if(!done && recursive){
+                        initFetch(recursive);
+                    }
+
                 });
             }
 
             const nextcollection = this.hidden_collections.shift();
+            
 
             if (nextcollection) {
                 this.appendToCms(nextcollection.firstElementChild.children);
@@ -298,8 +317,17 @@ class FsLibrary {
                 this.setLoadmoreHref(aHref.href);
                 this.index++;
             }
+            else{
+                //All pages fetched and rendered
+                done=true;
+            }
+
 
             busy = false;
+
+            if(!done && recursive){
+                initFetch(true);
+            }
         }
 
     }
@@ -731,6 +759,7 @@ interface AltClass {
 
 interface LoadMore {
     button: string;
+    loadAll:boolean;
     animation?: Animatn
 }
 
