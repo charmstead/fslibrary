@@ -210,7 +210,11 @@ class FsLibrary {
             (<any>document.querySelector('.w-pagination-wrapper')).outerHTML = ''
         }
 
-        this.reinitializeWebflow();
+        try {
+            this.reinitializeWebflow()
+        } catch (error) {
+
+        };
 
     }
 
@@ -330,19 +334,25 @@ class FsLibrary {
         }
 
         classNames.map(({ classTarget: target, classToAdd: alt }) => {
-            const list = parent.querySelectorAll(target);
+            const list = parent.children;
+            const addon = alt.replace(/\./g, "")
+
             for (let j = start - 1; j < list.length; j += frequency) {
 
-                const addon = alt.replace(/\./g, "")
-                if (list[j].className.indexOf(addon) < 0) {
-                    list[j].className += " " + addon
-                }
+                list[j].querySelectorAll(target).forEach(elem => {
+                    if (elem.className.indexOf(addon) < 0) {
+                        elem.className += " " + addon
+                    }
+                })
 
                 if (frequency == 0) {
                     break;
                 }
-                this.reinitializeWebflow()
+                try {
+                    this.reinitializeWebflow()
+                } catch (error) {
 
+                }
             }
         })
     }
@@ -614,7 +624,7 @@ class FsLibrary {
         }
         animation = this.animation;
 
-       
+
         const get_cms_items: any = () => [].slice.call(document.querySelectorAll(this.cms_selector));
 
 
@@ -661,7 +671,7 @@ class FsLibrary {
                     elem.classList.toggle(active);
 
 
-                    const isReversed = previouslyClicked?!sortReverse:sortReverse;
+                    const isReversed = previouslyClicked ? !sortReverse : sortReverse;
 
                     sortHelper({ sortTarget, sortReverse: isReversed });
 
