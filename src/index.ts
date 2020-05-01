@@ -210,11 +210,7 @@ class FsLibrary {
             (<any>document.querySelector('.w-pagination-wrapper')).outerHTML = ''
         }
 
-        try {
-            this.reinitializeWebflow()
-        } catch (error) {
-
-        };
+        this.reinitializeWebflow();
 
     }
 
@@ -251,7 +247,7 @@ class FsLibrary {
         collection.forEach(val => val.parentNode.outerHTML = "");
     }
 
-    public loadmore(config: LoadMore = { button: "a.w-pagination-next", loadAll: false, animation: this.animation }): void {
+    public loadmore(config: LoadMore = { button: "a.w-pagination-next", animation: this.animation }): void {
 
         if (!this.indexSet) {
             this.setNextButtonIndex();
@@ -271,65 +267,39 @@ class FsLibrary {
         }
 
 
-        const { button, loadAll = false } = config;
+
+        const { button } = config;
 
         const nextButton = document.querySelector(button);
         nextButton.setAttribute("data-href", (<any>nextButton).href);
         nextButton.removeAttribute('href');
         let busy = false;
 
-
-        (<any>nextButton).onclick = (evt) => {
-            initFetch();
-        }
-
-        document.addEventListener("DOMContentLoaded", function (event) {
-
-            loadAll && initFetch(true);
-
-        });
-
-        const initFetch = (recursive = false) => {
-
+        (<any>document.querySelector(button)).onclick = (evt) => {
             if (busy) return false;
 
-            const href = nextButton.getAttribute("data-href");
+            const href = evt.currentTarget.getAttribute("data-href");
 
             busy = true;
-
             if (href) {
 
                 return this.getNextData(href).then(res => {
                     //enable button
                     this.appendPaginatedData(<any>res);
                     busy = false;
-
-                    if (recursive) {
-                        initFetch(true);
-                    }
-
                 });
             }
 
             const nextcollection = this.hidden_collections.shift();
 
-
             if (nextcollection) {
-
                 this.appendToCms(nextcollection.firstElementChild.children);
                 const aHref = nextcollection.querySelector('.w-pagination-next');
                 this.setLoadmoreHref(aHref.href);
                 this.index++;
-                busy = false;
-
-                if (recursive) {
-                    initFetch(true);
-                }
-
             }
 
-
-
+            busy = false;
         }
 
     }
@@ -360,25 +330,36 @@ class FsLibrary {
         }
 
         classNames.map(({ classTarget: target, classToAdd: alt }) => {
-            const list = parent.children;
+
+            let list = parent.querySelectorAll(target);
+            let targerIsDirectChild = true;
+
+            if (parent.children[0] != list[0]) {
+                targerIsDirectChild = false;
+                list = parent.children;
+            }
+
+
             const addon = alt.replace(/\./g, "")
 
             for (let j = start - 1; j < list.length; j += frequency) {
 
-                list[j].querySelectorAll(target).forEach(elem => {
-                    if (elem.className.indexOf(addon) < 0) {
-                        elem.className += " " + addon
-                    }
-                })
+                if (targerIsDirectChild) {
+                    list[j].classList.toggle(addon);
+                }
+                else {
+                    list[j].querySelectorAll(target).forEach(elem => {
+                        elem.classList.toggle(addon);
+                    })
+                }
+
 
                 if (frequency == 0) {
                     break;
                 }
-                try {
-                    this.reinitializeWebflow()
-                } catch (error) {
 
-                }
+                this.reinitializeWebflow()
+
             }
         })
     }
@@ -767,7 +748,6 @@ interface AltClass {
 
 interface LoadMore {
     button: string;
-    loadAll: boolean;
     animation?: Animatn
 }
 
