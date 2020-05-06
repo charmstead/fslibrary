@@ -173,6 +173,7 @@ class FsLibrary {
             if (i > 0) {
                 elem.parentElement.outerHTML = "";
             }
+            this.reinitializeWebflow()
         })
 
 
@@ -308,7 +309,7 @@ class FsLibrary {
             }
 
             const nextcollection = this.hidden_collections.shift();
-
+            this.reinitializeWebflow();
 
             if (nextcollection) {
 
