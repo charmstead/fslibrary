@@ -245,7 +245,7 @@ class FsLibrary {
         const collection = this.getHiddenCollections();
         this.hidden_collections = collection.map(val => val.parentElement.cloneNode(true));
 
-        collection.forEach(val => val.parentNode.outerHTML = "");
+        // collection.forEach(val => val.parentNode.outerHTML = "");
     }
 
     public loadmore(config: LoadMore = { button: "a.w-pagination-next", loadAll: false, animation: this.animation }): void {
@@ -253,6 +253,7 @@ class FsLibrary {
         if (!this.indexSet) {
             this.setNextButtonIndex();
         }
+        
         this.setHiddenCollections();
 
         if (config.animation) {
@@ -765,7 +766,38 @@ class FsLibrary {
             )
         }
     }
+
+
+    public nest({textList,nestSource,nestTarget}){
+    
+        const master_collection =this.getMasterCollection();
+
+        const textArray = master_collection.querySelectorAll(textList);
+
+        const target = master_collection.querySelectorAll(nestTarget);
+
+        const sourceLinks = [].slice.call(document.querySelectorAll(nestSource+" a"));
+
+        target.forEach((elem,i)=>{
+
+            let tags = textArray[i].textContent;
+            tags = '('+tags.replace(/\s*,\s*/gi,'|')+')';
+
+            const regex = new RegExp(tags,'gi');
+
+            elem.innerHTML = sourceLinks.filter((link,j)=>{
+                regex.test(link.textContent);
+            })
+            .map(elem=>elem.outerHTML);
+            
+        })
+    }
 }
+
+
+
+
+
 
 interface AltClass {
     classTarget: string;
