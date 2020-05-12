@@ -324,7 +324,9 @@ class FsLibrary {
       }
 
       const nextcollection = this.hidden_collections.shift();
-      this.reinitializeWebflow();
+    //   setTimeout(() => {
+    //     this.reinitializeWebflow();
+    //   }, 500);
 
       if (nextcollection) {
         this.appendToCms(nextcollection.firstElementChild.children);
@@ -813,7 +815,8 @@ class FsLibrary {
           .filter((link, j) => {
             return regex.test(link.textContent);
           })
-          .map((elem) => elem.outerHTML).join("")
+          .map((elem) => elem.outerHTML)
+          .join("");
       }
     });
   }
