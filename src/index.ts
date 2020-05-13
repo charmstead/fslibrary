@@ -810,7 +810,7 @@ class FsLibrary {
 
         if (textElem && target[j]) {
           let tags = textElem.textContent;
-          tags = "(" + tags.replace(/\s*,\s*/gi, "|") + ")";
+          tags = "(^" + tags.replace(/\s*,\s*/gi, "|") + "$)";
           const regex = new RegExp(tags, "gi");
   
           target[j].innerHTML = sourceLinks
