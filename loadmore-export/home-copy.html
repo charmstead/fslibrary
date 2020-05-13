@@ -637,15 +637,15 @@
          // })();
          
          
-         // (function() {
-         // var insertTags = new FsLibrary('.w-dyn-items')
+         (function() {
+         var insertTags = new FsLibrary('.w-dyn-items')
          
-         // insertTags.nest({
-         //     textList: '.stories-plaintext-tag-text',    // plaintext comma separated list
-         //     nestSource: '.multi-reference-tags', // CMS list we are taking real tags from
-         //     nestTarget: '.tag-list' // where we paste the items from nestSource
-         // })
-         // })();
+         insertTags.nest({
+             textList: '.stories-plaintext-tag-text',    // plaintext comma separated list
+             nestSource: '.multi-reference-tags', // CMS list we are taking real tags from
+             nestTarget: '.tag-list' // where we paste the items from nestSource
+         })
+         })();
          
          
       </script>
