@@ -324,9 +324,9 @@ class FsLibrary {
       }
 
       const nextcollection = this.hidden_collections.shift();
-    //   setTimeout(() => {
-    //     this.reinitializeWebflow();
-    //   }, 500);
+      //   setTimeout(() => {
+      //     this.reinitializeWebflow();
+      //   }, 500);
 
       if (nextcollection) {
         this.appendToCms(nextcollection.firstElementChild.children);
@@ -806,23 +806,27 @@ class FsLibrary {
 
       const target = collection.querySelectorAll(nestTarget);
 
-      textArray.forEach((textElem,j)=>{
-
+      textArray.forEach((textElem, j) => {
         if (textElem && target[j]) {
           let tags = textElem.textContent;
-          tags = "^(" + tags.replace(/\s*,\s*/gi, "|") + ")$";
+
+          tags = tags.replace(/\s*,\s*/gi, "|");
+          const tagsArry = tags.split("|");
+          tags = "^(" + tags + ")$";
           const regex = new RegExp(tags, "gi");
-  
+
           target[j].innerHTML = sourceLinks
             .filter((link) => {
-              return regex.test(link.textContent);
+              const test = regex.test(link.textContent.trim());
+              return test;
+            })
+            .sort((a,b)=>{
+              return tagsArry.indexOf(a.textContent) -  tagsArry.indexOf(b.textContent)
             })
             .map((elem) => elem.outerHTML)
             .join("");
         }
-
-      })
-
+      });
     });
   }
 }
