@@ -802,22 +802,27 @@ class FsLibrary {
     );
 
     master_collections.forEach((collection, i) => {
-      const textArray = collection.querySelector(textList);
+      const textArray = collection.querySelectorAll(textList);
 
-      const target = collection.querySelector(nestTarget);
+      const target = collection.querySelectorAll(nestTarget);
 
-      if (textArray && target) {
-        let tags = textArray.textContent;
-        tags = "(" + tags.replace(/\s*,\s*/gi, "|") + ")";
-        const regex = new RegExp(tags, "gi");
+      textArray.forEach((textElem,j)=>{
 
-        target.innerHTML = sourceLinks
-          .filter((link, j) => {
-            return regex.test(link.textContent);
-          })
-          .map((elem) => elem.outerHTML)
-          .join("");
-      }
+        if (textElem && target[j]) {
+          let tags = textElem.textContent;
+          tags = "(" + tags.replace(/\s*,\s*/gi, "|") + ")";
+          const regex = new RegExp(tags, "gi");
+  
+          target[j].innerHTML = sourceLinks
+            .filter((link) => {
+              return regex.test(link.textContent);
+            })
+            .map((elem) => elem.outerHTML)
+            .join("");
+        }
+
+      })
+
     });
   }
 }
