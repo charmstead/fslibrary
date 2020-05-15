@@ -325,7 +325,7 @@ class FsLibrary {
 
       const nextcollection = this.hidden_collections.shift();
       //   setTimeout(() => {
-      //     this.reinitializeWebflow();
+          this.reinitializeWebflow();
       //   }, 500);
 
       if (nextcollection) {
@@ -813,15 +813,18 @@ class FsLibrary {
           tags = tags.replace(/\s*,\s*/gi, "|");
           const tagsArry = tags.split("|");
           tags = "^(" + tags + ")$";
-          const regex = new RegExp(tags, "gi");
 
           target[j].innerHTML = sourceLinks
             .filter((link) => {
+              const regex = new RegExp(tags, "gi");
               const test = regex.test(link.textContent.trim());
               return test;
             })
-            .sort((a,b)=>{
-              return tagsArry.indexOf(a.textContent.trim()) -  tagsArry.indexOf(b.textContent.trim())
+            .sort((a, b) => {
+              return (
+                tagsArry.indexOf(a.textContent.trim()) -
+                tagsArry.indexOf(b.textContent.trim())
+              );
             })
             .map((elem) => elem.outerHTML)
             .join("");
