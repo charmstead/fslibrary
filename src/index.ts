@@ -821,7 +821,7 @@ class FsLibrary {
               return test;
             })
             .sort((a,b)=>{
-              return tagsArry.indexOf(a.textContent) -  tagsArry.indexOf(b.textContent)
+              return tagsArry.indexOf(a.textContent.trim()) -  tagsArry.indexOf(b.textContent.trim())
             })
             .map((elem) => elem.outerHTML)
             .join("");
