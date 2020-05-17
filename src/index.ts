@@ -31,6 +31,9 @@ class FsLibrary {
   };
 
   private addClass: boolean;
+
+  private nestConfig;
+
   private index: number = 0;
 
   private hidden_collections: any[];
@@ -270,6 +273,7 @@ class FsLibrary {
     config: LoadMore = {
       button: "a.w-pagination-next",
       loadAll: false,
+      resetIx:true,
       animation: this.animation,
     }
   ): void {
@@ -289,7 +293,7 @@ class FsLibrary {
       this.makeStyleSheet({});
     }
 
-    const { button, loadAll = false } = config;
+    const { button,resetIx=true, loadAll = false } = config;
 
     const nextButton = document.querySelector(button);
     nextButton.setAttribute("data-href", (<any>nextButton).href);
@@ -324,9 +328,13 @@ class FsLibrary {
       }
 
       const nextcollection = this.hidden_collections.shift();
-      //   setTimeout(() => {
+        if(resetIx){
           this.reinitializeWebflow();
-      //   }, 500);
+        }
+          
+        if(this.nestConfig){
+          this.nest(this.nestConfig)
+        }
 
       if (nextcollection) {
         this.appendToCms(nextcollection.firstElementChild.children);
@@ -794,7 +802,18 @@ class FsLibrary {
     };
   }
 
+
+  private setNestConfig(config){
+    if(!this.nestConfig){
+      this.nestConfig=config;
+    }
+  }
+
+
   public nest({ textList, nestSource, nestTarget }) {
+
+   this.setNestConfig({ textList, nestSource, nestTarget })
+
     const master_collections = document.querySelectorAll(this.cms_selector);
 
     const sourceLinks = [].slice.call(
@@ -842,6 +861,7 @@ interface AltClass {
 interface LoadMore {
   button: string;
   loadAll?: boolean;
+  resetIx?:boolean;
   animation?: Animatn;
 }
 
