@@ -218,15 +218,14 @@ class FsLibrary {
       this.index
     ];
     const nextHref = paginationWrapper.querySelector(".w-pagination-next");
-    collection && this.appendToCms(collection.children);
     nextHref
       ? this.setLoadmoreHref((<any>nextHref).href)
       : this.setLoadmoreHref("");
+    collection && this.appendToCms(collection.children);
 
     if (!this.hidden_collections.length && !nextHref) {
       (<any>document.querySelector(".w-pagination-wrapper")).outerHTML = "";
     }
-    this.reinitializeWebflow();
 
   }
 
@@ -325,10 +324,15 @@ class FsLibrary {
           this.appendPaginatedData(<any>res);
           busy = false;
 
+          if(resetIx){
+            this.reinitializeWebflow();
+          }
+          
           if (recursive) {
             initFetch(true);
           }
-        });
+        })
+
       }
 
       const nextcollection = this.hidden_collections.shift();
@@ -346,10 +350,10 @@ class FsLibrary {
           initFetch(true);
         }
       }
-
       if(resetIx){
         this.reinitializeWebflow();
       }
+
         
     };
   }
