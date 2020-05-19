@@ -226,8 +226,8 @@ class FsLibrary {
     if (!this.hidden_collections.length && !nextHref) {
       (<any>document.querySelector(".w-pagination-wrapper")).outerHTML = "";
     }
-
     this.reinitializeWebflow();
+
   }
 
   private appendToCms(collection) {
@@ -245,6 +245,10 @@ class FsLibrary {
         this.addclasses(this.addClassConfig);
       }
     });
+
+    if(this.nestConfig){
+      this.nest(this.nestConfig)
+    }
   }
 
   private setLoadmoreHref(url) {
@@ -328,13 +332,8 @@ class FsLibrary {
       }
 
       const nextcollection = this.hidden_collections.shift();
-        if(resetIx){
-          this.reinitializeWebflow();
-        }
-          
-        if(this.nestConfig){
-          this.nest(this.nestConfig)
-        }
+
+
 
       if (nextcollection) {
         this.appendToCms(nextcollection.firstElementChild.children);
@@ -347,6 +346,11 @@ class FsLibrary {
           initFetch(true);
         }
       }
+
+      if(resetIx){
+        this.reinitializeWebflow();
+      }
+        
     };
   }
 
