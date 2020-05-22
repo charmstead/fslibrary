@@ -224,9 +224,8 @@ class FsLibrary {
     collection && this.appendToCms(collection.children);
 
     if (!this.hidden_collections.length && !nextHref) {
-      (<any>document.querySelector(".w-pagination-wrapper")).outerHTML = "";
+      (<any>this.getLoadmoreHref()).outerHTML = "";
     }
-
   }
 
   private appendToCms(collection) {
@@ -245,16 +244,24 @@ class FsLibrary {
       }
     });
 
-    if(this.nestConfig){
-      this.nest(this.nestConfig)
+    if (this.nestConfig) {
+      this.nest(this.nestConfig);
     }
   }
 
   private setLoadmoreHref(url) {
     const master_collection = this.getMasterCollection();
-    master_collection.parentElement
-      .querySelector("a.w-pagination-next")
-      .setAttribute("data-href", url);
+    const hrefButton = master_collection.parentElement
+      .querySelector("a.w-pagination-next");
+      hrefButton.setAttribute("data-href", url || (<any>hrefButton).href);
+      return hrefButton;
+  }
+  
+  private getLoadmoreHref(selector?) {
+    const master_collection = this.getMasterCollection();
+    const hrefButton = master_collection.parentElement
+      .querySelector(selector || "a.w-pagination-next");
+      return hrefButton;
   }
 
   private getHiddenCollections(): any[] {
@@ -276,7 +283,7 @@ class FsLibrary {
     config: LoadMore = {
       button: "a.w-pagination-next",
       loadAll: false,
-      resetIx:true,
+      resetIx: true,
       animation: this.animation,
     }
   ): void {
@@ -294,13 +301,14 @@ class FsLibrary {
       this.makeStyleSheet({ duration, easing, transform: effects });
     } else {
       this.makeStyleSheet({});
-    }
+    } 
 
-    const { button,resetIx=true, loadAll = false } = config;
+    const { button, resetIx = true, loadAll = false } = config;
 
-    const nextButton = document.querySelector(button);
+    const nextButton = this.getLoadmoreHref(button);
     nextButton.setAttribute("data-href", (<any>nextButton).href);
     nextButton.removeAttribute("href");
+
     let busy = false;
 
     (<any>nextButton).onclick = (evt) => {
@@ -324,20 +332,17 @@ class FsLibrary {
           this.appendPaginatedData(<any>res);
           busy = false;
 
-          if(resetIx){
+          if (resetIx) {
             this.reinitializeWebflow();
           }
-          
+
           if (recursive) {
             initFetch(true);
           }
-        })
-
+        });
       }
 
       const nextcollection = this.hidden_collections.shift();
-
-
 
       if (nextcollection) {
         this.appendToCms(nextcollection.firstElementChild.children);
@@ -350,11 +355,9 @@ class FsLibrary {
           initFetch(true);
         }
       }
-      if(resetIx){
+      if (resetIx) {
         this.reinitializeWebflow();
       }
-
-        
     };
   }
 
@@ -810,17 +813,14 @@ class FsLibrary {
     };
   }
 
-
-  private setNestConfig(config){
-    if(!this.nestConfig){
-      this.nestConfig=config;
+  private setNestConfig(config) {
+    if (!this.nestConfig) {
+      this.nestConfig = config;
     }
   }
 
-
   public nest({ textList, nestSource, nestTarget }) {
-
-   this.setNestConfig({ textList, nestSource, nestTarget })
+    this.setNestConfig({ textList, nestSource, nestTarget });
 
     const master_collections = document.querySelectorAll(this.cms_selector);
 
@@ -869,7 +869,7 @@ interface AltClass {
 interface LoadMore {
   button: string;
   loadAll?: boolean;
-  resetIx?:boolean;
+  resetIx?: boolean;
   animation?: Animatn;
 }
 
