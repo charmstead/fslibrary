@@ -214,10 +214,8 @@ class FsLibrary {
   private appendPaginatedData(data: string) {
     const newDoc = createDocument(data, "newDoc" + Date.now());
     const collection = newDoc.querySelectorAll(this.cms_selector)[this.index];
-    const paginationWrapper = newDoc.querySelectorAll(".w-pagination-wrapper")[
-      this.index
-    ];
-    const nextHref = paginationWrapper.querySelector(".w-pagination-next");
+    const nextHref = collection.parentElement.querySelectorAll(".w-pagination-next");
+    // const nextHref = paginationWrapper.querySelector(".w-pagination-next");
     nextHref
       ? this.setLoadmoreHref((<any>nextHref).href)
       : this.setLoadmoreHref("");
