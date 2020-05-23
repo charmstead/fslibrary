@@ -208,7 +208,7 @@ class FsLibrary {
           return resolve(xhr.response);
         }
       };
-    }).then((res) => res);
+    }).then((res) => res); 
   }
 
   private appendPaginatedData(data: string) {
