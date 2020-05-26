@@ -210,12 +210,12 @@ class FsLibrary {
       };
     }).then((res) => res); 
   }
+  
 
   private appendPaginatedData(data: string) {
     const newDoc = createDocument(data, "newDoc" + Date.now());
     const collection = newDoc.querySelectorAll(this.cms_selector)[this.index];
-    const nextHref = collection.parentElement.querySelectorAll(".w-pagination-next");
-    // const nextHref = paginationWrapper.querySelector(".w-pagination-next");
+    const nextHref = collection.parentElement.querySelectorAll(".w-pagination-next")[this.index];
     nextHref
       ? this.setLoadmoreHref((<any>nextHref).href)
       : this.setLoadmoreHref("");
@@ -274,7 +274,7 @@ class FsLibrary {
       val.parentElement.cloneNode(true)
     );
 
-    // collection.forEach(val => val.parentNode.outerHTML = "");
+    collection.forEach(val => val.parentNode.outerHTML = "");
   }
 
   public loadmore(
