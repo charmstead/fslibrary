@@ -33,3 +33,49 @@ export function createDocument(html, title) {
   export const escapeRegExp = (string)=>{
     return string.replace(/[*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
+
+
+export function whichTransitionEvent() {
+    var t,
+      el = document.createElement("fakeelement");
+  
+    var transitions = {
+      transition: "transitionend",
+      OTransition: "oTransitionEnd",
+      MozTransition: "transitionend",
+      WebkitTransition: "webkitTransitionEnd",
+    };
+  
+    for (t in transitions) {
+      if (el.style[t] !== undefined) {
+        return transitions[t];
+      }
+    }
+  }
+  
+  export function whichAnimationEvent() {
+    var t,
+      el = document.createElement("fakeelement");
+  
+    var animations = {
+      animation: "animationend",
+      OAnimationn: "oAnimationnEnd",
+      MozAnimationn: "animationnend",
+      WebkitAnimationn: "webkitAnimationnEnd",
+    };
+  
+    for (t in animations) {
+      if (el.style[t] !== undefined) {
+        return animations[t];
+      }
+    }
+  }
+  
+  export function debounce(callback, wait) {
+    let timeout;
+    return (...args) => {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => callback.apply(context, args), wait);
+    };
+  }

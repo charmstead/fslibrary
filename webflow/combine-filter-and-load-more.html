@@ -2067,8 +2067,8 @@
         (function() {
 
             var _animation = {
-                enable: true,
-                duration: 1000,
+                enable: false,
+                duration: 0,
                 easing: 'ease-in',
                 effects: 'scale(0) translate(10px,20px) rotateZ(360deg)'
             }
@@ -2100,17 +2100,11 @@
                 animation: _animation
             })
 
-            //or
 
-            // fslib.cmsfilter({
-            //     cms_filter: _FILTERS,
+            // fslib.loadmore({
+            //     button: ".load-more-button",
             //     animation: _animation
             // })
-
-            fslib.loadmore({
-                button: ".load-more-button",
-                animation: _animation
-            })
 
         })();
 
