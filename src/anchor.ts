@@ -1,38 +1,47 @@
 import { FsLibrary } from "./fsLibrary";
+import { createElementFromHTML } from "./utility";
 
 FsLibrary.prototype.anchor = function ({
-  button,
+  anchorButton,
   buttonsTarget,
   activeClass,
-  anchorLink,
-  sectionAnchorTarget,
+  anchorId,
 }) {
   const cms = this.getMasterCollection();
+  const active = String(activeClass).replace(".", "");
 
+  
   const targetHolder = document.querySelector(buttonsTarget);
   targetHolder.innerHTML = "";
 
-  const testimonial = cms.querySelectorAll(sectionAnchorTarget);
+  const testimonials = cms.querySelectorAll(".w-dyn-item>div");
+
 
   const Webflow = (<any>window).Webflow || [];
 
   Webflow.push(function () {
-    testimonial.forEach((elem, idx) => {
-      const anchor_link = elem.querySelector(anchorLink).textContent.trim();
-      const sidebar_link = elem.querySelector(button);
+    testimonials.forEach((elem, idx) => {
+      let anchor_link = elem.querySelector(anchorId).textContent.trim()
+      anchor_link=anchor_link.replace(/\s+/gi, "-");
+      const sidebar_link = elem.querySelector(anchorButton);
 
       elem.id = anchor_link;
       sidebar_link.href = "#" + anchor_link;
 
-      targetHolder.innerHTML += sidebar_link.outerHTML;
+      const sidelink:any = createElementFromHTML(sidebar_link.outerHTML);
 
-      (<any>targetHolder.children[idx]).addEventListener("click", (event) => {
-        const target = event.currentTarget;
-        const active = String(activeClass).replace(".", "");
+      targetHolder.appendChild(sidelink);
+
+      if(idx==0){
+        sidelink.classList.add(active)
+      }
+
+      sidelink.addEventListener("click", (event) => {
+        const target:any = event.currentTarget;
       
         removeActiveClassFromTriggers(target, active);
       
-        if(!target.contains(active)){
+        if(!target.classList.contains(active)){
             target.classList.add(active);
         }
         
@@ -42,7 +51,7 @@ FsLibrary.prototype.anchor = function ({
   });
 
   const removeActiveClassFromTriggers = ( target, activeClass) => {
-    document.querySelector(buttonsTarget).children.forEach((elem) => {
+    document.querySelectorAll(buttonsTarget+">a").forEach((elem) => {
       if (elem.outerHTML != target.outerHTML) {
         elem.classList.remove(activeClass);
       }

@@ -1,6 +1,6 @@
 import { FsLibrary } from "./fsLibrary";
 
-FsLibrary.prototype.tabs = function ({ tabComponent, tabName }) {
+FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
   const cms = this.getMasterCollection();
   const testimonials = cms.querySelectorAll(".w-dyn-item>div");
 
@@ -50,6 +50,7 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName }) {
         content,
       });
       tabContent.innerHTML += newPane;
+      !!resetIx && this.reinitializeWebflow();
     });
   };
 };
