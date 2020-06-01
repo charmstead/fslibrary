@@ -858,6 +858,54 @@ class FsLibrary {
       });
     });
   }
+
+
+public tabs({ tabComponent, tabName }) {
+  const cms = this.getMasterCollection();
+  const testimonials = cms.querySelectorAll(".w-dyn-item>div");
+  
+  const tabMenu = document.querySelector(tabComponent + " .w-tab-menu");
+  const tabContent = document.querySelector(tabComponent + " .w-tab-content");
+  
+  
+  const tabPane = tabContent.children[0];
+  const tabLink = tabMenu.querySelector('a');
+  
+  const control = ""//etAttribute("aria-controls");
+  console.log(tabLink,tabLink.href)
+
+  // const prefix = getPrefix(control);
+  
+//   tabLink.classList.remove('w--current');
+//   tabPane.classList.remove('w--tab-active');
+  
+  // const tabLinkClassNames = tabLink.className;
+  // const tabContentClassNames = tabPane.className;
+
+
+  //clear tabMenu and tabContent
+
+//   tabMenu.innerHTML="";
+//   tabContent.innerHTML="";
+
+
+  //appends new contents
+  
+//   testimonials.forEach((element,index) => {
+      
+//       const name = element.querySelector(tabName);
+      
+//       const newLink=getTabLink({name,prefix,index,classes:tabLinkClassNames});
+//       tabMenu.innerHTML += newLink;
+
+//       const content= element.outerHTML;
+//       const newPane=getTabPane({name,prefix,index,classes:tabContentClassNames,content});
+//       tabContent.innerHTML +=newPane;
+
+//   });
+
+
+};
 }
 
 interface AltClass {
