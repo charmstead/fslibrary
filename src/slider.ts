@@ -2,7 +2,8 @@ import { FsLibrary } from "./fsLibrary";
 import { createElementFromHTML } from "./utility";
 
 FsLibrary.prototype.slider = function ({
-    sliderComponent
+    sliderComponent,
+    resetIx
 }) {
 
 
@@ -45,8 +46,10 @@ FsLibrary.prototype.slider = function ({
           slideContainer.outerHTML+="";
           (<any>window).___toggledInit___=true;
           (<any>window).Webflow.ready();
+          resetIx && this.reinitializeWebflow();
         }
     });
+
 
   });
 
