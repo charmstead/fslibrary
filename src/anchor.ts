@@ -4,7 +4,6 @@ import {
   registerListener,
   isInViewport,
   findDeepestChildElement,
-  debounce,
 } from "./utility";
 
 FsLibrary.prototype.anchor = function ({
@@ -41,7 +40,7 @@ FsLibrary.prototype.anchor = function ({
     }
 
     const deepest=findDeepestChildElement(elem);
-    registerListener("scroll", debounce(()=>observe(deepest,sidelink),100));
+    registerListener("scroll", ()=>observe(deepest,sidelink));
 
 
     sidelink.addEventListener("click", (event) => {
