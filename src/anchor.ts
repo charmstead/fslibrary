@@ -10,7 +10,7 @@ FsLibrary.prototype.anchor = function ({
   const cms = this.getMasterCollection();
   const active = String(activeClass).replace(".", "");
 
-  
+
   const targetHolder = document.querySelector(buttonsTarget);
   targetHolder.innerHTML = "";
 
@@ -19,7 +19,7 @@ FsLibrary.prototype.anchor = function ({
 
   const Webflow = (<any>window).Webflow || [];
 
-  Webflow.push(function () {
+  // Webflow.push(function () {
     testimonials.forEach((elem, idx) => {
       let anchor_link = elem.querySelector(anchorId).textContent.trim()
       anchor_link=anchor_link.replace(/\s+/gi, "-");
@@ -48,7 +48,7 @@ FsLibrary.prototype.anchor = function ({
       });
 
     });
-  });
+  // });
 
   const removeActiveClassFromTriggers = ( target, activeClass) => {
     document.querySelectorAll(buttonsTarget+">a").forEach((elem) => {

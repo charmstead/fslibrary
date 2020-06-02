@@ -29,7 +29,6 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
 
   const initTabs = (prefix, tabLinkClassNames, tabContentClassNames) => {
     // appends new contents
-
     testimonials.forEach((element, index) => {
       const name = element.querySelector(tabName).innerHTML;
 
