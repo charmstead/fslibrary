@@ -4,7 +4,12 @@ import {
   registerListener,
   isInViewport,
   findDeepestChildElement,
+  debounce,
+  throttle,
+  isOutOfViewport,
 } from "./utility";
+
+const $ = (<any>window).jQuery;
 
 FsLibrary.prototype.anchor = function ({
   anchorButton,
@@ -18,12 +23,12 @@ FsLibrary.prototype.anchor = function ({
   const targetHolder = document.querySelector(buttonsTarget);
   targetHolder.innerHTML = "";
 
-  const testimonials = cms.querySelectorAll(".w-dyn-item>div");
+  const testimonials = [].slice.call(cms.querySelectorAll(".w-dyn-item>div"));
 
   const Webflow = (<any>window).Webflow || [];
 
   // Webflow.push(function () {
-  testimonials.forEach((elem, idx,arr) => {
+  const done = testimonials.map((elem, idx, arr) => {
     let anchor_link = elem.querySelector(anchorId).textContent.trim();
     anchor_link = anchor_link.replace(/\s+/gi, "-");
     const sidebar_link = elem.querySelector(anchorButton);
@@ -39,34 +44,29 @@ FsLibrary.prototype.anchor = function ({
       sidelink.classList.add(active);
     }
 
-    const deepest=findDeepestChildElement(elem);
-    registerListener("scroll", ()=>observe(deepest,sidelink));
 
+    $(sidelink).on('click', function (e) {
+      $(document).off("scroll",onScroll);
+      
+      removeActiveClassFromTriggers(this, active);
+      $(this).addClass(active);
+    
+     setTimeout(()=>{
+      $(document).on("scroll", onScroll);
+     },2000) 
 
-    sidelink.addEventListener("click", (event) => {
-      const target: any = event.currentTarget;
-
-      removeActiveClassFromTriggers(target, active);
-
-      if (!target.classList.contains(active)) {
-        target.classList.add(active);
-      }
-    });
   });
+
+    return Promise.resolve();
+  });
+
+
+
+  Promise.all(done).then(() => {
+    $(document).on("scroll",onScroll)
+  })
+
   // });
-
-  function observe(elm,target) {
-    const one= isInViewport(elm);
-
-    if (one) {
-      removeActiveClassFromTriggers(target, active);
-      if (!target.classList.contains(active)) {
-        target.classList.add(active);
-      }
-      return
-    }
-
-  }
   
 
   const removeActiveClassFromTriggers = (target, activeClass) => {
@@ -76,5 +76,21 @@ FsLibrary.prototype.anchor = function ({
       }
     });
   };
-};
 
+  const onScroll=()=> {
+    document.querySelectorAll(buttonsTarget + ">a").forEach((elem, i) => {
+      const href = (<any>elem).href.match(/#(.*)?/)[1];
+      const targetElem = document.getElementById(href);
+      // const deepest = findDeepestChildElement(targetElem);
+      const check = isOutOfViewport(targetElem);
+    
+      if (!check.bottom && !check.top) {
+        removeActiveClassFromTriggers(elem, active);
+        elem.classList.add(active);
+      } else {
+        elem.classList.remove(active);
+      }
+    });
+  }
+
+};

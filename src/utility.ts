@@ -8,12 +8,35 @@ export function isInViewport(el) {
     rect.left <= (window.innerWidth || document.documentElement.clientWidth)
   );
 }
+
+export const isOutOfViewport = function (elem) {
+
+	// Get element's bounding
+	var bounding = elem.getBoundingClientRect();
+
+	// Check if it's out of the viewport on each side
+	const out:any = {};
+	out.top = bounding.top < 0;
+	out.left = bounding.left < 0;
+	out.bottom = bounding.bottom > (window.innerHeight || document.documentElement.clientHeight);
+	out.right = bounding.right > (window.innerWidth || document.documentElement.clientWidth);
+	out.any = out.top || out.left || out.bottom || out.right;
+	out.all = out.top && out.left && out.bottom && out.right;
+
+	return out;
+
+};
+
 export function registerListener(event, func) {
-  if (window.addEventListener) {
-    window.addEventListener(event, func);
+  if (document.addEventListener) {
+    document.addEventListener(event, func,true);
   } else {
-    (window as any).attachEvent("on" + event, func);
+    (document as any).attachEvent("on" + event, func);
   }
+}
+
+export function removeListener(event, func) {
+    document.removeEventListener(event, func,true);
 }
 
 export function isVisible(elem) {
@@ -89,4 +112,26 @@ export function createElementFromHTML(htmlString) {
 
   // Change this to div.childNodes to support multiple top-level nodes
   return div.firstChild;
+}
+
+
+export const throttle = (func, limit) => {
+  let lastFunc
+  let lastRan
+  return function() {
+    const context = this
+    const args = arguments
+    if (!lastRan) {
+      func.apply(context, args)
+      lastRan = Date.now()
+    } else {
+      clearTimeout(lastFunc)
+      lastFunc = setTimeout(function() {
+        if ((Date.now() - lastRan) >= limit) {
+          func.apply(context, args)
+          lastRan = Date.now()
+        }
+      }, limit - (Date.now() - lastRan))
+    }
+  }
 }
