@@ -44,30 +44,33 @@ FsLibrary.prototype.anchor = function ({
       sidelink.classList.add(active);
     }
 
+    $(sidelink).on("click", function (e) {
+      $(document).off("scroll", onScroll);
 
-    $(sidelink).on('click', function (e) {
-      $(document).off("scroll",onScroll);
-      
       removeActiveClassFromTriggers(this, active);
-      $(this).addClass(active);
-    
-     setTimeout(()=>{
-      $(document).on("scroll", onScroll);
-     },2000) 
 
-  });
+      $("html, body")
+        .stop()
+        .animate(
+          {
+            scrollTop: $(this).offset().top + 2,
+          },
+          500,
+          "swing",
+          function () {
+            $(document).on("scroll", onScroll);
+          }
+        );
+    });
 
     return Promise.resolve();
   });
 
-
-
   Promise.all(done).then(() => {
-    $(document).on("scroll",onScroll)
-  })
+    $(document).on("scroll", onScroll);
+  });
 
   // });
-  
 
   const removeActiveClassFromTriggers = (target, activeClass) => {
     document.querySelectorAll(buttonsTarget + ">a").forEach((elem) => {
@@ -77,13 +80,13 @@ FsLibrary.prototype.anchor = function ({
     });
   };
 
-  const onScroll=()=> {
+  const onScroll = () => {
     document.querySelectorAll(buttonsTarget + ">a").forEach((elem, i) => {
       const href = (<any>elem).href.match(/#(.*)?/)[1];
       const targetElem = document.getElementById(href);
       // const deepest = findDeepestChildElement(targetElem);
       const check = isOutOfViewport(targetElem);
-    
+
       if (!check.bottom && !check.top) {
         removeActiveClassFromTriggers(elem, active);
         elem.classList.add(active);
@@ -91,6 +94,5 @@ FsLibrary.prototype.anchor = function ({
         elem.classList.remove(active);
       }
     });
-  }
-
+  };
 };
