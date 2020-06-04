@@ -44,24 +44,6 @@ FsLibrary.prototype.anchor = function ({
       sidelink.classList.add(active);
     }
 
-    $(sidelink).on("click", function (e) {
-      $(document).off("scroll", onScroll);
-
-      removeActiveClassFromTriggers(this, active);
-
-      $("html, body")
-        .stop()
-        .animate(
-          {
-            scrollTop: $(this).offset().top + 2,
-          },
-          500,
-          "swing",
-          function () {
-            $(document).on("scroll", onScroll);
-          }
-        );
-    });
 
     return Promise.resolve();
   });
