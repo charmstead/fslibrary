@@ -8,7 +8,7 @@ FsLibrary.prototype.slider = function ({
 
 
   const cms = this.getMasterCollection();
-  const testimonials = cms.querySelectorAll(".w-dyn-item>div");
+  const testimonials = [].slice.call(cms.querySelectorAll(".w-dyn-item>div"));
 
   const slideContainer = document.querySelector(sliderComponent);
 
@@ -35,21 +35,22 @@ FsLibrary.prototype.slider = function ({
     slideNav.innerHTML="";
 
     
-    testimonials.forEach((elem,idx,arr) => {
+    const done =testimonials.map((elem,idx,arr) => {
         const newSlide:any = templateSlide.cloneNode(true);
         newSlide.innerHTML =elem.outerHTML;
 
         slideHolder.innerHTML +=(<any>newSlide).outerHTML;
         slideNav.innerHTML +=templateDot;
 
-        if(idx>=arr.length-1){
-          slideContainer.outerHTML+="";
-          (<any>window).___toggledInit___=true;
-          (<any>window).Webflow.ready();
-          resetIx && this.reinitializeWebflow();
-        }
+        return Promise.resolve(true);
     });
 
+    Promise.all(done).then(r=>{
+      slideContainer.outerHTML+="";
+      (<any>window).___toggledInit___=true;
+      (<any>window).Webflow.ready();
+      !!resetIx && this.reinitializeWebflow();
+    })
 
   });
 
