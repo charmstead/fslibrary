@@ -13,7 +13,7 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
   const Webflow = (<any>window).Webflow || [];
   
   Webflow.push(function () {
-    if((<any>window).___toggledInit___){
+    if((<any>window).___toggledInitTab___){
       return;
     }
 
@@ -30,8 +30,10 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
     tabContent.innerHTML = "";
     Promise.all(initTabs(prefix, tabLinkClassNames, tabContentClassNames))
     .then(res=>{
-      (<any>window).___toggledInit___=true;
-       !!resetIx && this.reinitializeWebflow();
+      (<any>window).___toggledInitTab___=true;
+      (<any>window).Webflow.ready();
+      !!resetIx &&  (<any>window).Webflow.require("ix2").init();
+ 
     })
 
   });
