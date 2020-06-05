@@ -2,7 +2,7 @@ import { FsLibrary } from "./fsLibrary";
 
 FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
   const cms = this.getMasterCollection();
-  const testimonials = cms.querySelectorAll(".w-dyn-item>div");
+  const testimonials = [].slice.call(cms.querySelectorAll(".w-dyn-item>div"));
 
   const tabMenu = document.querySelector(tabComponent + " .w-tab-menu");
   const tabContent = document.querySelector(tabComponent + " .w-tab-content");
@@ -13,6 +13,10 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
   const Webflow = (<any>window).Webflow || [];
   
   Webflow.push(function () {
+    if((<any>window).___toggledInit___){
+      return;
+    }
+
     const prefix = getPrefix(tabLink.href);
     tabLink.classList.remove("w--current");
     tabPane.classList.remove("w--tab-active");
@@ -24,12 +28,17 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
 
     tabMenu.innerHTML = "";
     tabContent.innerHTML = "";
-    initTabs(prefix, tabLinkClassNames, tabContentClassNames);
+    Promise.all(initTabs(prefix, tabLinkClassNames, tabContentClassNames))
+    .then(res=>{
+      (<any>window).___toggledInit___=true;
+       !!resetIx && this.reinitializeWebflow();
+    })
+
   });
 
   const initTabs = (prefix, tabLinkClassNames, tabContentClassNames) => {
     // appends new contents
-    testimonials.forEach((element, index) => {
+    return testimonials.map((element, index) => {
       const name = element.querySelector(tabName).innerHTML;
 
       const newLink = getTabLink({
@@ -49,7 +58,7 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
         content,
       });
       tabContent.innerHTML += newPane;
-      !!resetIx && this.reinitializeWebflow();
+      return Promise.resolve()
     });
   };
 };

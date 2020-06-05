@@ -2,14 +2,9 @@ import { FsLibrary } from "./fsLibrary";
 import {
   createElementFromHTML,
   registerListener,
-  isInViewport,
-  findDeepestChildElement,
-  debounce,
-  throttle,
   isOutOfViewport,
 } from "./utility";
 
-const $ = (<any>window).jQuery;
 
 FsLibrary.prototype.anchor = function ({
   anchorButton,
@@ -49,7 +44,7 @@ FsLibrary.prototype.anchor = function ({
   });
 
   Promise.all(done).then(() => {
-    $(document).on("scroll", onScroll);
+    registerListener("scroll",onScroll)
   });
 
   // });
