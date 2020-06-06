@@ -54,9 +54,9 @@ FsLibrary.prototype.loadmore = function (
         this.appendPaginatedData(<any>res);
         busy = false;
 
-        if (resetIx) {
+        // if (resetIx) {
           this.reinitializeWebflow();
-        }
+        // }
 
         if (recursive) {
           initFetch(true);
@@ -69,9 +69,9 @@ FsLibrary.prototype.loadmore = function (
     if (nextcollection) {
       this.appendToCms(nextcollection.firstElementChild.children).then(
         (res) => {
-          if (resetIx) {
+          // if (resetIx) {
             this.reinitializeWebflow();
-          }
+          // }
         }
       );
       const aHref = nextcollection.querySelector(".w-pagination-next");

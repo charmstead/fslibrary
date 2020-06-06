@@ -67,7 +67,6 @@ FsLibrary.prototype.setLoadmoreHref = function (url) {
 
 FsLibrary.prototype.getLoadmoreHref = function (selector?) {
   const master_collection = this.getMasterCollection();
-  console.log(master_collection)
   const hrefButton = master_collection.parentElement.querySelector(
     selector || "a.w-pagination-next"
   );
