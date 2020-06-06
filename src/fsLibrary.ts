@@ -76,7 +76,7 @@ FsLibrary.prototype.getMasterCollection = function () {
 };
 
 FsLibrary.prototype.reinitializeWebflow = function () {
-  // (<any>window).Webflow.destroy();
+  (<any>window).Webflow.destroy();
   (<any>window).Webflow.ready();
   (<any>window).Webflow.require("ix2").init();
     initResize();
