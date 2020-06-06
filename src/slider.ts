@@ -49,7 +49,8 @@ FsLibrary.prototype.slider = function ({
       slideContainer.outerHTML+="";
       (<any>window).___toggledInit___=true;
       (<any>window).Webflow.ready();
-      !!resetIx && this.reinitializeWebflow();
+      !!resetIx &&  (<any>window).Webflow.require("ix2").init();
+
     })
 
   });
