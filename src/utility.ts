@@ -135,3 +135,17 @@ export const throttle = (func, limit) => {
     }
   }
 }
+
+export const initResize=()=>{
+  
+  if (typeof(Event) === 'function') {
+    // modern browsers
+    window.dispatchEvent(new Event('resize'));
+  } else {
+    // for IE and other old browsers
+    // causes deprecation warning on modern browsers
+    const evt = window.document.createEvent('UIEvents'); 
+    (<any>evt).initUIEvent('resize', true, false, window, 0); 
+    window.dispatchEvent(evt);
+  }
+}

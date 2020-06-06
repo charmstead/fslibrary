@@ -11,7 +11,7 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
   const tabLink = tabMenu.getElementsByTagName("a")[0];
 
   const Webflow = (<any>window).Webflow || [];
-  
+  const self=this;
   Webflow.push(function () {
     if((<any>window).___toggledInitTab___){
       return;
@@ -32,7 +32,7 @@ FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx }) {
     .then(res=>{
       (<any>window).___toggledInitTab___=true;
       (<any>window).Webflow.ready();
-      !!resetIx &&  (<any>window).Webflow.require("ix2").init();
+      !!resetIx && self.reinitializeWebflow();
  
     })
 

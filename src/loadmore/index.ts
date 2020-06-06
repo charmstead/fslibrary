@@ -1,5 +1,5 @@
 import { FsLibrary } from "../fsLibrary";
-import './util'
+import "./util";
 
 FsLibrary.prototype.loadmore = function (
   config: LoadMore = {
@@ -67,7 +67,13 @@ FsLibrary.prototype.loadmore = function (
     const nextcollection = this.hidden_collections.shift();
 
     if (nextcollection) {
-      this.appendToCms(nextcollection.firstElementChild.children);
+      this.appendToCms(nextcollection.firstElementChild.children).then(
+        (res) => {
+          if (resetIx) {
+            this.reinitializeWebflow();
+          }
+        }
+      );
       const aHref = nextcollection.querySelector(".w-pagination-next");
       this.setLoadmoreHref(aHref.href);
       this.index++;
@@ -76,9 +82,6 @@ FsLibrary.prototype.loadmore = function (
       if (recursive) {
         initFetch(true);
       }
-    }
-    if (resetIx) {
-      this.reinitializeWebflow();
     }
   };
 };

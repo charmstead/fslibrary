@@ -18,7 +18,7 @@ FsLibrary.prototype.slider = function ({
 
 
   const Webflow = (<any>window).Webflow || [];
-
+const self=this;
   Webflow.push(function () {
     if((<any>window).___toggledInit___){
       return;
@@ -49,7 +49,7 @@ FsLibrary.prototype.slider = function ({
       slideContainer.outerHTML+="";
       (<any>window).___toggledInit___=true;
       (<any>window).Webflow.ready();
-      !!resetIx &&  (<any>window).Webflow.require("ix2").init();
+      !!resetIx &&  self.reinitializeWebflow();
 
     })
 

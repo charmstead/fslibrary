@@ -1,5 +1,5 @@
 import { blurImg } from "./blurImg";
-import { isVisible } from "./utility";
+import { isVisible, initResize } from "./utility";
 
 export function FsLibrary(
   cms_selector: string,
@@ -79,6 +79,9 @@ FsLibrary.prototype.reinitializeWebflow = function () {
   // (<any>window).Webflow.destroy();
   (<any>window).Webflow.ready();
   (<any>window).Webflow.require("ix2").init();
+  setTimeout(()=>{
+    initResize();
+  },20)
 };
 
 FsLibrary.prototype.makeStyleSheet = function ({

@@ -35,7 +35,7 @@ FsLibrary.prototype.appendPaginatedData = function (data: string) {
 FsLibrary.prototype.appendToCms = function (collection) {
   const master_collection = this.getMasterCollection();
 
-  [].slice.call(collection).forEach((element) => {
+  const append=[].slice.call(collection).map((element) => {
     element.classList.add("fslib-fadeIn");
 
     once(element, whichAnimationEvent(), ({ type }) => {
@@ -46,11 +46,14 @@ FsLibrary.prototype.appendToCms = function (collection) {
     if (this.addClass) {
       this.addclasses(this.addClassConfig);
     }
+    return Promise.resolve();
   });
 
   if (this.nestConfig) {
     this.nest(this.nestConfig);
   }
+
+  return Promise.all(append);
 };
 
 FsLibrary.prototype.setLoadmoreHref = function (url) {
