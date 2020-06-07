@@ -149,3 +149,17 @@ export const initResize=()=>{
     window.dispatchEvent(evt);
   }
 }
+
+export const dispatchEvent=(event)=>{
+  
+  if (typeof(Event) === 'function') {
+    // modern browsers
+    window.dispatchEvent(new Event(event));
+  } else {
+    // for IE and other old browsers
+    // causes deprecation warning on modern browsers
+    const evt = window.document.createEvent('UIEvents'); 
+    (<any>evt).initUIEvent(event, true, false, window, 0); 
+    window.dispatchEvent(evt);
+  }
+}

@@ -1,5 +1,6 @@
 import { blurImg } from "./blurImg";
-import { isVisible, initResize } from "./utility";
+import { isVisible, dispatchEvent } from "./utility";
+import {trigger} from '../js/util/index'
 
 export function FsLibrary(
   cms_selector: string,
@@ -79,7 +80,8 @@ FsLibrary.prototype.reinitializeWebflow = function () {
   (<any>window).Webflow.destroy();
   (<any>window).Webflow.ready();
   (<any>window).Webflow.require("ix2").init();
-    initResize();
+  trigger(document,'readystatechange');
+
 };
 
 FsLibrary.prototype.makeStyleSheet = function ({
