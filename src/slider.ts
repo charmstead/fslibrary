@@ -3,7 +3,7 @@ import { createElementFromHTML } from "./utility";
 
 FsLibrary.prototype.slider = function ({
     sliderComponent,
-    resetIx
+    resetIx=true
 }) {
 
 
