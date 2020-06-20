@@ -1,5 +1,4 @@
 import { FsLibrary } from "./fsLibrary";
-import { createElementFromHTML } from "./utility";
 
 FsLibrary.prototype.slider = function ({
     sliderComponent,
@@ -8,7 +7,7 @@ FsLibrary.prototype.slider = function ({
 
 
   const cms = this.getMasterCollection();
-  const testimonials = [].slice.call(cms.querySelectorAll(".w-dyn-item>div"));
+  const testimonials = [].slice.call(cms.querySelectorAll(".w-dyn-item>*"));
 
   const slideContainer = document.querySelector(sliderComponent);
 
