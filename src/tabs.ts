@@ -2,7 +2,7 @@ import { FsLibrary } from "./fsLibrary";
 
 FsLibrary.prototype.tabs = function ({ tabComponent, tabName,resetIx=true }) {
   const cms = this.getMasterCollection();
-  const testimonials = [].slice.call(cms.querySelectorAll(".w-dyn-item>div"));
+  const testimonials = [].slice.call(cms.querySelectorAll(".w-dyn-item>*"));
 
   const tabMenu = document.querySelector(tabComponent + " .w-tab-menu");
   const tabContent = document.querySelector(tabComponent + " .w-tab-content");
