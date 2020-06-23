@@ -81,7 +81,7 @@ FsLibrary.prototype.reinitializeWebflow = function () {
   (<any>window).Webflow.ready();
   (<any>window).Webflow.require("ix2").init();
   trigger(document,'readystatechange');
-
+  (<any>window).Webflow.redraw.up()
 };
 
 FsLibrary.prototype.makeStyleSheet = function ({
