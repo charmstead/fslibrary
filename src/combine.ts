@@ -1,7 +1,6 @@
 import { isVisible } from "./utility";
 import { FsLibrary } from "./fsLibrary";
 
-
   /**
    * Combine all the collection items into one collection.
    */
@@ -30,10 +29,17 @@ FsLibrary.prototype.combine=function() {
     }
 
     //deletes the rest collection list
-    visible_collection.forEach((elem: Element, i: number) => {
+   const done= visible_collection.map((elem: Element, i: number) => {
       if (i > 0) {
         elem.parentElement.outerHTML = "";
       }
-      this.reinitializeWebflow();
-    });
-  }
+      return Promise.resolve()
+    })
+
+    Promise.all(done).then(r=>{
+      if((<any>window).Webflow.require("ix2")){
+        this.reinitializeWebflow();
+      }
+    })
+
+}

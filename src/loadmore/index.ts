@@ -1,5 +1,7 @@
 import { FsLibrary } from "../fsLibrary";
 import "./util";
+import { throttle, getPercentOfView } from "../utility";
+
 
 FsLibrary.prototype.loadmore = function (
   config: LoadMore = {
@@ -7,12 +9,15 @@ FsLibrary.prototype.loadmore = function (
     loadAll: false,
     resetIx: true,
     animation: this.animation,
+    infiniteScroll:true,
+    infiniteScrollPercentage:80
   }
 ): void {
   if (!this.indexSet) {
     this.setNextButtonIndex();
   }
 
+  const master_collection = this.getMasterCollection();
   this.setHiddenCollections();
 
   if (config.animation) {
@@ -25,7 +30,7 @@ FsLibrary.prototype.loadmore = function (
     this.makeStyleSheet({});
   }
 
-  const { button, resetIx = true, loadAll = false } = config;
+  const { button, resetIx = true, loadAll = false,infiniteScroll=true,infiniteScrollPercentage=80 } = config;
 
   const nextButton = this.getLoadmoreHref(button);
   nextButton.setAttribute("data-href", (<any>nextButton).href);
@@ -36,6 +41,19 @@ FsLibrary.prototype.loadmore = function (
   (<any>nextButton).onclick = (evt) => {
     initFetch();
   };
+
+  const initScroll = throttle((evt) => {
+
+   const percent= getPercentOfView(master_collection.parentElement)
+    if (percent>=infiniteScrollPercentage) { 
+          initFetch();
+    }
+  }, 700);
+
+  if(infiniteScroll){
+    document.addEventListener("scroll", initScroll);
+
+  }
 
   document.addEventListener("DOMContentLoaded", function (event) {
     loadAll && initFetch(true);
@@ -91,6 +109,8 @@ interface LoadMore {
   loadAll?: boolean;
   resetIx?: boolean;
   animation?: Animatn;
+  infiniteScroll?:boolean,
+infiniteScrollPercentage?:Number
 }
 
 interface Animatn {

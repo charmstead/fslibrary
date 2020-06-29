@@ -10,33 +10,35 @@ export function isInViewport(el) {
 }
 
 export const isOutOfViewport = function (elem) {
+  // Get element's bounding
+  var bounding = elem.getBoundingClientRect();
 
-	// Get element's bounding
-	var bounding = elem.getBoundingClientRect();
+  // Check if it's out of the viewport on each side
+  const out: any = {};
+  out.top = bounding.top < 0;
+  out.left = bounding.left < 0;
+  out.bottom =
+    bounding.bottom >
+    (window.innerHeight || document.documentElement.clientHeight);
+  out.right =
+    bounding.right >
+    (window.innerWidth || document.documentElement.clientWidth);
+  out.any = out.top || out.left || out.bottom || out.right;
+  out.all = out.top && out.left && out.bottom && out.right;
 
-	// Check if it's out of the viewport on each side
-	const out:any = {};
-	out.top = bounding.top < 0;
-	out.left = bounding.left < 0;
-	out.bottom = bounding.bottom > (window.innerHeight || document.documentElement.clientHeight);
-	out.right = bounding.right > (window.innerWidth || document.documentElement.clientWidth);
-	out.any = out.top || out.left || out.bottom || out.right;
-	out.all = out.top && out.left && out.bottom && out.right;
-
-	return out;
-
+  return out;
 };
 
 export function registerListener(event, func) {
   if (document.addEventListener) {
-    document.addEventListener(event, func,true);
+    document.addEventListener(event, func, true);
   } else {
     (document as any).attachEvent("on" + event, func);
   }
 }
 
 export function removeListener(event, func) {
-    document.removeEventListener(event, func,true);
+  document.removeEventListener(event, func, true);
 }
 
 export function isVisible(elem) {
@@ -114,52 +116,83 @@ export function createElementFromHTML(htmlString) {
   return div.firstChild;
 }
 
-
 export const throttle = (func, limit) => {
-  let lastFunc
-  let lastRan
-  return function() {
-    const context = this
-    const args = arguments
+  let lastFunc;
+  let lastRan;
+  return function () {
+    const context = this;
+    const args = arguments;
     if (!lastRan) {
-      func.apply(context, args)
-      lastRan = Date.now()
+      func.apply(context, args);
+      lastRan = Date.now();
     } else {
-      clearTimeout(lastFunc)
-      lastFunc = setTimeout(function() {
-        if ((Date.now() - lastRan) >= limit) {
-          func.apply(context, args)
-          lastRan = Date.now()
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function () {
+        if (Date.now() - lastRan >= limit) {
+          func.apply(context, args);
+          lastRan = Date.now();
         }
-      }, limit - (Date.now() - lastRan))
+      }, limit - (Date.now() - lastRan));
     }
-  }
-}
+  };
+};
 
-export const initResize=()=>{
-  
-  if (typeof(Event) === 'function') {
+export const initResize = () => {
+  if (typeof Event === "function") {
     // modern browsers
-    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event("resize"));
   } else {
     // for IE and other old browsers
     // causes deprecation warning on modern browsers
-    const evt = window.document.createEvent('UIEvents'); 
-    (<any>evt).initUIEvent('resize', true, false, window, 0); 
+    const evt = window.document.createEvent("UIEvents");
+    (<any>evt).initUIEvent("resize", true, false, window, 0);
     window.dispatchEvent(evt);
   }
-}
+};
 
-export const dispatchEvent=(event)=>{
-  
-  if (typeof(Event) === 'function') {
+export const dispatchEvent = (event) => {
+  if (typeof Event === "function") {
     // modern browsers
     window.dispatchEvent(new Event(event));
   } else {
     // for IE and other old browsers
     // causes deprecation warning on modern browsers
-    const evt = window.document.createEvent('UIEvents'); 
-    (<any>evt).initUIEvent(event, true, false, window, 0); 
+    const evt = window.document.createEvent("UIEvents");
+    (<any>evt).initUIEvent(event, true, false, window, 0);
     window.dispatchEvent(evt);
+  }
+};
+
+/**
+ * @param {HTMLElement} element
+ * @returns {number} percent of element in view
+ */
+export function getPercentOfView(element) {
+  const viewTop = window.pageYOffset;
+  const viewBottom = viewTop + window.innerHeight;
+  const rect = element.getBoundingClientRect();
+  const elementTop = rect.top + viewTop;
+  const elementBottom = elementTop + rect.height;
+
+  if (elementTop >= viewBottom || elementBottom <= viewTop) {
+    // heigher or lower than viewport
+    return 0;
+  } else if (elementTop <= viewTop && elementBottom >= viewBottom) {
+    // element is completely in viewport and bigger than viewport
+    return 100;
+  } else if (elementBottom <= viewBottom) {
+    if (elementTop < viewTop) {
+      // intersects viewport top
+      return Math.round(((elementBottom - viewTop) / window.innerHeight) * 100);
+    } else {
+      // completely inside viewport
+      return Math.round(
+        ((elementBottom - elementTop) / window.innerHeight) * 100
+      );
+    }
+  } else {
+    // intersects viewport bottom
+    //  elementBottom >= viewBottom && elementTop <= viewBottom
+    return Math.round(((viewBottom - elementTop) / window.innerHeight) * 100);
   }
 }

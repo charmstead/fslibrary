@@ -22,7 +22,7 @@ gulp.task("clean", (done: any) => {
 gulp.task("build:fsLib", () => {
 
   const project = tsc.createProject("tsconfig.json");
-  const result = gulp.src(["src/*.ts"])
+  const result = gulp.src(["src/index.ts"])
     .pipe(sourceMaps.init())
     .pipe(project());
   return result.js
