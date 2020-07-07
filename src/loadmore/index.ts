@@ -1,7 +1,6 @@
 import { FsLibrary } from "../fsLibrary";
 import "./util";
-import { throttle, getPercentOfView } from "../utility";
-
+import { throttle, getPercentOfView, isInViewport } from "../utility";
 
 FsLibrary.prototype.loadmore = function (
   config: LoadMore = {
@@ -9,8 +8,8 @@ FsLibrary.prototype.loadmore = function (
     loadAll: false,
     resetIx: true,
     animation: this.animation,
-    infiniteScroll:true,
-    infiniteScrollPercentage:80
+    infiniteScroll: true,
+    infiniteScrollPercentage: 80,
   }
 ): void {
   if (!this.indexSet) {
@@ -18,6 +17,7 @@ FsLibrary.prototype.loadmore = function (
   }
 
   const master_collection = this.getMasterCollection();
+  const getCollections = () => this.getMasterCollection();
   this.setHiddenCollections();
 
   if (config.animation) {
@@ -30,7 +30,13 @@ FsLibrary.prototype.loadmore = function (
     this.makeStyleSheet({});
   }
 
-  const { button, resetIx = true, loadAll = false,infiniteScroll=true,infiniteScrollPercentage=80 } = config;
+  const {
+    button,
+    resetIx = true,
+    loadAll = false,
+    infiniteScroll = true,
+    infiniteScrollPercentage = 80,
+  } = config;
 
   const nextButton = this.getLoadmoreHref(button);
   nextButton.setAttribute("data-href", (<any>nextButton).href);
@@ -43,16 +49,18 @@ FsLibrary.prototype.loadmore = function (
   };
 
   const initScroll = throttle((evt) => {
+    const children = getCollections().children;
+    const len = children.length;
 
-   const percent= getPercentOfView(master_collection.parentElement)
-    if (percent>=infiniteScrollPercentage) { 
-          initFetch();
+    const pos = Math.round((infiniteScrollPercentage * len) / 100);
+
+    if (isInViewport(children[pos])) {
+      initFetch();
     }
   }, 700);
 
-  if(infiniteScroll){
+  if (infiniteScroll) {
     document.addEventListener("scroll", initScroll);
-
   }
 
   document.addEventListener("DOMContentLoaded", function (event) {
@@ -109,8 +117,8 @@ interface LoadMore {
   loadAll?: boolean;
   resetIx?: boolean;
   animation?: Animatn;
-  infiniteScroll?:boolean,
-infiniteScrollPercentage?:Number
+  infiniteScroll?: boolean;
+  infiniteScrollPercentage?: number;
 }
 
 interface Animatn {

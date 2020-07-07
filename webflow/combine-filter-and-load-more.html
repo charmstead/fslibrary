@@ -24,6 +24,9 @@
         <div class="page-content">
             <div class="filter-bar">
                 <div class="filter-cat-1">
+                    <div class="filter-button filter-reset" >
+                        <div>Reset</div>
+                    </div>
                     <div class="filter-button" filter-by=''>
                         <div>All</div>
                     </div>
@@ -45,7 +48,7 @@
 
                 </div>
                 <div class="filter-cat-2">
-                    <div class="filter-button red" filter-by='RED'>
+                    <div class="filter-button red" filter-by='RED' filter-by-class=".project-color">
                         <div>Red</div>
                     </div>
                     <div class="filter-button green" filter-by='GREEN'>
@@ -58,7 +61,21 @@
                         <input filter-by='' name="search" type="text" />
                     </div>
                 </div>
-                <div class="filter-cat-3">
+
+                <div class="filter-cat-range">
+                    <div class="filter-button red" filter-by='2-5' filter-range="true" filter-by-class=".project-number">
+                        <div>2-5</div>
+                    </div>
+                    <div class="filter-button green" filter-by='10-50' filter-range="true" filter-by-class=".project-number">
+                        <div>10-50</div>
+                    </div>
+                    <div class="filter-button blue" filter-by='100-150' filter-range="true" filter-by-class=".project-number">
+                        <div>100-150</div>
+                    </div>
+                </div>
+
+
+                <!-- <div class="filter-cat-3">
                     <div class="w-checkbox checkbox">
                         <input type="checkbox" id="checkbox" name="jan" filter-by="Jan" class="w-checkbox-input">
                         <label for="checkbox" class="w-form-label">Jan</label>
@@ -88,7 +105,7 @@
                         <input type="checkbox" id="checkbox-7" name="june" filter-by="June" class="w-checkbox-input">
                         <label for="checkbox-7" class="w-form-label">June</label>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="combine-cms-items"></div>
             <div class="cms-outer-wrapper w-dyn-list">
@@ -2067,8 +2084,8 @@
         (function() {
 
             var _animation = {
-                enable: false,
-                duration: 0,
+                enable: true,
+                duration: 500,
                 easing: 'ease-in',
                 effects: 'scale(0) translate(10px,20px) rotateZ(360deg)'
             }
@@ -2089,6 +2106,10 @@
                 },
                 {
                     filterWrapper: ".filter-cat-3",
+                    filterType: "multi",
+                },
+                {
+                    filterWrapper: ".filter-cat-range",
                     filterType: "multi"
                 }
             ]
@@ -2097,9 +2118,11 @@
 
             fslib.filter({
                 filterArray: _FILTERS,
+                filterReset:'.filter-reset',
                 animation: _animation
             })
 
+            
 
             // fslib.loadmore({
             //     button: ".load-more-button",
