@@ -1,5 +1,5 @@
 import "./addClasses";
-import "./filter";
+import "./filter/filter";
 import "./combine";
 import "./lazyLoad";
 import "./nest";
