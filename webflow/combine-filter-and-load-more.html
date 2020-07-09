@@ -63,13 +63,13 @@
                 </div>
 
                 <div class="filter-cat-range">
-                    <div class="filter-button red" filter-by='2-5' filter-range="true" filter-by-class=".project-number">
+                    <div class="filter-button red" filter-by='2-5'>
                         <div>2-5</div>
                     </div>
-                    <div class="filter-button green" filter-by='10-50' filter-range="true" filter-by-class=".project-number">
+                    <div class="filter-button green" filter-by='10-50'>
                         <div>10-50</div>
                     </div>
-                    <div class="filter-button blue" filter-by='100-150' filter-range="true" filter-by-class=".project-number">
+                    <div class="filter-button blue" filter-by='100-150'>
                         <div>100-150</div>
                     </div>
                 </div>
@@ -2098,21 +2098,30 @@
             var _FILTERS = [
                 {
                     filterWrapper: ".filter-cat-1",
-                    filterType: "exclusive"
+                    filterType: "exclusive",
+                    filterBy:""
                 },
                 {
                     filterWrapper: ".filter-cat-2",
-                    filterType: "multi"
+                    filterType: "multi",
+                    filterBy:""
+
                 },
                 {
                     filterWrapper: ".filter-cat-3",
                     filterType: "multi",
+                    filterBy:""
+
                 },
                 {
                     filterWrapper: ".filter-cat-range",
-                    filterType: "multi"
+                    filterType: "multi",
+                    filterBy:".project-number",
+                    range:true
                 }
             ]
+
+
 
             //default is and
 

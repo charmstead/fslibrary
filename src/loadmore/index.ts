@@ -1,6 +1,11 @@
 import { FsLibrary } from "../fsLibrary";
 import "./util";
-import { throttle, getPercentOfView, isInViewport } from "../utility";
+import {
+  throttle,
+  getPercentOfView,
+  isInViewport,
+  isOutOfViewport,
+} from "../utility";
 
 FsLibrary.prototype.loadmore = function (
   config: LoadMore = {
@@ -49,12 +54,13 @@ FsLibrary.prototype.loadmore = function (
   };
 
   const initScroll = throttle((evt) => {
-    const children = getCollections().children;
+    const parent = getCollections();
+    const children = parent.children;
     const len = children.length;
 
     const pos = Math.round((infiniteScrollPercentage * len) / 100);
 
-    if (isInViewport(children[pos])) {
+    if (isInViewport(children[pos]) || !isOutOfViewport(parent).bottom) {
       initFetch();
     }
   }, 700);
