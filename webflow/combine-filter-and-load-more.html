@@ -48,7 +48,7 @@
 
                 </div>
                 <div class="filter-cat-2">
-                    <div class="filter-button red" filter-by='RED' filter-by-class=".project-color">
+                    <div class="filter-button red" filter-by='RED'>
                         <div>Red</div>
                     </div>
                     <div class="filter-button green" filter-by='GREEN'>
@@ -2099,24 +2099,22 @@
                 {
                     filterWrapper: ".filter-cat-1",
                     filterType: "exclusive",
-                    filterBy:""
+                    filterByClass:".project-category"
                 },
                 {
                     filterWrapper: ".filter-cat-2",
                     filterType: "multi",
-                    filterBy:""
 
                 },
                 {
                     filterWrapper: ".filter-cat-3",
                     filterType: "multi",
-                    filterBy:""
 
                 },
                 {
                     filterWrapper: ".filter-cat-range",
                     filterType: "multi",
-                    filterBy:".project-number",
+                    filterByClass:".project-number",
                     range:true
                 }
             ]

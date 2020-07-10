@@ -3990,12 +3990,12 @@ fsLibrary_1.FsLibrary.prototype.filter = function (_a) {
         filter_group = _a.filter_group,
         _b = _a.filterType,
         filterType = _b === void 0 ? filter_type : _b,
-        _c = _a.filterBy,
-        filterBy = _c === void 0 ? "" : _c,
+        _c = _a.filterByClass,
+        filterByClass = _c === void 0 ? "" : _c,
         _d = _a.range,
         range = _d === void 0 ? false : _d;
     filter[index] = {
-      target: filterBy,
+      target: filterByClass,
       query: [],
       range: range
     };
@@ -4131,7 +4131,7 @@ fsLibrary_1.FsLibrary.prototype.filter = function (_a) {
           filter[index].query = [filterText];
         } else {
           //it is definitely "multi"
-          filter[index].query.push(filterText);
+          filterText && filterText.length && filter[index].query.push(filterText);
         }
       }
 
@@ -4166,6 +4166,7 @@ fsLibrary_1.FsLibrary.prototype.filter = function (_a) {
 };
 
 var findAndMatchFilterText = function findAndMatchFilterText(filter, master_collection) {
+  console.log(filter);
   var disposableNote = helper_1.removeMsg();
   var queries = Object["values"](filter);
   master_collection.map(function (elem, i) {
@@ -5043,7 +5044,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40315" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42725" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

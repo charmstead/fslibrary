@@ -82,11 +82,11 @@ FsLibrary.prototype.filter = function ({
     prevClicked,
     filter_group,
     filterType = filter_type,
-    filterBy = "",
+    filterByClass = "",
     range = false,
   }) {
     filter[index] = {
-      target: filterBy,
+      target: filterByClass,
       query: [],
       range,
     };
@@ -227,7 +227,7 @@ FsLibrary.prototype.filter = function ({
         filter[index].query = [filterText];
       } else {
         //it is definitely "multi"
-        filter[index].query.push(filterText);
+        filterText && filterText.length && filter[index].query.push(filterText);
       }
     }
     if (animation.enable && animation.queue && filterActive) {
@@ -264,6 +264,7 @@ FsLibrary.prototype.filter = function ({
 };
 
 const findAndMatchFilterText = (filter, master_collection) => {
+  console.log(filter);
   const disposableNote = removeMsg();
   let queries = Object["values"](filter);
 
@@ -361,4 +362,11 @@ const addInputListener = (elem, otherElem, fxn) => {
       fxn(filter_text);
     }, 500)
   );
+};
+
+type filterArray = {
+  filterWrapper: string;
+  filterType: string;
+  filterByClass: string;
+  range: boolean;
 };
