@@ -82,13 +82,13 @@ FsLibrary.prototype.filter = function ({
     prevClicked,
     filter_group,
     filterType = filter_type,
-    filterByClass = "",
-    range = false,
+    filterByClass = null,
+    filterRange = false,
   }) {
     filter[index] = {
       target: filterByClass,
       query: [],
-      range,
+      filterRange,
     };
 
     filter_group.map((elem, j) => {
@@ -264,23 +264,22 @@ FsLibrary.prototype.filter = function ({
 };
 
 const findAndMatchFilterText = (filter, master_collection) => {
-  console.log(filter);
   const disposableNote = removeMsg();
   let queries = Object["values"](filter);
 
   master_collection.map((elem, i) => {
     const search_result: any = queries.reduce(
-      (curr: any, { query, target, range }) => {
+      (curr: any, { query, target, filterRange }) => {
         //creating a regex to test against
-        const val = range ? query : `(${query.join("|")})`;
+        const val = filterRange ? query : `(${query.join("|")})`;
 
         const result = [].slice.call(elem.children).map((item, j) => {
           const re = new RegExp(val, "gi");
-          const textContent = target
-            ? item.querySelector(target).textContent
-            : item.textContent;
 
-          const valid = range
+          //checks if target is specified, otherwise use the textcontent from item
+          const textContent = (item.querySelector(target) || item).textContent;
+
+          const valid = filterRange
             ? isInRange(val, textContent)
             : re.test(textContent);
 

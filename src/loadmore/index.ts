@@ -1,11 +1,6 @@
 import { FsLibrary } from "../fsLibrary";
 import "./util";
-import {
-  throttle,
-  getPercentOfView,
-  isInViewport,
-  isOutOfViewport,
-} from "../utility";
+import { throttle, isInViewport, isOutOfViewport } from "../utility";
 
 FsLibrary.prototype.loadmore = function (
   config: LoadMore = {
@@ -13,7 +8,7 @@ FsLibrary.prototype.loadmore = function (
     loadAll: false,
     resetIx: true,
     animation: this.animation,
-    infiniteScroll: true,
+    infiniteScroll: false,
     infiniteScrollPercentage: 80,
   }
 ): void {
@@ -37,9 +32,9 @@ FsLibrary.prototype.loadmore = function (
 
   const {
     button,
-    resetIx = true,
+    resetIx = false,
     loadAll = false,
-    infiniteScroll = true,
+    infiniteScroll = false,
     infiniteScrollPercentage = 80,
   } = config;
 
@@ -66,6 +61,7 @@ FsLibrary.prototype.loadmore = function (
   }, 700);
 
   if (infiniteScroll) {
+    console.log("infinite scroll added");
     document.addEventListener("scroll", initScroll);
   }
 

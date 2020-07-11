@@ -3844,10 +3844,10 @@ exports.preventParentFormSubmission = function (elem) {
 };
 
 exports.preventFormSubmission = function (formElem) {
-  formElem.addEventListener("submit", function (evt) {
+  formElem.onsubmit = function (evt) {
     evt.preventDefault();
     return false;
-  });
+  };
 };
 
 exports.resetAllFilter = function (_a) {
@@ -3991,13 +3991,13 @@ fsLibrary_1.FsLibrary.prototype.filter = function (_a) {
         _b = _a.filterType,
         filterType = _b === void 0 ? filter_type : _b,
         _c = _a.filterByClass,
-        filterByClass = _c === void 0 ? "" : _c,
-        _d = _a.range,
-        range = _d === void 0 ? false : _d;
+        filterByClass = _c === void 0 ? null : _c,
+        _d = _a.filterRange,
+        filterRange = _d === void 0 ? false : _d;
     filter[index] = {
       target: filterByClass,
       query: [],
-      range: range
+      filterRange: filterRange
     };
     filter_group.map(function (elem, j) {
       var tag_element = elem && elem.tagName;
@@ -4166,20 +4166,20 @@ fsLibrary_1.FsLibrary.prototype.filter = function (_a) {
 };
 
 var findAndMatchFilterText = function findAndMatchFilterText(filter, master_collection) {
-  console.log(filter);
   var disposableNote = helper_1.removeMsg();
   var queries = Object["values"](filter);
   master_collection.map(function (elem, i) {
     var search_result = queries.reduce(function (curr, _a) {
       var query = _a.query,
           target = _a.target,
-          range = _a.range; //creating a regex to test against
+          filterRange = _a.filterRange; //creating a regex to test against
 
-      var val = range ? query : "(" + query.join("|") + ")";
+      var val = filterRange ? query : "(" + query.join("|") + ")";
       var result = [].slice.call(elem.children).map(function (item, j) {
-        var re = new RegExp(val, "gi");
-        var textContent = target ? item.querySelector(target).textContent : item.textContent;
-        var valid = range ? isInRange(val, textContent) : re.test(textContent);
+        var re = new RegExp(val, "gi"); //checks if target is specified, otherwise use the textcontent from item
+
+        var textContent = (item.querySelector(target) || item).textContent;
+        var valid = filterRange ? isInRange(val, textContent) : re.test(textContent);
         var clonedItem = item.cloneNode(true);
 
         if (valid) {
@@ -4652,7 +4652,7 @@ fsLibrary_1.FsLibrary.prototype.loadmore = function (config) {
       loadAll: false,
       resetIx: true,
       animation: this.animation,
-      infiniteScroll: true,
+      infiniteScroll: false,
       infiniteScrollPercentage: 80
     };
   }
@@ -4687,11 +4687,11 @@ fsLibrary_1.FsLibrary.prototype.loadmore = function (config) {
 
   var button = config.button,
       _b = config.resetIx,
-      resetIx = _b === void 0 ? true : _b,
+      resetIx = _b === void 0 ? false : _b,
       _c = config.loadAll,
       loadAll = _c === void 0 ? false : _c,
       _d = config.infiniteScroll,
-      infiniteScroll = _d === void 0 ? true : _d,
+      infiniteScroll = _d === void 0 ? false : _d,
       _e = config.infiniteScrollPercentage,
       infiniteScrollPercentage = _e === void 0 ? 80 : _e;
   var nextButton = this.getLoadmoreHref(button);
@@ -4715,6 +4715,7 @@ fsLibrary_1.FsLibrary.prototype.loadmore = function (config) {
   }, 700);
 
   if (infiniteScroll) {
+    console.log("infinite scroll added");
     document.addEventListener("scroll", initScroll);
   }
 
@@ -5044,7 +5045,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42725" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33387" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

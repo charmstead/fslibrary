@@ -34,10 +34,10 @@ export const preventParentFormSubmission = (elem) => {
   }
 };
 export const preventFormSubmission = (formElem) => {
-  formElem.addEventListener("submit", (evt) => {
+  formElem.onsubmit = (evt) => {
     evt.preventDefault();
     return false;
-  });
+  };
 };
 
 export const resetAllFilter = ({ filter, triggerSelectors, activeClass }) => {
